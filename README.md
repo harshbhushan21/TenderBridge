@@ -270,13 +270,14 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 6.1 | `tools/amendment_diff.py`: typed changes, `apply_amendments`, `invalidation_for` | ⬜ |
-| 6.2 | `services/amendment_service.py`: upload → parse → diff preview → confirm → new version; supersede v1 approval; mark drafts stale | ⬜ |
-| 6.3 | `agents/subgraphs/amendment_impact.py`: direct amendments vs derived impacts; reuse unaffected checks | ⬜ |
-| 6.4 | Version comparison function (score, recommendation, changed items) | ⬜ |
+| 6.1 | `tools/amendment_diff.py`: typed changes, `apply_amendments`, `invalidation_for` | ✅ |
+| 6.2 | `services/amendment_service.py`: upload → parse → diff preview → confirm → new version; supersede v1 approval; mark drafts stale | ✅ |
+| 6.3 | `agents/subgraphs/amendment_impact.py`: direct amendments vs derived impacts; reuse unaffected checks | ✅ |
+| 6.4 | Version comparison function (score, recommendation, changed items) | ✅ |
 | 6.5 | Tests: 14 changes vs `corrigendum_diff_gold.json`; `run_demo_case.py CASE-2` → 78.80 `NO_BID` without re-embedding the KB | ⬜ |
 
 **Done when:** the same tender shows v1 77.34 `BID_WITH_CONDITIONS` and v2 78.80 `NO_BID` with the ISO evidence, and the v1 approval reads `superseded`.
+**Implementation update:** Amendment files remain tender-version content and are never added to the company KB. The deterministic diff layer supports both section fallbacks and structured parser records with stable change IDs and citations. Confirmation creates the next effective version, supersedes the prior version's Gate 1 reviews, marks prior drafts stale, and records derived invalidations. Focused unit coverage is in `backend/tests/unit/test_phase6_amendments.py`; CASE-2's full Postgres/gold replay remains the final acceptance check.
 **Meanwhile [S]:** build static UI layouts (shell, dashboard, workspace tabs) with mock data from the contract types.
 
 ### Phase 7 · [S] Frontend core + amendment and version routes

@@ -6,10 +6,13 @@ import uuid
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any
 
+from sqlalchemy import select
+
 from backend.app.agents.checkpoint import get_checkpointer
 from backend.app.agents.graph import build_graph
 from backend.app.agents.persistence import persist_state, thread_id_for, upsert_run
 from backend.app.core.config import get_settings
+from backend.app.db import models as m
 from backend.app.db.engine import session_scope
 from backend.app.db.repositories.analysis import run_to_dict
 from backend.app.db.repositories.tenders import get_tender
@@ -72,7 +75,9 @@ def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None) -> 
 
 
 def start_run(tender_id: str, *, version: int | None = None,
-              analysis_mode: str | None = None, mode: str = "full_analysis") -> dict[str, Any]:
+              analysis_mode: str | None = None, mode: str = "full_analysis",
+              previous_run_id: str | None = None,
+              scoring_factors: dict[str, float] | None = None) -> dict[str, Any]:
     with session_scope() as session:
         tender = get_tender(session, tender_id)
         chosen_version = version or tender.current_version
@@ -80,10 +85,28 @@ def start_run(tender_id: str, *, version: int | None = None,
         if not sections:
             raise ValueError("tender has no indexed sections")
         run_id = f"RUN-{uuid.uuid4().hex[:10].upper()}"
+        amendment_state: dict[str, Any] = {}
+        if mode == "impact":
+            amendment = session.scalar(select(m.AmendmentRow).where(
+                m.AmendmentRow.tender_id == tender_id,
+                m.AmendmentRow.target_version == chosen_version,
+                m.AmendmentRow.status == "confirmed",
+            ))
+            if amendment and amendment.diff:
+                diff = amendment.diff
+                amendment_state = {
+                    "change_map": {key: True for key in diff.get("invalidated_checks", [])},
+                    "invalidated_checks": diff.get("invalidated_checks", []),
+                    "reusable_checks": diff.get("reusable_checks", []),
+                    "derived_impacts": diff.get("derived_impacts", []),
+                }
         state: dict[str, Any] = {
             "tender_id": tender_id, "tender_version": chosen_version,
             "analysis_run_id": run_id, "company_id": get_settings().default_company_id,
             "mode": mode, "analysis_mode": analysis_mode or tender.analysis_mode,
+            "previous_run_id": previous_run_id,
+            "scoring_factors": scoring_factors or {},
+            **amendment_state,
             "sections": [s.model_dump(mode="json") for s in sections],
             "flags": [], "raw_requirements": [], "requirements": [], "compliance": [],
             "risks": [], "errors": [],
