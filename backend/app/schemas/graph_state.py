@@ -65,6 +65,8 @@ class TenderState(TypedDict, total=False):
     reusable_checks: list[str]
     derived_impacts: list[dict]
     routes: list[dict]                            # requirement_id -> check/tool chosen by the router
+    amendment_changes: list[dict]                 # confirmed AmendmentChange dumps up to this version
+    previous_compliance: list[dict]               # base version's compliance (impact-mode reuse)
 
     # --- analysis ---
     compliance: Annotated[list[dict], merge_by_key("requirement_id")]

@@ -50,7 +50,8 @@ def check_similar_work(projects: list[ProjectRecord], rule: SimilarWorkRule) -> 
         usable = project.eligible_value_inr is not None
         if in_window and similar and usable:
             definite.append(project)
-        elif in_window and similar and project.eligible_value_inr is None and _pending_value(project):
+        elif (in_window and similar and project.eligible_value_inr is None and rule.count_uncertified_share
+              and _pending_value(project)):
             pending.append(project)
         candidates.append({
             "project_id": project.project_id,

@@ -149,13 +149,19 @@ def _pq_item(clause_ref: str, text: str, section: dict[str, Any]) -> dict[str, A
 class PQContext:
     """Company facts loaded once per run."""
 
-    def __init__(self, session: Session, company_id: str, key_facts: KeyFacts | None):
+    def __init__(self, session: Session, company_id: str, key_facts: KeyFacts | None,
+                 amendment_changes: list[dict[str, Any]] | None = None):
         self.company: CompanyProfile | None = get_company(session, company_id)
         self.financials = get_financials(session, company_id)
         self.certificates = get_certificates(session, company_id)
         self.projects = get_projects(session, company_id)
         self.key_facts = key_facts
         self.extra: dict[str, Any] = dict(self.company.extra) if self.company else {}
+        # Corrigendum C1-05 style rule: only the client-certified consortium share counts.
+        self.certified_share_only = any(
+            c.get("field") == "consortium_experience_value_rule"
+            and re.search(r"certified by the client", str(c.get("new_value") or ""), re.IGNORECASE)
+            for c in amendment_changes or [])
 
     @property
     def deadline(self) -> date | None:
@@ -248,7 +254,8 @@ def evaluate_pq(check: str, text: str, ctx: PQContext) -> RuleResult:
         similar_rule = SimilarWorkRule(branches=branches,
                                        window_years=(parsed.get("window") or {}).get("years", 7),
                                        reference_date=reference,
-                                       required_scope_tags=analysis_inputs()["similar_work_scope_tags"])
+                                       required_scope_tags=analysis_inputs()["similar_work_scope_tags"],
+                                       count_uncertified_share=not ctx.certified_share_only)
         if not branches:
             return _result(check, EligibilityStatus.needs_human, "Similar-work thresholds not parsed.")
         return check_similar_work(ctx.projects, similar_rule)

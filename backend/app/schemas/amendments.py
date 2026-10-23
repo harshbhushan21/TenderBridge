@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -31,10 +32,15 @@ class AmendmentStatus(str, Enum):
     failed = "failed"
 
 
+ChangeKind = Literal["added", "changed", "removed", "superseded", "clarified", "no_change"]
+
+
 class AmendmentChange(BaseModel):
     """A DIRECT document amendment (as published by the buyer)."""
     change_id: str                     # "CHG-01"
     change_type: ChangeType
+    kind: ChangeKind = "changed"       # what happened to the provision (corrigendum_diff_gold vocabulary)
+    part: Literal["A", "B"] | None = None  # A = amendment, B = pre-bid response (A prevails)
     clause_ref: str | None = None
     field: str | None = None           # key-fact name if mapped e.g. "submission_deadline"
     old_value: str | None = None

@@ -270,14 +270,15 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 6.1 | `tools/amendment_diff.py`: typed changes, `apply_amendments`, `invalidation_for` | ✅ |
-| 6.2 | `services/amendment_service.py`: upload → parse → diff preview → confirm → new version; supersede v1 approval; mark drafts stale | ✅ |
-| 6.3 | `agents/subgraphs/amendment_impact.py`: direct amendments vs derived impacts; reuse unaffected checks | ✅ |
-| 6.4 | Version comparison function (score, recommendation, changed items) | ✅ |
-| 6.5 | Tests: 14 changes vs `corrigendum_diff_gold.json`; `run_demo_case.py CASE-2` → 78.80 `NO_BID` without re-embedding the KB | ⬜ |
+| 6.1 | `ingestion/corrigendum_parser.py` reads Part A (existing → amended) and Part B (pre-bid response) tables; `tools/amendment_diff.py` builds typed changes (kind, field, normalised old/new values, invalidated checks), `apply_changes_to_key_facts`, section-diff fallback | ✅ |
+| 6.2 | `services/amendment_service.py`: upload → `process_amendment` (own sessions, background-safe) → preview → confirm → new effective version; supersedes **every** live base-version Gate 1 review; stale drafts; exact counts | ✅ |
+| 6.3 | Impact re-analysis: `reconcile_corrigenda` applies amended key facts (cited to the corrigendum) and the invalidated checks; unaffected hard gates are reused from v1 (`reused_from_version`); consortium rule C1-05 applied to similar work | ✅ |
+| 6.4 | `compare_versions` / `services.amendment_service.compare_tender_versions`: score, recommendation, changed verdicts (not whole records), changed risk levels, amendments | ✅ |
+| 6.5 | `tests/integration/test_phase6_corrigendum.py` (12 tests): 14/14 gold changes; CASE-2 → 78.80 `NO_BID`; v2 gates and risk register match gold; amended dates cite the corrigendum; only affected checks re-run; v1 approval superseded; KB not re-embedded | ✅ |
 
 **Done when:** the same tender shows v1 77.34 `BID_WITH_CONDITIONS` and v2 78.80 `NO_BID` with the ISO evidence, and the v1 approval reads `superseded`.
-**Implementation update:** Amendment files remain tender-version content and are never added to the company KB. The deterministic diff layer supports both section fallbacks and structured parser records with stable change IDs and citations. Confirmation creates the next effective version, supersedes the prior version's Gate 1 reviews, marks prior drafts stale, and records derived invalidations. Focused unit coverage is in `backend/tests/unit/test_phase6_amendments.py`; CASE-2's full Postgres/gold replay remains the final acceptance check.
+**Review fixes (23 Oct, [S]):** CASE-2 returned **77.34 `BID_WITH_CONDITIONS`** (identical to v1) and task 6.5 was open. Causes: the diff matched sections by `section_id`, so every corrigendum section was just "added" and the 13 amendments were never extracted; and amendments were never applied to the analysis (the v1 deadline from the notice won, so ISO stayed valid). Also fixed: only *approved* Gate 1 reviews were superseded; superseded/stale counts came from the session identity map; preview processed the file inside the request transaction; `compare_versions` compared whole records (every requirement showed as changed).
+**Result after fixes:** `dev.py demo-cli CASE-2` from an empty database → v1 77.34, then Corrigendum No. 1 → **78.80 `NO_BID`**: PQ-06 fails with "ISO27001 (CERT-002) expires 2026-11-10, 10 day(s) before the bid submission deadline (2026-11-20)"; eligibility 89.62 and commercial 65 match gold; PQ-01/05/06/12 re-run, the other 9 hard gates reused from v1. Typed diff: all 14 gold changes match (kind, field, old/new); 8 further binding pre-bid clarifications are listed for the reviewer (the gold set only labels PB-09).
 **Meanwhile [S]:** build static UI layouts (shell, dashboard, workspace tabs) with mock data from the contract types.
 
 ### Phase 7 · [S] Frontend core + amendment and version routes

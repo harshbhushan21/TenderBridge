@@ -6,15 +6,13 @@ import uuid
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any
 
-from sqlalchemy import select
-
 from backend.app.agents.checkpoint import get_checkpointer
 from backend.app.agents.graph import build_graph
-from backend.app.agents.persistence import persist_state, thread_id_for, upsert_run
+from backend.app.agents.persistence import load_compliance, persist_state, thread_id_for, upsert_run
 from backend.app.core.config import get_settings
-from backend.app.db import models as m
 from backend.app.db.engine import session_scope
-from backend.app.db.repositories.analysis import run_to_dict
+from backend.app.db.repositories.amendments import confirmed_for_version
+from backend.app.db.repositories.analysis import latest_run, run_to_dict
 from backend.app.db.repositories.tenders import get_tender
 from backend.app.ingestion.tender_ingest import load_effective_sections
 from backend.app.llm.budget import bind_budget, new_budget
@@ -85,21 +83,18 @@ def start_run(tender_id: str, *, version: int | None = None,
         if not sections:
             raise ValueError("tender has no indexed sections")
         run_id = f"RUN-{uuid.uuid4().hex[:10].upper()}"
-        amendment_state: dict[str, Any] = {}
-        if mode == "impact":
-            amendment = session.scalar(select(m.AmendmentRow).where(
-                m.AmendmentRow.tender_id == tender_id,
-                m.AmendmentRow.target_version == chosen_version,
-                m.AmendmentRow.status == "confirmed",
-            ))
-            if amendment and amendment.diff:
-                diff = amendment.diff
-                amendment_state = {
-                    "change_map": {key: True for key in diff.get("invalidated_checks", [])},
-                    "invalidated_checks": diff.get("invalidated_checks", []),
-                    "reusable_checks": diff.get("reusable_checks", []),
-                    "derived_impacts": diff.get("derived_impacts", []),
-                }
+        # Every confirmed amendment up to this version applies, in any mode; impact mode
+        # also gets the base version's results so unaffected checks can be reused.
+        amendment_state: dict[str, Any] = {"amendment_changes": [
+            change for a in confirmed_for_version(session, tender_id, chosen_version)
+            for change in (a.diff or {}).get("changes", [])]}
+        if mode == "impact" and chosen_version > 1:
+            base = latest_run(session, tender_id, chosen_version - 1, completed_only=True)
+            if base is not None:
+                amendment_state["previous_compliance"] = load_compliance(
+                    session, tender_id, chosen_version - 1, base.run_id)
+                amendment_state["previous_version"] = chosen_version - 1
+                previous_run_id = previous_run_id or base.run_id
         state: dict[str, Any] = {
             "tender_id": tender_id, "tender_version": chosen_version,
             "analysis_run_id": run_id, "company_id": get_settings().default_company_id,

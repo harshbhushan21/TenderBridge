@@ -173,6 +173,8 @@ class SimilarWorkRule(BaseModel):
     client_types: list[str] = Field(default_factory=list)          # empty => any
     require_completion_certificate: bool = True
     allow_ongoing: bool = False
+    # False once a corrigendum says only the client-certified share counts (no "pending" share)
+    count_uncertified_share: bool = True
 
 
 class CertificationRule(BaseModel):
