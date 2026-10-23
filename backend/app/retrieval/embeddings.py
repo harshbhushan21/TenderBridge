@@ -56,7 +56,7 @@ class HashEmbedder:
     def _embed(self, text: str) -> list[float]:
         vec = [0.0] * self.dim
         toks = tokenize(text)
-        feats = toks + [f"{a}_{b}" for a, b in zip(toks, toks[1:])]
+        feats = toks + [f"{a}_{b}" for a, b in zip(toks, toks[1:], strict=False)]
         for f in feats:
             h = int.from_bytes(hashlib.blake2b(f.encode(), digest_size=8).digest(), "little")
             idx = h % self.dim
@@ -117,4 +117,4 @@ def get_embedder() -> Embedder:
 
 
 def cosine(a: list[float], b: list[float]) -> float:
-    return sum(x * y for x, y in zip(a, b))
+    return sum(x * y for x, y in zip(a, b, strict=False))

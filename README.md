@@ -157,7 +157,7 @@ Built before this plan; listed so later phases know what to reuse.
 | Settings and path resolution, errors, structured logging (`core/`) | ✅ |
 | Pydantic schemas: documents, requirements, eligibility, assessment, amendments, graph state | ✅ |
 | ORM models; DB engine with SQLite default and Postgres + pgvector support | ✅ |
-| Repositories for KB, tenders, amendments, analysis (audit is a stub → Phase 1) | 🟡 |
+| Repositories for KB, tenders, amendments, analysis, audit | ✅ |
 | Demo data pack under `demo_data/` | ✅ |
 | Parsers: PDF (Docling → PyMuPDF → pypdf), DOCX, XLSX, OCR; SHA-256 hashing | ✅ |
 | Upload validation, hidden-text/injection scans, PII masking | ✅ |
@@ -173,15 +173,19 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 1.1 | Rename package `testtbridge` → `tenderbridge` in `pyproject.toml`; remove the `src/testtbridge` stub and its script entry; `uv lock` | ⬜ |
-| 1.2 | Dev tools (pytest, ruff, mypy) into a dev group; add `langchain-groq`; delete or regenerate the stale `requirements.txt` | ⬜ |
-| 1.3 | Align roles in `core/security.py`: `analyst / writer / bid_manager / admin`, data scopes `hr / finance / legal` (see [Roles](#roles)) | ⬜ |
-| 1.4 | `knowledge/kb_seed.py`: idempotent upsert of `structured_facts/*` with evidence spans | ⬜ |
-| 1.5 | `backend/scripts/init_db.py`, `seed_company_facts.py`; finish the audit repository | ⬜ |
-| 1.6 | `Makefile` targets that exist so far: `setup`, `seed`, `test` (more added by later phases) | ⬜ |
-| 1.7 | Alembic baseline (only for Postgres deploy; SQLite demo uses `create_all`) | ⬜ |
+| 1.1 | Rename package `testtbridge` → `tenderbridge`; remove the `src/testtbridge` stub and script entry; non-installable app (`[tool.uv] package = false`); re-locked | ✅ |
+| 1.2 | Dev tools (pytest, ruff, mypy) in a `dev` group; `langchain-groq` added; stale `requirements.txt` deleted (`pyproject.toml` + `uv.lock` are the source) | ✅ |
+| 1.3 | Roles in `core/security.py`: `analyst / writer / bid_manager / admin`, data scopes `hr / finance / legal`; unknown `X-Role` → `analyst`; `require_approver()` for gates (see [Roles](#roles)) | ✅ |
+| 1.4 | `knowledge/kb_seed.py`: idempotent upsert of `structured_facts/*` (3 financials, 5 certificates, 10 projects, 10 people, 10 risk positions, 62 evidence rows) | ✅ |
+| 1.5 | `backend/scripts/init_db.py`, `seed_company_facts.py`; audit repository | ✅ |
+| 1.6 | `Makefile`: `setup`, `init-db`, `migrate`, `seed`, `reset-db`, `test`, `lint` (later phases add theirs) | ✅ |
+| 1.7 | Alembic baseline `7725f771faec` (pgvector extension + GIN indexes on Postgres); upgrade / `alembic check` / downgrade verified on SQLite and Postgres | ✅ |
+| 1.8 | Postgres 16 + pgvector 0.8.0 in `docker-compose.yml` (port 5433); `make db-up`, `test-pg`; tests isolated from the dev DB (`TEST_DATABASE_URL`) | ✅ |
+| 1.9 | Pinned ruff rule set and mypy config in `pyproject.toml`; existing backend lint-clean (safe fixes only, behaviour unchanged); `make lint`, `make typecheck`. mypy is clean for Phase 1 files; 38 typing errors remain in later-phase files, assigned as tasks 2.8, 3.9, 4.9, 8.7, 9.6 | ✅ |
+| 1.10 | Portable across machines and OSes: `dev.py` task runner + `doctor`, `.python-version`, `.gitattributes`, root-anchored SQLite path, fixed Docker project name, Node pin; verified with a fresh clone in another folder and a real `git clone` with `core.autocrlf=true` | ✅ |
 
 **Done when:** `uv sync` works on a fresh clone, seeding twice gives the same row counts, `get_financials()` returns ₹46 / 52 / 58 Cr with spans, and `role_can_read("analyst", …)` follows the data pack's tags.
+**Result (23 Oct):** ✅ done. Verified on a clean copy (`make setup && make seed && make test`) and on a fresh Postgres volume (`make db-up && make migrate && make seed`, seeding twice gives identical counts). 20 tests pass on Postgres (`make test-pg`), 19 + 1 Postgres-only skip on SQLite; `make lint` is clean. Notes for Phase 2: facts are keyed by company `NIMBUS-001`; `Project.eligible_value_inr` is the client-certified bidder share only (PRJ-005 is `None`); project `scope_tags` are factual (`data_centre`, `noc_24x7`, `sector:*`, `scope:*`) and similarity is for the rule/judge to decide; every source column is kept in each row's `raw` (e.g. `revenue_infra_services_inr_cr` for PQ-04); person names are stored masked.
 **Meanwhile [H]:** write the Phase 2 test cases from `eligibility_gold.json` and `eligibility_rules_gold.json`; confirm Groq/Gemini model IDs and quotas with a tiny request.
 
 ### Phase 2 · [H] Deterministic rules and bid scoring
@@ -195,6 +199,7 @@ Built before this plan; listed so later phases know what to reuse.
 | 2.5 | `tools/commercial_rules.py`: clause category vs `risk_positions.json` → `within_policy / review / escalate` | ⬜ |
 | 2.6 | `tools/bid_scoring.py`: hard gates + weights from `bid_scoring_policy.json`; any hard-gate gap ⇒ `NO_BID` | ⬜ |
 | 2.7 | Rules as a config **rule pack** (GeM/CPPP) so a second pack loads without code changes | ⬜ |
+| 2.8 | mypy-clean `tools/financial_rules.py`, `tools/facts.py` (typing only; no runtime bugs found) | ⬜ |
 
 **Done when:** every case in `eligibility_gold.json` passes with the LLM off: ₹52 Cr passes ₹45 Cr and fails ₹55 Cr, PQ-05 branch (b) passes, ISO valid on 6 Nov and expired on 20 Nov, and the scorer returns 77.34 `BID_WITH_CONDITIONS` (v1) and 78.80 `NO_BID` (v2).
 **Meanwhile [S]:** read the Phase 2 code, list which tools Phase 3 retrieval must feed; sketch the UI screens on paper.
@@ -211,6 +216,7 @@ Built before this plan; listed so later phases know what to reuse.
 | 3.6 | `ingestion/tender_ingest.py`: `load_effective_sections(tender_id, version)`; BoQ rows | ⬜ |
 | 3.7 | Tests: parser fidelity vs `extracted/tender_sections.json` and scanned page 12; 5 `retrieval_qa.json` questions; analyst cannot retrieve `bid_risk_policy.pdf`; second ingest re-embeds nothing | ⬜ |
 | 3.8 | `Makefile`: `ingest-kb` | ⬜ |
+| 3.9 | mypy-clean `retrieval/embeddings.py`, `ingestion/docx_parser.py` | ⬜ |
 
 **Done when:** the four v1 files ingest to `ready_for_analysis` with page-citable sections and BoQ rows, with no recommendation yet, and KB queries return the right doc and page.
 **Meanwhile [H]:** write the shredder / router / similarity-judge prompts for Phase 4 and test them by hand on two sections.
@@ -227,6 +233,7 @@ Built before this plan; listed so later phases know what to reuse.
 | 4.6 | `agents/runner.py` (background start, resume, cancel, run state) and `agents/persistence.py` (write/read results) | ⬜ |
 | 4.7 | Events and audit emitted per node | ⬜ |
 | 4.8 | `backend/scripts/run_demo_case.py CASE-1`; `Makefile`: `demo-cli` | ⬜ |
+| 4.9 | mypy-clean `agents/nodes/core.py`, `ops/events.py`, `llm/factory.py`, `exports/service.py` (its `agents.persistence` import resolves with 4.6) | ⬜ |
 
 **Done when:** a freshly uploaded v1 runs to Gate 1 from the CLI and returns 77.34 `BID_WITH_CONDITIONS` with citations, and the paused run resumes after a restart.
 **Meanwhile [S]:** scaffold the FastAPI router files against `docs/api_contract.md` with stubbed responses (no business logic).
@@ -282,6 +289,7 @@ Built before this plan; listed so later phases know what to reuse.
 | 8.4 | LangSmith tracing on, with PII redaction verified | ⬜ |
 | 8.5 | `evals/run_evals.py` + evaluators: mandatory recall (42-item live subset), key facts, eligibility, corrigendum diff, retrieval recall@6, safety traps; `Makefile`: `evals` | ⬜ |
 | 8.6 | Measured TDR-001 run: time and cost per tender for the ROI slide; record demo video safety copy | ⬜ |
+| 8.7 | mypy-clean `guardrails/injection.py` | ⬜ |
 
 **Done when:** `injection_test.pdf` is quarantined, invented credentials are caught, and a measured mandatory-recall number, time and cost exist.
 **Meanwhile [S]:** draft the deck and README sections that need the measured numbers.
@@ -295,6 +303,7 @@ Built before this plan; listed so later phases know what to reuse.
 | 9.3 | Export tests: every file opens and shows version and citations | ⬜ |
 | 9.4 | README final pass; `make demo`; fresh-clone setup test | ⬜ |
 | 9.5 | ~6-slide PPTX (cream/brown): problem → use case/pipeline → agent graph → Responsible AI (security, privacy, explainability, audit, role-based access, human approval) → measured ROI → reuse ("what stays vs what you configure") + differentiation | ⬜ |
+| 9.6 | mypy-clean `exports/compliance_xlsx.py`, `exports/draft_docx.py` | ⬜ |
 
 **Done when:** a fresh clone runs with the README alone, and the deck is ready before the 15:00 review.
 **Meanwhile [H]:** rehearse the 5-minute demo on the real app; note rough edges.
@@ -360,8 +369,8 @@ knows where its code goes.
 
 ```text
 TenderBridge/
-├── README.md · .env.example · pyproject.toml · uv.lock · requirements.txt (stale, task 1.2)
-├── Makefile ⬜ · docker-compose.yml ⬜
+├── README.md · .env.example · pyproject.toml · uv.lock · alembic.ini · .python-version · .gitattributes
+├── dev.py ✅ (cross-platform commands) · Makefile ✅ (wrapper) · docker-compose.yml ✅ (Postgres + pgvector; api/web added in Phases 5, 7)
 ├── docs/
 │   ├── api_contract.md ✅       # REST + SSE contract (single source for routes)
 │   ├── interfaces.md ✅         # internal module contracts with status
@@ -371,10 +380,10 @@ TenderBridge/
 │   ├── app/
 │   │   ├── main.py ⬜
 │   │   ├── core/ ✅             # config, errors, logging, security
-│   │   ├── db/ ✅               # engine, models, repositories
+│   │   ├── db/ ✅               # engine, models, repositories, migrations (Alembic)
 │   │   ├── schemas/ ✅          # Pydantic contracts
 │   │   ├── ingestion/ 🟡        # parsers ✅; sectionizer, classifier, upload_service, tender_ingest, kb_ingest ⬜
-│   │   ├── knowledge/ ⬜        # kb_seed, fact_provenance, fact_validation, freshness
+│   │   ├── knowledge/ 🟡        # kb_seed ✅; fact_provenance, fact_validation, freshness ⬜
 │   │   ├── retrieval/ 🟡        # embeddings ✅; chunker, indexer, keyword, vector, hybrid, reranker, context_pack ⬜
 │   │   ├── tools/ 🟡            # dates, facts, financial, certificate, searches ✅; rule_parser, project, personnel, registration, commercial, amendment_diff, citation_lookup, boq, bid_scoring, registry ⬜
 │   │   ├── llm/ 🟡              # factory, routing, budget ✅; prompts/ ⬜
@@ -384,8 +393,8 @@ TenderBridge/
 │   │   ├── exports/ ✅          # xlsx, docx, ics, audit json, service (untested)
 │   │   ├── ops/ ✅              # events, audit, metrics, langsmith
 │   │   └── api/ ⬜              # routers
-│   ├── scripts/ ⬜              # init_db, seed_company_facts, ingest_company_kb, run_demo_case, smoke_test
-│   └── tests/ 🟡                # conftest ✅; unit / integration / e2e ⬜
+│   ├── scripts/ 🟡              # init_db, seed_company_facts ✅; ingest_company_kb, run_demo_case ⬜
+│   └── tests/ 🟡                # conftest, unit (seed, roles) ✅; integration / e2e ⬜
 ├── evals/ 🟡                    # package skeleton; run_evals.py, evaluators ⬜
 ├── frontend/ 🟡                 # Next.js package + src/lib ✅; app pages and components ⬜
 └── storage/                     # generated at runtime, git-ignored
@@ -393,29 +402,68 @@ TenderBridge/
 
 ## Setup
 
-Prerequisites: Python **3.13**, [uv](https://docs.astral.sh/uv/), Node.js 20+
-and npm. Optional: PostgreSQL 16 + pgvector, Tesseract (scanned pages),
-provider API keys.
+Works the same on **macOS, Linux and Windows**. Every command is in `dev.py`
+and needs only uv; `make <target>` is a shortcut for the same thing on
+macOS/Linux.
+
+### What you need
+
+| Tool | Needed for | Install |
+|---|---|---|
+| [uv](https://docs.astral.sh/uv/getting-started/installation/) | everything (installs Python 3.13 itself, pinned in `.python-version`) | macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh \| sh` · Windows: `powershell -c "irm https://astral.sh/uv/install.ps1 \| iex"` |
+| Git | cloning | |
+| Docker Desktop | only for Postgres (SQLite needs nothing) | docker.com |
+| Node.js 20+ (`frontend/.nvmrc`) | only for the frontend (Phase 7) | nodejs.org |
+
+Optional: Tesseract for OCR of scanned pages; provider API keys for real LLM runs.
+
+### First run on a new laptop
 
 ```bash
-# backend (from the project root)
-uv sync
-cp .env.example .env          # SQLite + fake LLMs: no keys needed
-
-# foundation smoke checks (until the API exists)
-uv run python -c "from backend.app.core.config import get_settings; print(get_settings().demo_data_dir)"
-uv run python -c "from backend.app.db.engine import init_db, check_db; init_db(); print(check_db())"
-uv run pytest backend/tests -q
-
-# after Phase 9
-uv run uvicorn backend.app.main:app --reload --port 8000
-
-# frontend (after Phase 10)
-cd frontend && npm install && cp .env.local.example .env.local && npm run dev
+git clone https://github.com/harshbhushan21/TenderBridge.git
+cd TenderBridge
+uv run python dev.py setup     # installs deps into .venv, creates .env (SQLite + fake LLMs, no keys)
+uv run python dev.py doctor    # checks Python, deps, demo-data hashes, .env, database
+uv run python dev.py seed      # creates tables and seeds company facts (idempotent)
+uv run python dev.py test
 ```
 
-UI at <http://localhost:3000>, API at <http://localhost:8000>. A one-command
-`make demo` (task 9.4) will replace these steps once the targets are tested.
+On macOS/Linux the same is `make setup && make doctor && make seed && make test`.
+`uv run python dev.py help` lists every command.
+
+### Optional: Postgres 16 + pgvector (Docker)
+
+```bash
+uv run python dev.py db-up     # starts the container on localhost:5433
+# edit .env: comment out the SQLite DATABASE_URL / CHECKPOINT_URL lines and
+#            uncomment the Postgres ones
+uv run python dev.py migrate   # Alembic baseline (pgvector extension + full-text indexes)
+uv run python dev.py seed
+uv run python dev.py test-pg   # tests on a separate tenderbridge_test database
+```
+
+Data lives in the Docker volume `tenderbridge_tenderbridge_pgdata` (kept by
+`db-down`; removed only by `docker compose down -v`). Uploaded files, parsed
+text and exports go to `storage/` (git-ignored). If port 5433 is taken, set
+`POSTGRES_PORT` in `.env` and use the same port in `DATABASE_URL`.
+
+### Running the app
+
+```bash
+uv run uvicorn backend.app.main:app --reload --port 8000                          # after Phase 5 (API)
+cd frontend && npm install && cp .env.local.example .env.local && npm run dev     # after Phase 7 (UI)
+```
+
+UI at <http://localhost:3000>, API at <http://localhost:8000>.
+
+### Why it is portable
+
+- `.env` is per machine and git-ignored; `.env.example` holds safe defaults, and the app runs with no `.env` at all.
+- Relative paths in `DATABASE_URL`, `DEMO_DATA_DIR` and `STORAGE_DIR` resolve from the project root, never the current folder.
+- `uv.lock` pins every dependency for all platforms; `.python-version` pins Python 3.13.
+- `.gitattributes` keeps source files LF and leaves `demo_data/` bytes untouched, so the manifests' SHA-256 hashes still match after a Windows clone (`dev.py doctor` checks this).
+- Docker names (`tenderbridge-db`, the volume) are fixed by `name:` in `docker-compose.yml`, whatever the clone folder is called.
+- Optional system libraries (libmagic, Tesseract, Docling) fall back gracefully when missing.
 
 ## Configuration
 
@@ -424,7 +472,8 @@ Copy `.env.example` to `.env`. Environment variables override the JSON demo conf
 | Variable | Default | Purpose |
 |---|---|---|
 | `DEMO_DATA_DIR` / `STORAGE_DIR` | `demo_data` / `storage` | Read-only fixtures / writable runtime files |
-| `DATABASE_URL` | `sqlite:///storage/tenderbridge.db` | SQLite locally; `postgresql+psycopg://…` for Postgres |
+| `DATABASE_URL` | `sqlite:///storage/tenderbridge.db` | SQLite locally; `postgresql+psycopg://tenderbridge:tenderbridge@localhost:5433/tenderbridge` with `make db-up` |
+| `TEST_DATABASE_URL` | empty | Postgres database for tests (`make test-pg` sets it); tests never touch `DATABASE_URL` |
 | `CHECKPOINT_URL` | empty | LangGraph checkpoint store (empty → SQLite/memory) |
 | `LLM_FAST` / `LLM_STRONG` | `fake:fast` / `fake:strong` | `provider:model`; see below |
 | `GROQ_API_KEY` / `GOOGLE_API_KEY` | empty | Provider keys (never commit) |
@@ -433,7 +482,7 @@ Copy `.env.example` to `.env`. Environment variables override the JSON demo conf
 | `LANGSMITH_TRACING` / `LANGSMITH_PROJECT` / `LANGSMITH_API_KEY` | `false` / `tenderbridge` / empty | Tracing (mask PII first) |
 | `MAX_COST_USD` / `MAX_LLM_CALLS` / `MAX_RETRIES` / `MAX_REWRITES` / `MAX_PARALLEL_LLM` | 5 / 400 / 1 / 2 / 4 | Per-run budget and loop limits |
 | `DEMO_MODE` / `ANALYSIS_MODE` | `true` / `focused` | Demo disclosures; `focused` = 42-item live subset, `full` = offline |
-| `DEFAULT_COMPANY_ID` | `NIMBUS` | Company workspace |
+| `DEFAULT_COMPANY_ID` | `NIMBUS-001` | Company workspace (matches `structured_facts/company.json`) |
 | `CORS_ORIGINS` | `http://localhost:3000` | Allowed browser origins |
 | `MAX_UPLOAD_MB` / `MAX_ZIP_ENTRIES` / `MAX_ZIP_UNCOMPRESSED_MB` | 50 / 200 / 300 | Upload limits |
 | `TB_USE_DOCLING` | `0` | Enable Docling once installed and validated |
@@ -494,9 +543,10 @@ mandatory). Mandatory recall ≥ 95% is a **target** until we measure it.
 ## Testing and evaluation
 
 ```bash
-uv run pytest backend/tests -q
-uv run ruff check backend
-uv run mypy backend/app
+uv run python dev.py test        # SQLite            (make test)
+uv run python dev.py test-pg     # Postgres + pgvector (make test-pg)
+uv run python dev.py lint        # (make lint)
+uv run python dev.py typecheck   # (make typecheck)
 uv run python -m evals.run_evals          # Phase 7.5
 cd frontend && npm run typecheck && npm run build
 ```
@@ -525,6 +575,7 @@ and labelled replay · gold files never in agent context.
 - One phase at a time, owned by one person. The owner works on a branch per phase or per task, e.g. `s/p3-kb-ingest`, `h/p4-gate1`, `fix/<short-name>`, and merges into `main` when the phase's **Done when** check passes. The next owner starts from that `main`. Branching and pushing will be set up later; for now work stays local.
 - The person who is not building reviews and tests the previous phase and does the **Meanwhile** prep; bugs found there go on a `fix/` branch by the phase's owner.
 - Update the task's status in this README in the same change that implements it.
+- Before merging a phase: `lint`, `test`, `test-pg`, and `typecheck` (via `dev.py` or `make`) clean for the files the phase touched; run `doctor` after pulling.
 - Contracts first: schemas (`backend/app/schemas/`), ORM models and `docs/api_contract.md` are shared; extend them by adding fields with defaults, and record breaking changes in `docs/decisions.md`.
 - Integration checkpoints: Phase 3 (uploaded v1 → indexed sections), Phase 4 (CLI CASE-1), Phase 5 (API v1 flow), Phase 6 (CASE-2), Phase 7 (browser click-through).
 

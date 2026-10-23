@@ -1,5 +1,5 @@
 [project]
-name = "testtbridge"
+name = "tenderbridge"
 version = "0.1.0"
 description = "TenderBridge: agentic copilot that turns IT-infrastructure tenders into verified compliance checks, bid / no-bid recommendations and cited drafts"
 readme = "README.md"
@@ -22,6 +22,7 @@ dependencies = [
     "langchain-community>=0.3",
     "langchain-core>=0.3",
     "langchain-google-genai>=2.0",
+    "langchain-groq>=0.2",
     "langchain-huggingface>=0.1",
     "langchain-ollama>=0.2",
     "langchain-openai>=0.2",
@@ -30,7 +31,6 @@ dependencies = [
     "langgraph-checkpoint-postgres>=2.0",
     "langgraph-checkpoint-sqlite>=2.0",
     "langsmith>=0.1.140",
-    "mypy>=1.11",
     "numpy>=1.26",
     "openpyxl>=3.1",
     "pgvector>=0.3",
@@ -44,9 +44,6 @@ dependencies = [
     "pymupdf>=1.24",
     "pypdf>=4.3",
     "pytesseract>=0.3.10",
-    "pytest>=8.3",
-    "pytest-asyncio>=0.24",
-    "pytest-cov>=5.0",
     "python-dateutil>=2.9",
     "python-docx>=1.1",
     "python-dotenv>=1.0",
@@ -56,7 +53,6 @@ dependencies = [
     "rapidfuzz>=3.9",
     "redis>=5.0",
     "regex>=2024.7",
-    "ruff>=0.6",
     "sentence-transformers>=3.0",
     "sqlalchemy>=2.0.30",
     "sse-starlette>=2.1",
@@ -65,9 +61,45 @@ dependencies = [
     "uvicorn[standard]>=0.30",
 ]
 
-[project.scripts]
-testtbridge = "testtbridge:main"
+[dependency-groups]
+dev = [
+    "mypy>=1.11",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "types-openpyxl",
+]
 
-[build-system]
-requires = ["uv_build>=0.12.23,<0.13.0"]
-build-backend = "uv_build"
+[tool.uv]
+# Application, not a library: nothing to build or install. Modules import as
+# `backend.app.*` from the project root.
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["backend/tests"]
+
+[tool.mypy]
+python_version = "3.13"
+# Third-party packages without type information are treated as Any.
+ignore_missing_imports = true
+exclude = ["backend/app/db/migrations/"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+# Generated Alembic revisions are reviewed by hand, not linted.
+extend-exclude = ["backend/app/db/migrations/versions"]
+
+[tool.ruff.lint]
+# Explicit rule set so results do not change with ruff's defaults. Blind
+# `except Exception` is allowed: optional dependencies and providers must fail
+# soft by design (docs/interfaces.md).
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "B008",   # FastAPI dependencies use calls in argument defaults
+    "E501",   # long regexes and data tables read better unwrapped
+    "UP042",  # keep `str, Enum`: StrEnum changes str() output used in JSON and SSE payloads
+    "UP046", "UP047",  # PEP 695 generics: style only
+]

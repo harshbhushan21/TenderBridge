@@ -13,9 +13,16 @@ from sqlalchemy.orm import Session
 from backend.app.core.errors import ToolError
 from backend.app.db import models as m
 from backend.app.schemas.documents import SourceSpan
-from backend.app.schemas.eligibility import (CertificateRecord, CertificateStatus, CompanyProfile,
-                                             FinancialRecord, PersonCert, PersonRecord,
-                                             ProjectRecord, RiskPositionRecord)
+from backend.app.schemas.eligibility import (
+    CertificateRecord,
+    CertificateStatus,
+    CompanyProfile,
+    FinancialRecord,
+    PersonCert,
+    PersonRecord,
+    ProjectRecord,
+    RiskPositionRecord,
+)
 from backend.app.schemas.requirements import KeyFacts, Requirement
 from backend.app.tools.date_normalization import fiscal_year_key
 

@@ -1,0 +1,20 @@
+# Keep text files LF on every OS (Makefile, shell, Python, JSON/CSV fixtures).
+* text=auto eol=lf
+
+# Binary demo fixtures: never touch their bytes. demo_data manifests record
+# SHA-256 hashes, and `python dev.py doctor` verifies them after a clone.
+*.pdf  binary
+*.docx binary
+*.xlsx binary
+*.png  binary
+*.jpg  binary
+*.ico  binary
+*.db   binary
+
+# demo_data is a generated fixture pack: keep every byte as committed (some
+# CSVs are CRLF, and manifests record hashes).
+demo_data/** -text
+
+# Windows-only scripts keep CRLF.
+*.bat  text eol=crlf
+*.cmd  text eol=crlf

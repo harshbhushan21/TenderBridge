@@ -6,10 +6,18 @@ from typing import Any
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from backend.app.db.models import (Certificate, Company, Financial, KbChunk, KbDocument, Person,
-                                   Project, RiskPosition)
+from backend.app.db.models import (
+    Certificate,
+    Company,
+    Financial,
+    KbChunk,
+    KbDocument,
+    Person,
+    Project,
+    RiskPosition,
+)
 
-FACT_TABLES = {
+FACT_TABLES: dict[str, Any] = {
     "financials": Financial, "certificates": Certificate, "projects": Project,
     "people": Person, "risk_positions": RiskPosition,
 }

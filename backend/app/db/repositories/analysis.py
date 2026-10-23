@@ -4,8 +4,7 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from backend.app.db.models import (AnalysisRun, BidAssessmentRow, ExportRow, ReviewRow,
-                                   SectionDraftRow)
+from backend.app.db.models import AnalysisRun, BidAssessmentRow, ExportRow, ReviewRow, SectionDraftRow
 
 
 def latest_run(session: Session, tender_id: str, version: int | None = None,

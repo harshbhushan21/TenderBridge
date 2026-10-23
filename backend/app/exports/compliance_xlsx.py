@@ -1,9 +1,10 @@
 """Compliance matrix and eligibility/risk workbooks (openpyxl)."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from collections.abc import Iterable
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
@@ -59,7 +60,7 @@ def _header_block(ws: Worksheet, title: str, *, tender_id: str, version: int,
     """Write title rows; return next free row."""
     ws.cell(row=1, column=1, value=title).font = TITLE_FONT
     ws.cell(row=2, column=1, value=f"Tender: {tender_id}    Version: v{version}    "
-                                   f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+                                   f"Generated: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
     mode_txt = ("Focused live analysis — not full-tender coverage" if analysis_mode == "focused"
                 else "Full-tender analysis")
     ws.cell(row=3, column=1, value=f"Analysis mode: {mode_txt}")

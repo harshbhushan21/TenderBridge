@@ -71,7 +71,7 @@ def parse_xlsx(path: str | Path, doc_id: str) -> tuple[ParsedDocument, list[BoqI
             if "description" in m and len(m) >= 2:
                 header_idx, mapping = i, m
                 break
-        for i, r in enumerate(rows):
+        for r in rows:
             if all(v is None or str(v).strip() == "" for v in r):
                 continue
             lines.append(" | ".join("" if v is None else str(v) for v in r))
@@ -89,7 +89,7 @@ def parse_xlsx(path: str | Path, doc_id: str) -> tuple[ParsedDocument, list[BoqI
                 cells = {f"{get_column_letter(ci + 1)}{excel_row}": v for ci, v in enumerate(r)
                          if v is not None}
 
-                def g(field: str):
+                def g(field: str, r=r, mapping=mapping):
                     idx = mapping.get(field)
                     return r[idx] if idx is not None and idx < len(r) else None
 

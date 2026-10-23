@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from backend.app.schemas.graph_state import TenderState
 from backend.app.agents.nodes.core import (
     bid_score,
     eligibility_and_risk,
@@ -17,6 +16,7 @@ from backend.app.agents.nodes.core import (
     shred_requirements,
     write_no_bid_report,
 )
+from backend.app.schemas.graph_state import TenderState
 
 
 def _after_intake(state: TenderState) -> str:

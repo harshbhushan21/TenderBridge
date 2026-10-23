@@ -4,8 +4,14 @@ from __future__ import annotations
 import re
 from datetime import date
 
-from backend.app.schemas.eligibility import (Calculation, CertificateRecord, CertificateStatus,
-                                             CertificationRule, EligibilityStatus, RuleResult)
+from backend.app.schemas.eligibility import (
+    Calculation,
+    CertificateRecord,
+    CertificateStatus,
+    CertificationRule,
+    EligibilityStatus,
+    RuleResult,
+)
 from backend.app.schemas.requirements import KeyFacts
 
 _STANDARD_PATTERNS: list[tuple[re.Pattern, str]] = [
