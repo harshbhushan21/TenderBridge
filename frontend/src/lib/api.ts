@@ -23,21 +23,45 @@ export class ApiError extends Error {
   }
 }
 
-export function currentUser(): string {
-  if (typeof window !== "undefined") {
-    try {
-      return window.localStorage.getItem("tb.user") || DEMO_USER;
-    } catch {
-      return DEMO_USER;
-    }
+export type DemoRole = "bid_manager" | "analyst";
+
+export const DEMO_IDENTITIES: Record<DemoRole, { user: string; label: string }> = {
+  bid_manager: { user: DEMO_USER, label: "Bid Manager" },
+  analyst: { user: "analyst@nimbus.example", label: "Analyst" },
+};
+
+function stored(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
   }
-  return DEMO_USER;
+}
+
+/** Demo identity (X-Role header). Switchable in the top bar; production would use real auth. */
+export function currentRole(): DemoRole {
+  const r = stored("tb.role") || DEMO_ROLE;
+  return r === "analyst" ? "analyst" : "bid_manager";
+}
+
+export function currentUser(): string {
+  return DEMO_IDENTITIES[currentRole()].user;
+}
+
+export function setRole(role: DemoRole): void {
+  try {
+    window.localStorage.setItem("tb.role", role);
+  } catch {
+    /* private mode: role resets on reload */
+  }
+  window.dispatchEvent(new Event("tb-role-change"));
 }
 
 function headers(extra?: HeadersInit): Headers {
   const h = new Headers(extra);
   h.set("X-User", currentUser());
-  h.set("X-Role", DEMO_ROLE);
+  h.set("X-Role", currentRole());
   return h;
 }
 
@@ -115,7 +139,8 @@ export const api = {
     const fd = new FormData();
     for (const f of files) fd.append("files", f, f.name);
     if (docRole) fd.append("doc_role", docRole);
-    return request<{ files: { doc_id: string; filename: string; doc_role: string; status: string }[] }>(
+    return request<{ files: { doc_id: string; filename: string; doc_role: string; status: string }[];
+                     rejected: { filename: string; error: string }[] }>(
       `${t(id)}/files`, { method: "POST", body: fd },
     );
   },
@@ -133,7 +158,7 @@ export const api = {
   eventsUrl: (id: string, runId?: string, afterId = 0) =>
     `${API_BASE}${t(id)}/events${qs({ run_id: runId, after_id: afterId || undefined })}`,
 
-  requirements: (id: string, params: { version?: number; category?: string; mandatory?: boolean; q?: string } = {}) =>
+  requirements: (id: string, params: { version?: number; category?: string; mandatory?: boolean; hard_gate?: boolean; q?: string } = {}) =>
     request<{ version: number; analysis_mode: string; items: Requirement[] }>(`${t(id)}/requirements${qs(params)}`),
   keyFacts: (id: string, version?: number) => request<KeyFacts>(`${t(id)}/key-facts${qs({ version })}`),
   compliance: (id: string, version?: number) =>
@@ -160,7 +185,7 @@ export const api = {
   amendments: (id: string) => request<Items<AmendmentSummary>>(`${t(id)}/amendments`),
   amendmentDiff: (id: string, aid: string) =>
     request<AmendmentDiff>(`${t(id)}/amendments/${encodeURIComponent(aid)}/diff`),
-  confirmAmendment: (id: string, aid: string, body: { reviewer: string; comment?: string; accepted_change_ids?: string[] | null }) =>
+  confirmAmendment: (id: string, aid: string, body: { comment?: string; accepted_change_ids?: string[] | null }) =>
     json<{ tender_version: number; status: string; superseded_reviews: number; stale_drafts: number }>(
       `${t(id)}/amendments/${encodeURIComponent(aid)}/confirm`, "POST", body,
     ),

@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.api import exports, health, kb, ops, tenders
+from backend.app.api import amendments, exports, health, kb, ops, tenders
 from backend.app.api.errors import install_error_handlers
 from backend.app.core.config import get_settings
 from backend.app.core.logging import configure_logging
@@ -35,7 +35,7 @@ def create_app() -> FastAPI:
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origin_list, allow_credentials=True,
                        allow_methods=["*"], allow_headers=["*"])
     install_error_handlers(app)
-    for router in (health.router, kb.router, tenders.router, exports.router, ops.router):
+    for router in (health.router, kb.router, tenders.router, amendments.router, exports.router, ops.router):
         app.include_router(router)
     return app
 

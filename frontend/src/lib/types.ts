@@ -226,9 +226,13 @@ export type ChangeType =
   | "date_change" | "value_change" | "clause_replaced" | "clause_added" | "clause_deleted"
   | "clarification" | "eligibility_change" | "commercial_change" | "format_change" | "other";
 
+export type ChangeKind = "added" | "changed" | "removed" | "superseded" | "clarified" | "no_change";
+
 export interface AmendmentChange {
   change_id: string;
   change_type: ChangeType;
+  kind: ChangeKind;
+  part?: "A" | "B" | null;
   clause_ref?: string | null;
   field?: string | null;
   old_value?: string | null;
@@ -273,6 +277,8 @@ export interface AmendmentSummary {
   base_version: number;
   target_version: number;
   doc_id?: string | null;
+  changes?: number;
+  confirmed_by?: string | null;
   created_at?: string | null;
 }
 
@@ -359,6 +365,7 @@ export interface VersionInfo {
   confirmed_at?: string | null;
   assessment?: { score: number; recommendation: Recommendation; approval_status: ApprovalStatus } | null;
   run_id?: string | null;
+  run_status?: string | null;
 }
 
 export interface VersionsResponse {
@@ -373,10 +380,16 @@ export interface CompareSide {
   hard_gate_failures: string[];
 }
 
+export interface CompareVerdict {
+  status: EligibilityStatus;
+  summary: string;
+}
+
 export interface CompareResponse {
   a: CompareSide | null;
   b: CompareSide | null;
-  changed_items: { requirement_id: string; before: unknown; after: unknown }[];
+  changed_items: { requirement_id: string; hard_gate: boolean; before: CompareVerdict | null; after: CompareVerdict | null }[];
+  risk_changes: { category: string; before: RiskLevel | null; after: RiskLevel | null; tender_value?: string | null }[];
   amendments: AmendmentChange[];
   derived_impacts: DerivedImpact[];
 }
@@ -492,6 +505,7 @@ export interface Items<T> {
   items: T[];
 }
 
+/** Analysis graph nodes in run order (backend/app/agents/graph.py). */
 export const NODE_ORDER = [
   "intake_guard",
   "load_tender",
@@ -502,16 +516,21 @@ export const NODE_ORDER = [
   "route_requirements",
   "eligibility_and_risk",
   "bid_score",
-  "human_gate_1",
-  "write_no_bid_report",
-  "plan_response",
-  "write_sections",
-  "verify_claims",
-  "rewrite_failed",
-  "human_gate_2",
-  "final_compliance_check",
-  "export_outputs",
+  "gate1_review",
 ] as const;
+
+export const NODE_LABELS: Record<(typeof NODE_ORDER)[number], string> = {
+  intake_guard: "Intake checks",
+  load_tender: "Load tender",
+  shred_requirements: "Extract requirements",
+  merge_and_dedupe: "Deduplicate",
+  extract_key_facts: "Key facts",
+  reconcile_corrigenda: "Apply corrigenda",
+  route_requirements: "Route checks",
+  eligibility_and_risk: "Eligibility & risk",
+  bid_score: "Score",
+  gate1_review: "Gate 1",
+};
 
 export type NodeName = (typeof NODE_ORDER)[number];
 

@@ -285,14 +285,15 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 7.1 | Routes: amendments (upload, list, diff, confirm), reanalyse, versions, compare, audit | ⬜ |
-| 7.2 | App shell, role switcher (Bid Manager / Analyst), dashboard | ⬜ |
-| 7.3 | New tender + upload page with per-file status; Analyze enabled only when ready | ⬜ |
-| 7.4 | Tender workspace: live node strip (SSE), requirements matrix, evidence panel (tender clause + company proof + rule trace) | ⬜ |
-| 7.5 | Gate 1 panel: recommendation vs human decision, comments, audit entry | ⬜ |
-| 7.6 | Amendment upload → diff preview (direct vs derived) → confirm → re-analyse → v1 vs v2 comparison | ⬜ |
+| 7.1 | `api/amendments.py`: upload (202, processed in the background), list, diff (409 while parsing), confirm (Bid Manager/Admin; refusals audited), reanalyse (`mode: impact|full_analysis`), versions, compare; `tests/integration/test_phase7_amendment_api.py` | ✅ |
+| 7.2 | `frontend/`: Next.js 15 app shell, synthetic-data notice, role switcher (Bid Manager / Analyst → `X-User`/`X-Role`), dashboard (KB status, expiring certificates, tender cards) | ✅ |
+| 7.3 | `tenders/new`: create + multi-file upload, per-file status and detail; Analyze enabled only when every file is indexed | ✅ |
+| 7.4 | `tenders/[id]` workspace: live node strip (SSE with polling fallback), requirements matrix (hard gates / all / unchecked, search), evidence panel (tender clause + page text, rule trace, company evidence), risks, documents, activity (audit + guardrails) | ✅ |
+| 7.5 | Gate 1 panel: system recommendation vs human decision, comment, version-bound; an Analyst click shows the server's 403 and the refusal appears in the audit trail | ✅ |
+| 7.6 | Documents tab: corrigendum upload → typed diff (kind, field, before → after, Part A/B, page, checks to re-run) → confirm → re-analyse impact; Versions tab: v1/v2 cards and the comparison (changed hard gates, changed contract terms) | ✅ |
 
 **Done when:** the v1 → Gate 1 → corrigendum → v2 `NO_BID` story runs in a clean browser with no console actions; `Makefile`: `web`.
+**Result (23 Oct):** driven end to end in headless Chrome against a fresh database: upload 4 files → indexed → Analyze → 77.34 `BID_WITH_CONDITIONS`; Analyst approve → 403 shown and `gate1.denied` audited; Bid Manager approves; corrigendum → 22 typed changes (14 gold + 8 pre-bid clarifications) → confirm (v1 approval `superseded`) → re-analyse → **78.80 `NO_BID`**, REQ-PQ-06 `meets → gap`, PBG/payment/SLA cap `review → within_policy`, 9 hard gates marked `reused v1`. `dev.py web` starts the UI (runs `npm ci` on first use); `dev.py web-check` typechecks and builds it; `doctor` reports Node.js.
 **Meanwhile [H]:** prepare the eval harness inputs and the injection/claim test fixtures list.
 
 ### Phase 8 · [H] Trust layer: guardrails, claim verifier, evals, measured run
@@ -467,8 +468,8 @@ text and exports go to `storage/` (git-ignored). If port 5433 is taken, set
 ### Running the app
 
 ```bash
-uv run uvicorn backend.app.main:app --reload --port 8000                          # after Phase 5 (API)
-cd frontend && npm install && cp .env.local.example .env.local && npm run dev     # after Phase 7 (UI)
+uv run python dev.py api      # API on :8000 (make api)
+uv run python dev.py web      # UI on :3000, installs frontend packages on first run (make web)
 ```
 
 UI at <http://localhost:3000>, API at <http://localhost:8000>.

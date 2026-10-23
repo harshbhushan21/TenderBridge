@@ -126,6 +126,30 @@ def cmd_api() -> None:
     _py("-m", "uvicorn", "backend.app.main:app", "--reload", "--port", "8000", *sys.argv[2:])
 
 
+def _npm() -> str:
+    npm = shutil.which("npm")
+    if npm is None:
+        sys.exit("Node.js 20+ is not installed (needed only for the web UI): https://nodejs.org/")
+    return npm
+
+
+def cmd_web() -> None:
+    """start the web UI on http://localhost:3000 (installs frontend packages on first run)"""
+    frontend = ROOT / "frontend"
+    if not (frontend / "node_modules").exists():
+        _run(_npm(), "ci", "--prefix", str(frontend))
+    _run(_npm(), "run", "dev", "--prefix", str(frontend), *sys.argv[2:])
+
+
+def cmd_web_check() -> None:
+    """typecheck and production-build the web UI"""
+    frontend = ROOT / "frontend"
+    if not (frontend / "node_modules").exists():
+        _run(_npm(), "ci", "--prefix", str(frontend))
+    _run(_npm(), "run", "typecheck", "--prefix", str(frontend))
+    _run(_npm(), "run", "build", "--prefix", str(frontend))
+
+
 def cmd_reset_db() -> None:
     """drop and recreate tables, then seed (destroys local data)"""
     _py("-m", "backend.scripts.init_db", "--drop")
@@ -252,6 +276,16 @@ def cmd_doctor() -> None:
     except ImportError:
         pass
 
+    node = shutil.which("node")
+    if node:
+        version = subprocess.run([node, "--version"], capture_output=True, text=True).stdout.strip()
+        if int(version.lstrip("v").split(".")[0] or 0) >= 20:
+            ok(f"Node.js {version} (web UI)")
+        else:
+            warn(f"Node.js {version} found; the web UI needs 20+")
+    else:
+        warn("Node.js not found: only needed for the web UI (`dev.py web`), https://nodejs.org/")
+
     if (ROOT / ".env").exists():
         ok(".env present")
     else:
@@ -291,7 +325,7 @@ COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
     "demo-cli": cmd_demo_cli,
-    "reset-db": cmd_reset_db, "api": cmd_api,
+    "reset-db": cmd_reset_db, "api": cmd_api, "web": cmd_web, "web-check": cmd_web_check,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,
 }
