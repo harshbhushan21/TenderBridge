@@ -6,6 +6,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from typing import Any
 
+from backend.app.ops.langsmith import summarize_sections, traceable
 from backend.app.schemas.amendments import (
     AmendmentChange,
     AmendmentDiff,
@@ -152,6 +153,7 @@ def apply_amendments(base_sections: Sequence[dict[str, Any] | ParsedSection],
     return [merged[key] for key in sorted(merged)]
 
 
+@traceable(name="compare_versions", run_type="chain")
 def compare_versions(v1: dict[str, Any], v2: dict[str, Any]) -> dict[str, Any]:
     """Contract-shaped comparison of two analysed versions: score and recommendation,
     requirements whose verdict changed, and contract risks whose level changed.
@@ -280,6 +282,7 @@ def _corrigendum_number(rows_text: str) -> int:
     return int(m.group(1)) if m else 1
 
 
+@traceable(name="corrigendum_changes", run_type="parser", process_inputs=summarize_sections)
 def changes_from_corrigendum(rows: list[dict[str, Any]], *, doc_id: str, amendment_id: str,
                              tender_id: str, base_version: int, target_version: int,
                              first_page_text: str = "") -> AmendmentDiff:

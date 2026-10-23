@@ -8,6 +8,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any, Literal, cast
 
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.assessment import (
     BidAssessment,
     CriterionScore,
@@ -34,6 +35,7 @@ def _weights(policy: dict[str, Any]) -> dict[str, float]:
     return {str(k): float(v) / total for k, v in raw.items()}
 
 
+@traceable(name="score_bid", run_type="tool")
 def score_bid(
     *,
     tender_id: str,

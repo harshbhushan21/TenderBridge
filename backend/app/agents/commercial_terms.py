@@ -11,6 +11,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from backend.app.ops.langsmith import summarize_sections, traceable
 from backend.app.schemas.documents import SourceSpan
 from backend.app.schemas.eligibility import RiskItem, RiskLevel, RiskPositionRecord
 from backend.app.schemas.requirements import KeyFacts
@@ -34,6 +35,7 @@ def _days(text: str | None) -> float | None:
     return _num(r"within\s+(\d+)\s+days", text or "")
 
 
+@traceable(name="commercial_risk_register", run_type="tool", process_inputs=summarize_sections)
 def detect_commercial_risks(sections: list[dict[str, Any]], key_facts: KeyFacts | None,
                             positions: list[RiskPositionRecord], *, tender_id: str,
                             version: int) -> list[dict[str, Any]]:

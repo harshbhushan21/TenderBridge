@@ -18,6 +18,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from backend.app.ops.langsmith import summarize_sections, traceable
 from backend.app.schemas.documents import Scope, SourceSpan
 from backend.app.schemas.eligibility import (
     Calculation,
@@ -114,6 +115,7 @@ def _criterion_text(block: str) -> str:
     return " ".join(lines[: last + 1])
 
 
+@traceable(name="extract_pq_requirements", run_type="parser", process_inputs=summarize_sections)
 def extract_pq_requirements(sections: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Hard-gate requirements: every PQ-xx row plus the single-entity clause."""
     out: list[dict[str, Any]] = []
@@ -192,6 +194,7 @@ def _number(pattern: str, text: str) -> int | None:
     return int(raw) if raw.isdigit() else word_to_int(raw)
 
 
+@traceable(name="evaluate_pq", run_type="tool")
 def evaluate_pq(check: str, text: str, ctx: PQContext) -> RuleResult:
     company = ctx.company
     if company is None:

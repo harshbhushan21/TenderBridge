@@ -32,7 +32,14 @@ class Embedder(Protocol):
     def embed_query(self, text: str) -> list[float]: ...
 
 
+_warned_dims: set[int] = set()
+
+
 def _normalise(vec: list[float], dim: int) -> list[float]:
+    if len(vec) != dim and len(vec) not in _warned_dims:
+        _warned_dims.add(len(vec))
+        log.warning("embedding has %d dimensions, EMBEDDING_DIM is %d: vectors are %s", len(vec), dim,
+                    "truncated" if len(vec) > dim else "zero-padded")
     if len(vec) > dim:
         vec = vec[:dim]
     elif len(vec) < dim:
@@ -113,7 +120,9 @@ def get_embedder() -> Embedder:
             raise ValueError(f"unknown embedding provider '{provider}'")
         return LangChainEmbedder(inner, spec, dim)
     except Exception as exc:
-        log.warning("embedding provider %s unavailable (%s); using hash embeddings", spec, exc)
+        # Offline fallback is kept, but loudly: vectors written now are labelled hash-* and are
+        # ignored by searches once the real provider works again (until `dev.py reembed`).
+        log.error("embedding provider %s unavailable (%s); FALLING BACK to hash embeddings", spec, exc)
         return HashEmbedder(dim)
 
 

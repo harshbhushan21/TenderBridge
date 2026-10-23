@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
 
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.documents import GuardrailFlag
 
 # (pattern, severity)
@@ -29,6 +30,11 @@ _PATTERNS: list[tuple[re.Pattern, Severity]] = [
                 re.I), "high"),
     (re.compile(r"\bwhen\s+asked\s+about\b.{0,80}\b(always|never)\s+(answer|say|state|respond|reply)", re.I),
      "critical"),
+    # "Instruction to AI: ... skip guardrails" (planted in PDF metadata). Narrow on purpose: tender text
+    # legitimately says "the authority shall approve the bid", so approval wording alone is not flagged.
+    (re.compile(r"\binstructions?\s+(to|for)\s+(ai|llms?|the\s+model|automated|assistants?)\b", re.I), "high"),
+    (re.compile(r"\b(skip|bypass|disable|turn\s+off)\s+(the\s+|all\s+|any\s+)?(guardrails?|safety\s+checks?|"
+                r"verification|content\s+filters?)\b", re.I), "critical"),
     (re.compile(r"\b(rate|mark|treat|score)\s+(the\s+)?(bidder|vendor|company)\s+as\s+(fully\s+)?"
                 r"(compliant|eligible|qualified)", re.I), "critical"),
 ]
@@ -67,6 +73,7 @@ def _is_near_white(color: int) -> bool:
     return min(r, g, b) >= 240
 
 
+@traceable(name="screen_pdf_hidden_text_and_metadata", run_type="tool")
 def scan_pdf_hidden_text(path: str | Path, *, doc_id: str | None = None) -> list[GuardrailFlag]:
     """Detect white, tiny or off-page text spans using PyMuPDF (no-op if unavailable)."""
     try:

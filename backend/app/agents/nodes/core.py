@@ -52,35 +52,106 @@ def _source(section: dict[str, Any], text: str = "") -> dict[str, Any]:
     }
 
 
+# Clause markers: obligations, definitions, buyer rights and limits all bind the bidder.
+_MARKERS = re.compile(r"\b(shall|must|required|mandatory|eligible|minimum|at least|not less than|"
+                      r"not exceed|valid|submit|means|may|liable|prevail)\b", re.I)
+_BINDING = re.compile(r"\b(shall|must|required|mandatory|means|not exceed|prevail)\b", re.I)
+_OPTIONAL = re.compile(r"\b(preferred|optional|desirable|additional marks)\b", re.I)
+_AMENDED_COLUMN = re.compile(r"\b(amended|revised|response|clarification)\b", re.I)
+# A wrapped PDF line starts a new block only when it opens a list item or a numbered clause.
+_BLOCK_START = re.compile(r"^(\(?[a-z0-9]{1,3}\)|[a-z0-9]{1,3}\)|[•▪\-–]\s|\d+(\.\d+)+[A-Z]?\s)", re.I)
+_ABBREVIATIONS = {"rs", "no", "nos", "sl", "cl", "e.g", "i.e", "etc", "viz", "vs", "dr", "mr", "ms",
+                  "approx", "fig", "para", "ltd", "pvt", "co", "inc", "st", "max", "min"}
+_SERIAL = re.compile(r"^[A-Z]{0,2}\d{1,3}[a-z]?\.?$")
+_CATEGORY_TOKENS = (
+    ("turnover", RequirementCategory.eligibility_financial),
+    ("net worth", RequirementCategory.eligibility_financial),
+    ("experience", RequirementCategory.eligibility_experience),
+    ("similar work", RequirementCategory.eligibility_experience),
+    ("iso", RequirementCategory.eligibility_certification),
+    ("certificate", RequirementCategory.eligibility_certification),
+    ("personnel", RequirementCategory.personnel),
+    ("payment", RequirementCategory.commercial),
+    ("penalty", RequirementCategory.commercial),
+    ("submission", RequirementCategory.submission),
+)
+
+
+def _category(text: str) -> RequirementCategory:
+    lower = text.lower()
+    return next((c for token, c in _CATEGORY_TOKENS if token in lower), RequirementCategory.other)
+
+
+def _sentences(text: str, table_cells: list[str] | None = None) -> list[str]:
+    """Rejoin wrapped PDF lines, then split on real sentence ends (not "Rs." or "No.").
+
+    Lines that are part of a structured table cell are treated as breaks: the table
+    rows are extracted separately, and cell text has no full stops to end a sentence.
+    """
+    cells = [" ".join(c.lower().split()) for c in table_cells or [] if c]
+    blocks: list[list[str]] = []
+    for line in (ln.strip() for ln in text.splitlines()):
+        flat = " ".join(line.lower().split())
+        if not line or (cells and any(flat in cell for cell in cells)):
+            blocks.append([])
+        elif not blocks or not blocks[-1] or _BLOCK_START.match(line):
+            blocks.append([line])
+        else:
+            blocks[-1].append(line)
+    sentences: list[str] = []
+    for block in filter(None, blocks):
+        current: list[str] = []
+        for word in " ".join(block).split():
+            current.append(word)
+            stem = word.rstrip(".").lower()
+            if (word.endswith((".", "?")) and stem not in _ABBREVIATIONS
+                    and not re.fullmatch(r"[a-z]|\d+(\.\d+)*", stem, re.I)):
+                sentences.append(" ".join(current))
+                current = []
+        if current:
+            sentences.append(" ".join(current))
+    return sentences
+
+
+def _table_requirements(section: dict[str, Any]) -> list[ExtractedRequirement]:
+    """One candidate per table row; optional columns and amendment columns are kept apart."""
+    out: list[ExtractedRequirement] = []
+    for t_index, table in enumerate(section.get("tables") or [], 1):
+        headers = [str(h or "") for h in table.get("headers") or []]
+        amended = next((i for i, h in enumerate(headers) if _AMENDED_COLUMN.search(h)), None)
+        optional = {i for i, h in enumerate(headers) if _OPTIONAL.search(h)}
+        for r_index, row in enumerate(table.get("rows") or [], 1):
+            cells = [" ".join(str(c or "").split()) for c in row]
+            ref = f"{section.get('section_id', 'section')}-T{t_index}R{r_index}"
+            if amended is not None:
+                candidates = [(cells[amended], True)] if amended < len(cells) else []
+            else:
+                main = [c for i, c in enumerate(cells) if c and i not in optional and not _SERIAL.match(c)]
+                candidates = [("; ".join(main), True)] if len(main) >= 2 else []
+                candidates += [(cells[i], False) for i in sorted(optional) if i < len(cells) and cells[i]]
+            for text, mandatory in candidates:
+                if len(text.split()) < (3 if mandatory else 2):  # "Valid CCIE" is a real preference
+                    continue
+                out.append(ExtractedRequirement(
+                    clause_ref=ref, title=str(section.get("title", "")), text=text,
+                    category=_category(text), mandatory=mandatory,
+                    page=table.get("page") or section.get("page_start"), quote=text[:400],
+                    confidence=0.6))
+    return out
+
+
 def _heuristic_shred(section: dict[str, Any]) -> RequirementExtraction:
     from backend.app.schemas.requirements import RequirementExtraction
     extracted: list[ExtractedRequirement] = []
-    text = str(section.get("text", "")).strip()
-    sentences = [s.strip() for s in re.split(r"(?<=[.;])\s+|\n+", text) if s.strip()]
-    for index, sentence in enumerate(sentences):
-        if not re.search(r"\b(shall|must|required|eligible|minimum|valid|submit)\b", sentence, re.I):
+    cells = [str(c) for t in section.get("tables") or []
+             for row in [t.get("headers") or [], *(t.get("rows") or [])] for c in row]
+    for index, sentence in enumerate(_sentences(str(section.get("text", "")), cells)):
+        if not _MARKERS.search(sentence):
             continue
-        category = RequirementCategory.other
-        lower = sentence.lower()
-        for token, candidate in (
-            ("turnover", RequirementCategory.eligibility_financial),
-            ("net worth", RequirementCategory.eligibility_financial),
-            ("experience", RequirementCategory.eligibility_experience),
-            ("similar work", RequirementCategory.eligibility_experience),
-            ("iso", RequirementCategory.eligibility_certification),
-            ("certificate", RequirementCategory.eligibility_certification),
-            ("personnel", RequirementCategory.personnel),
-            ("payment", RequirementCategory.commercial),
-            ("penalty", RequirementCategory.commercial),
-            ("submission", RequirementCategory.submission),
-        ):
-            if token in lower:
-                category = candidate
-                break
         extracted.append(ExtractedRequirement(
             clause_ref=str(section.get("clause_ref") or f"{section.get('section_id', 'section')}-{index + 1}"),
-            title=str(section.get("title", "")), text=sentence, category=category,
-            mandatory=bool(re.search(r"\b(shall|must|required)\b", sentence, re.I)),
+            title=str(section.get("title", "")), text=sentence, category=_category(sentence),
+            mandatory=bool(_BINDING.search(sentence)) and not _OPTIONAL.search(sentence),
             page=section.get("page_start"), quote=sentence[:400], confidence=0.65,
         ))
     return RequirementExtraction(requirements=extracted)
@@ -148,11 +219,13 @@ def shred_requirements(state: TenderState) -> dict[str, Any]:
             system=load_prompt("shred_requirements"), user=text,
             heuristic=fallback,
         )
-        for item in result.value.requirements:
+        for item, heuristic_used in [(i, result.fallback) for i in result.value.requirements] + [
+                (row, False) for row in _table_requirements(section)]:
             sentence = item.text
             extracted.append({
                 **item.model_dump(mode="json"),
-                "source": _source(section, sentence), "llm_fallback": result.fallback,
+                "source": {**_source(section, sentence), "page": item.page or section.get("page_start")},
+                "llm_fallback": heuristic_used,
                 "section_path": section.get("section_path"),
                 "hard_gate": False,  # hard gates come only from the PQ table above
                 "tender_id": state["tender_id"],
@@ -164,14 +237,16 @@ def shred_requirements(state: TenderState) -> dict[str, Any]:
 def merge_and_dedupe(state: TenderState) -> dict[str, Any]:
     requirements: list[dict[str, Any]] = []
     seen: dict[tuple[str, str], str] = {}
+    used_ids: set[str] = set()
     for index, raw in enumerate(state.get("raw_requirements", [])):
         text = str(raw.get("text", "")).strip()
         key = (str(raw.get("clause_ref") or ""), re.sub(r"\W+", " ", text.lower()).strip())
         if key in seen:
             continue
         requirement_id = f"REQ-{raw.get('clause_ref') or index + 1}"
-        if requirement_id in {r["requirement_id"] for r in requirements}:
+        if requirement_id in used_ids:
             requirement_id = f"{requirement_id}-{index + 1}"
+        used_ids.add(requirement_id)
         seen[key] = requirement_id
         requirements.append({
             "requirement_id": requirement_id,
@@ -253,6 +328,7 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
         financials = get_financials(session, company_id) if company_id else []
         certificates = get_certificates(session, company_id) if company_id else []
         positions = get_risk_positions(session, company_id) if company_id else []
+        evidence_index = _evidence_index(session, company_id) if company_id else None
         for req in state.get("requirements", []):
             prior = previous.get(req["requirement_id"])
             if req.get("check") in reusable and prior is not None:
@@ -277,18 +353,52 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
                     result = None
             status = result.status if result else EligibilityStatus.needs_human
             summary = result.summary if result else "Not machine-checkable: assign an owner to confirm."
+            evidence = result.evidence if result else []
+            if result is None and company_id and req.get("mandatory", True) and evidence_index is not None:
+                evidence = _candidate_evidence(session, company_id, req, evidence_index)
+                if evidence:
+                    summary = ("Not machine-checkable: candidate company evidence attached for the "
+                               "owner to confirm.")
             compliance.append(ComplianceItem(
                 requirement_id=req["requirement_id"], tender_id=state["tender_id"],
                 tender_version=state["tender_version"], category=req.get("category", "other"),
                 mandatory=req.get("mandatory", True), hard_gate=req.get("hard_gate", False),
                 status=status, summary=summary, rule_result=result,
-                tender_source=req["source"], company_evidence=result.evidence if result else [],
+                tender_source=req["source"], company_evidence=evidence,
                 actions=result.actions if result else [],
                 confidence=req.get("confidence", 0.65), checked_by="rule" if result else "human",
             ).model_dump(mode="json"))
         risks = detect_commercial_risks(state.get("sections", []), key_facts, positions,
                                         tender_id=state["tender_id"], version=state["tender_version"])
     return {"compliance": compliance, "risks": risks}
+
+
+# Requirements no rule can check get candidate evidence from the company KB (RAG finds evidence,
+# a person decides). Searched as the least-privileged role, so restricted documents are never
+# attached to a compliance item that analysts can open.
+EVIDENCE_ROLE = "analyst"
+EVIDENCE_K = 3
+
+
+def _evidence_index(session: Any, company_id: str) -> Any:
+    from backend.app.retrieval.filters import SearchFilters
+    from backend.app.retrieval.keyword import prepare_candidates
+    from backend.app.schemas.documents import Scope
+
+    try:
+        index = prepare_candidates(session, SearchFilters(scope=Scope.kb, company_id=company_id,
+                                                          role=EVIDENCE_ROLE))
+    except Exception:  # an empty or unreachable KB leaves items for humans, as before
+        return None
+    return index if index.rows else None
+
+
+def _candidate_evidence(session: Any, company_id: str, req: dict[str, Any], index: Any) -> list[Any]:
+    from backend.app.tools.company_search import search_company_kb
+
+    hits = search_company_kb(session, company_id, str(req.get("text", ""))[:500], k=EVIDENCE_K,
+                             role=EVIDENCE_ROLE, candidates=index)
+    return [h.to_span() for h in hits]
 
 
 def _static_scores() -> dict[str, float]:
@@ -335,7 +445,10 @@ def bid_score(state: TenderState) -> dict[str, Any]:
         analysis_mode=state.get("analysis_mode", "focused"),
         rule_pack=policy or None,
     )
-    return {"assessment": assessment.model_dump(mode="json")}
+    from backend.app.guardrails.policy_enforcer import enforce_assessment
+    dumped = assessment.model_dump(mode="json")
+    enforce_assessment(dumped)  # a failed hard gate can never leave scoring as a bid
+    return {"assessment": dumped}
 
 
 def gate1_review(state: TenderState) -> dict[str, Any]:

@@ -122,8 +122,22 @@ def cmd_demo_cli() -> None:
 
 
 def cmd_evals() -> None:
-    """run the offline Phase 8 evaluation harness"""
-    _py("-m", "backend.app.evals.run_evals")
+    """run the pipeline on TDR-001 and score it against the gold files (fresh DB in storage/evals/)"""
+    if "--current-db" in sys.argv[2:]:
+        _py("-m", "backend.app.evals.run_evals")
+        return
+    out = ROOT / "storage" / "evals"
+    out.mkdir(parents=True, exist_ok=True)
+    for name in ("eval.sqlite", "eval_checkpoints.sqlite"):
+        (out / name).unlink(missing_ok=True)
+    _py("-m", "backend.app.evals.run_evals", env={
+        "DATABASE_URL": f"sqlite:///{(out / 'eval.sqlite').as_posix()}",
+        "CHECKPOINT_URL": f"sqlite:///{(out / 'eval_checkpoints.sqlite').as_posix()}"})
+
+
+def cmd_reembed() -> None:
+    """re-embed chunks made by a different embedder (after changing EMBEDDING_PROVIDER); --dry-run counts"""
+    _py("-m", "backend.scripts.reembed", *sys.argv[2:])
 
 
 def cmd_api() -> None:
@@ -329,7 +343,7 @@ def cmd_doctor() -> None:
 COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
-    "demo-cli": cmd_demo_cli, "evals": cmd_evals,
+    "demo-cli": cmd_demo_cli, "evals": cmd_evals, "reembed": cmd_reembed,
     "reset-db": cmd_reset_db, "api": cmd_api, "web": cmd_web, "web-check": cmd_web_check,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,

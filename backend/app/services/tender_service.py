@@ -1,11 +1,14 @@
 """Tender workspace lifecycle (create, status). The API layer (Phase 5) builds on this."""
 from __future__ import annotations
 
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import get_settings
 from backend.app.db import models as m
 from backend.app.ops.audit import audit
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.documents import TenderStatus
 
 
@@ -101,7 +104,7 @@ def start_analysis(session: Session, tender_id: str, *, version: int | None = No
         raise InvalidStateError("tender is not ready for analysis: wait for every file to be indexed",
                                 details={"status": tender.status})
     active = latest_run(session, tender_id, version)
-    if active is not None and active.status in ("queued", "running"):
+    if active is not None and active.status in ("queued", "running", "resuming"):
         raise ConflictError("an analysis is already running for this version",
                             details={"run_id": active.run_id})
     tender.status = TenderStatus.analyzing.value
@@ -112,6 +115,7 @@ def start_analysis(session: Session, tender_id: str, *, version: int | None = No
     return result
 
 
+@traceable(name="gate1_decision", run_type="chain")
 def decide_gate1(session: Session, tender_id: str, decision: dict, *, user_id: str, role: str) -> dict:
     """Record a version-bound Gate 1 decision and resume the paused run.
 
@@ -141,6 +145,15 @@ def decide_gate1(session: Session, tender_id: str, decision: dict, *, user_id: s
         raise InvalidStateError("no analysis is waiting for a Gate 1 decision",
                                 details={"run_status": run.status if run else None})
     status = {"approve_bid": "approved", "no_bid": "rejected", "defer": "pending"}[gate.action]
+    if gate.action != "defer":
+        # Claim the paused run atomically: of two near-simultaneous decisions only one resumes it.
+        from sqlalchemy import update
+        result: Any = session.execute(update(m.AnalysisRun).where(
+            m.AnalysisRun.run_id == run.run_id, m.AnalysisRun.status == "awaiting_human")
+            .values(status="resuming"))
+        claimed = result.rowcount
+        if claimed != 1:
+            raise ConflictError("this Gate 1 decision was already recorded", details={"run_id": run.run_id})
     session.add(m.ReviewRow(tender_id=tender_id, version=gate.tender_version, run_id=run.run_id, gate="gate1",
                             action=gate.action, status=status, reviewer=user_id, comment=gate.comment,
                             data=gate.model_dump(mode="json")))

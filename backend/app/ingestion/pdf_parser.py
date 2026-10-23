@@ -88,10 +88,13 @@ def _page_tables(page, page_no: int) -> list[TableBlock]:
     finder = getattr(page, "find_tables", None)
     if finder is None:
         return tables
+    fitz = _fitz()
     try:
         for t in finder().tables:
-            data = t.extract() or []
-            rows = [[("" if c is None else str(c).strip()) for c in row] for row in data]
+            # Cell text is read by clipping the page to each cell: `Table.extract()` drops
+            # the spaces between words on these PDFs ("RFPreference").
+            rows = [[" ".join(page.get_text("text", clip=fitz.Rect(c)).split()) if c else ""
+                     for c in row.cells] for row in t.rows]
             if not rows:
                 continue
             tables.append(TableBlock(headers=rows[0], rows=rows[1:], page=page_no))

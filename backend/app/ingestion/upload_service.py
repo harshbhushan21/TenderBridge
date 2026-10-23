@@ -28,9 +28,10 @@ from backend.app.ingestion.sectionizer import sectionize
 from backend.app.ingestion.xlsx_parser import parse_xlsx
 from backend.app.ops.audit import audit
 from backend.app.ops.events import emit_event
+from backend.app.ops.langsmith import traceable
 from backend.app.ops.metrics import record_guardrail
 from backend.app.retrieval.chunker import chunk_sections
-from backend.app.retrieval.indexer import index_tender_chunks
+from backend.app.retrieval.indexer import embed_chunks, index_tender_chunks
 from backend.app.schemas.documents import (
     BoqItem,
     GuardrailFlag,
@@ -113,6 +114,7 @@ def _set_status(doc_id: str, status: IngestionStatus, detail: str | None = None,
     return tf
 
 
+@traceable(name="tender_file_ingest", run_type="chain")
 def process_tender_file(doc_id: str) -> str:
     """Run the ingestion pipeline for one uploaded file; returns its final status.
 
@@ -149,6 +151,8 @@ def process_tender_file(doc_id: str) -> str:
         parsed_path = parsed_dir / f"{doc_id}.json"
         parsed_path.write_text(parsed.model_dump_json(), encoding="utf-8")
 
+        chunks = chunk_sections(sections, prefix=f"{doc_id}::")
+        vectors = embed_chunks(chunks)  # outside the write transaction (see embed_chunks)
         with session_scope() as s:
             s.execute(delete(m.TenderSection).where(m.TenderSection.doc_id == doc_id))
             s.execute(delete(m.BoqItemRow).where(m.BoqItemRow.doc_id == doc_id))
@@ -164,8 +168,8 @@ def process_tender_file(doc_id: str) -> str:
                                    row=item.row, item_no=item.item_no, description=item.description,
                                    unit=item.unit, quantity=item.quantity, rate=item.rate,
                                    amount=item.amount, cells=item.cells))
-            chunks = chunk_sections(sections, prefix=f"{doc_id}::")
-            index_tender_chunks(s, tender_id, version, doc_id, chunks, quarantined_sections=quarantined)
+            index_tender_chunks(s, tender_id, version, doc_id, chunks, quarantined_sections=quarantined,
+                                vectors=vectors)
             for flag in flags:
                 record_guardrail(flag, tender_id=tender_id, session=s)
             tf = s.get(m.TenderFile, doc_id)

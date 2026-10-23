@@ -121,5 +121,11 @@ def test_routing_reads_plan_and_stays_offline_in_fake_mode(monkeypatch):
         routing={"write_sections": {"primary": "gemini-3-flash"},
                  "route_requirements": {"primary": "keyword rules",
                                         "fallback": "groq/openai/gpt-oss-20b (10-15 items per call)"}}))
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-key")
     assert routing.resolve("write_sections").model == "google_genai:gemini-3-flash"
     assert routing.resolve("route_requirements").model == "groq:openai/gpt-oss-20b"
+    # Without a Google key the Gemini-planned node uses the tier model instead of failing auth.
+    monkeypatch.delenv("GOOGLE_API_KEY")
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    assert routing.resolve("write_sections").model == "groq:openai/gpt-oss-120b"

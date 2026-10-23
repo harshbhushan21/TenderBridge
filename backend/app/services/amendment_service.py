@@ -23,11 +23,13 @@ from backend.app.ingestion.tender_ingest import load_effective_sections, load_se
 from backend.app.ingestion.upload_service import process_tender_file, save_tender_upload
 from backend.app.ops.audit import audit
 from backend.app.ops.events import emit_event
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.amendments import AmendmentConfirmation, AmendmentDiff, AmendmentStatus
 from backend.app.schemas.documents import TenderStatus
 from backend.app.tools.amendment_diff import changes_from_corrigendum, diff_sections
 
 
+@traceable(name="amendment_upload", run_type="chain")
 def upload_amendment(session: Session, tender_id: str, filename: str, data: bytes,
                      *, actor: str = "system") -> dict[str, Any]:
     """Store a corrigendum for the next version. Call `process_amendment` after committing."""
@@ -53,6 +55,7 @@ def upload_amendment(session: Session, tender_id: str, filename: str, data: byte
             "base_version": base_version, "target_version": target_version}
 
 
+@traceable(name="amendment_process", run_type="chain")
 def process_amendment(amendment_id: str, *, actor: str = "system") -> str:
     """Parse the corrigendum and build its typed diff. Opens its own sessions."""
     with session_scope() as s:
@@ -104,6 +107,7 @@ def preview_amendment(session: Session, tender_id: str, amendment_id: str) -> Am
     return AmendmentDiff.model_validate(amendment.diff)
 
 
+@traceable(name="amendment_confirm", run_type="chain")
 def confirm_amendment(session: Session, tender_id: str, amendment_id: str,
                       confirmation: AmendmentConfirmation) -> dict[str, Any]:
     """Make the amended version effective: supersede the base version's Gate 1 decisions and
@@ -159,6 +163,7 @@ def confirm_amendment(session: Session, tender_id: str, amendment_id: str,
             "superseded_reviews": superseded, "stale_drafts": stale}
 
 
+@traceable(name="version_compare", run_type="chain")
 def compare_tender_versions(session: Session, tender_id: str, a: int, b: int) -> dict[str, Any]:
     """Compare the latest analysis of two versions (for GET /tenders/{id}/compare)."""
     from backend.app.agents.persistence import load_assessment, load_compliance, load_risks

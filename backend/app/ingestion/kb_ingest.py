@@ -9,6 +9,7 @@ Structured facts are seeded separately (knowledge/kb_seed.py) and not embedded.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -28,8 +29,10 @@ from backend.app.ingestion.docx_parser import parse_docx
 from backend.app.ingestion.file_validator import KB_EXTS
 from backend.app.ingestion.pdf_parser import parse_pdf
 from backend.app.ingestion.sectionizer import sectionize
+from backend.app.ops.langsmith import summarize_sections, traceable
 from backend.app.ops.metrics import record_guardrail
 from backend.app.retrieval.chunker import chunk_sections
+from backend.app.retrieval.embeddings import get_embedder
 from backend.app.retrieval.indexer import delete_doc_chunks, index_kb_chunks
 from backend.app.schemas.documents import GuardrailFlag, ParsedDocument, ParsedSection, Scope
 
@@ -62,6 +65,7 @@ def parse_any(path: Path, doc_id: str) -> ParsedDocument:
     raise FileRejected(f"unsupported knowledge-base file type: {path.suffix}")
 
 
+@traceable(name="screen_sections_for_injection", run_type="tool", process_inputs=summarize_sections)
 def scan_sections(sections: list[ParsedSection], hidden_by_page: dict[int, list[str]],
                   doc_id: str) -> list[GuardrailFlag]:
     """Quarantine injected instructions inside sections (text is untrusted data)."""
@@ -117,6 +121,7 @@ def _load_manifest(manifest_path: Path) -> dict[str, Any]:
     return json.loads(manifest_path.read_text(encoding="utf-8"))
 
 
+@traceable(name="kb_ingest", run_type="chain")
 def ingest_company_kb(session: Session, company_id: str | None = None, *, kb_dir: Path | None = None,
                       manifest_path: Path | None = None, facts_dir: Path | None = None,
                       force: bool = False) -> dict[str, Any]:
@@ -144,6 +149,7 @@ def ingest_company_kb(session: Session, company_id: str | None = None, *, kb_dir
     parsed_dir = settings.parsed_dir / "kb"
     parsed_dir.mkdir(parents=True, exist_ok=True)
 
+    embedder = get_embedder().name
     for entry in manifest.get("documents", []):
         report["documents"] += 1
         doc_id, rel = entry["doc_id"], entry["file_path"]
@@ -153,8 +159,12 @@ def ingest_company_kb(session: Session, company_id: str | None = None, *, kb_dir
                 raise FileRejected("file listed in manifest is missing", details={"path": rel})
             info = validate_upload(path.name, path.read_bytes(), allowed=KB_EXTS)
             row = session.get(m.KbDocument, doc_id)
-            if row is not None and row.file_sha256 == info["sha256"] and row.status in ("indexed", "quarantined") \
-                    and not force:
+            entry_sha = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
+            unchanged = (row is not None and row.file_sha256 == info["sha256"]
+                         and (row.meta or {}).get("manifest_sha") == entry_sha  # roles, sensitivity...
+                         and (row.status == "quarantined"
+                              or (row.status == "indexed" and (row.meta or {}).get("embedding_model") == embedder)))
+            if unchanged and not force:
                 report["skipped"] += 1
                 continue
             if row is None:
@@ -195,7 +205,8 @@ def ingest_company_kb(session: Session, company_id: str | None = None, *, kb_dir
                                                   "employee_id", "client", "verification_status")
                         if entry.get(k) is not None}
             row.meta.update({"parser": parsed.parser, "warnings": parsed.warnings,
-                             "guardrail_flags": len(flags)})
+                             "guardrail_flags": len(flags), "manifest_sha": entry_sha,
+                             "embedding_model": embedder})
             parsed_path = parsed_dir / f"{doc_id}.json"
             parsed_path.write_text(parsed.model_dump_json(), encoding="utf-8")
             row.parsed_path = str(parsed_path)

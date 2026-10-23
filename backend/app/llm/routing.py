@@ -102,16 +102,23 @@ def spec_from_plan(name: str | None) -> str | None:
 
 
 def planned_model(node: str) -> str | None:
+    """The plan's primary (else fallback) model for a node, skipping providers without an API key:
+    with only a Groq key, a node planned for Gemini runs on the tier model instead of failing auth."""
+    from backend.app.core.config import provider_configured
+
     entry = get_routing_config().routing.get(_ROUTING_ALIASES.get(node, node))
-    if isinstance(entry, dict):
-        return spec_from_plan(entry.get("primary")) or spec_from_plan(entry.get("fallback"))
+    if not isinstance(entry, dict):
+        return None
+    for spec in (spec_from_plan(entry.get("primary")), spec_from_plan(entry.get("fallback"))):
+        if spec and provider_configured(spec.split(":", 1)[0]):
+            return spec
     return None
 
 
 def resolve(node: str, tier: Tier | None = None) -> NodeRoute:
     """Model for a node. Offline (`fake:*` tier) stays offline; otherwise an explicit
-    `nodes` entry wins, then the plan's per-node primary (e.g. Gemini for drafting),
-    then the tier model from LLM_FAST / LLM_STRONG."""
+    `nodes` entry wins, then the plan's per-node primary (e.g. Gemini for drafting) if that
+    provider has a key, then the tier model from LLM_FAST / LLM_STRONG."""
     cfg = get_routing_config()
     node_cfg = cfg.nodes.get(node, {})
     t: Tier = node_cfg.get("tier") or tier or DEFAULT_NODE_TIERS.get(node, "fast")
