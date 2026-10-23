@@ -245,12 +245,21 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
     company_id = state.get("company_id")
     key_facts = KeyFacts.model_validate(state["key_facts"]) if state.get("key_facts") else None
     compliance: list[dict[str, Any]] = []
+    # Impact mode: a hard-gate check no amendment touches keeps its base-version result.
+    reusable = set(state.get("reusable_checks") or []) if state.get("mode") == "impact" else set()
+    previous = {c["requirement_id"]: c for c in state.get("previous_compliance") or []}
     with session_scope() as session:
-        ctx = PQContext(session, company_id, key_facts) if company_id else None
+        ctx = PQContext(session, company_id, key_facts, state.get("amendment_changes")) if company_id else None
         financials = get_financials(session, company_id) if company_id else []
         certificates = get_certificates(session, company_id) if company_id else []
         positions = get_risk_positions(session, company_id) if company_id else []
         for req in state.get("requirements", []):
+            prior = previous.get(req["requirement_id"])
+            if req.get("check") in reusable and prior is not None:
+                compliance.append({**prior, "tender_version": state["tender_version"],
+                                   "reused_from_version": prior.get("reused_from_version")
+                                   or prior.get("tender_version")})
+                continue
             result = None
             if req.get("check") and ctx is not None:
                 result = evaluate_pq(req["check"], req.get("text", ""), ctx)
@@ -357,13 +366,31 @@ def write_no_bid_report(state: TenderState) -> dict[str, Any]:
 
 
 def reconcile_corrigenda(state: TenderState) -> dict[str, Any]:
-    """Keep amendment metadata explicit; no amendment is silently applied."""
-    changes = state.get("change_map") or {}
-    invalidated = sorted(changes)
-    return {
+    """Apply confirmed amendments: amended key facts (with corrigendum sources) and the
+    set of checks they invalidate. Nothing is applied that a reviewer did not confirm."""
+    from backend.app.agents.prequalification import CHECK_CATEGORY
+    from backend.app.schemas.amendments import AmendmentChange
+    from backend.app.tools.amendment_diff import apply_changes_to_key_facts
+
+    raw = state.get("amendment_changes") or []
+    if not raw:
+        return {"invalidated_checks": [], "reusable_checks": []}
+    changes = [AmendmentChange.model_validate(c) for c in raw]
+    update: dict[str, Any] = {}
+    if state.get("key_facts"):
+        kf = apply_changes_to_key_facts(KeyFacts.model_validate(state["key_facts"]), changes)
+        update["key_facts"] = dump(kf)
+    invalidated = sorted({k for c in changes if c.kind != "no_change" for k in c.downstream_impacts})
+    change_map: dict[str, list[str]] = {}
+    for c in changes:
+        for key in c.downstream_impacts:
+            change_map.setdefault(key, []).append(c.change_id)
+    update.update({
         "invalidated_checks": invalidated,
-        "reusable_checks": [] if invalidated else [i["requirement_id"] for i in state.get("requirements", [])],
-    }
+        "reusable_checks": sorted(set(CHECK_CATEGORY) - set(invalidated) - {"manual"}),
+        "change_map": change_map,
+    })
+    return update
 
 
 def plan_response(state: TenderState) -> dict[str, Any]:

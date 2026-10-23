@@ -28,7 +28,7 @@ from backend.app.knowledge.kb_seed import seed_company_facts
 from backend.app.schemas.amendments import AmendmentConfirmation, AmendmentStatus
 from backend.app.services.amendment_service import (
     confirm_amendment,
-    preview_amendment,
+    process_amendment,
     upload_amendment,
 )
 from backend.app.services.tender_service import create_tender
@@ -63,37 +63,27 @@ def prepare_v1(tender_id: str = DEMO_TENDER, *, data_dir: Path | None = None) ->
 
 
 def prepare_v2(tender_id: str = DEMO_TENDER, *, data_dir: Path | None = None) -> str:
-    """Upload and confirm the checked-in corrigendum without touching the company KB."""
+    """v1 plus the corrigendum, uploaded, processed and confirmed (the KB is not touched)."""
     from sqlalchemy import select
 
     prepare_v1(tender_id, data_dir=data_dir)
     data = Path(data_dir or get_settings().demo_data_dir)
     with session_scope() as session:
-        existing = session.scalar(select(m.AmendmentRow).where(
-            m.AmendmentRow.tender_id == tender_id,
-            m.AmendmentRow.target_version == 2,
-        ))
+        existing = session.scalar(select(m.AmendmentRow).where(m.AmendmentRow.tender_id == tender_id,
+                                                               m.AmendmentRow.target_version == 2))
         if existing is None:
-            uploaded = upload_amendment(
+            amendment_id = upload_amendment(
                 session, tender_id, "corrigendum.pdf",
-                (data / "tender" / tender_id / "original" / "corrigendum.pdf").read_bytes(),
-                actor="demo-cli",
-            )
-            amendment_id = uploaded["amendment_id"]
+                (data / "tender" / DEMO_TENDER / "original" / "corrigendum.pdf").read_bytes(),
+                actor="demo-cli")["amendment_id"]
         else:
             amendment_id = existing.amendment_id
+    process_amendment(amendment_id, actor="demo-cli")
     with session_scope() as session:
         amendment = session.get(m.AmendmentRow, amendment_id)
-        if amendment is None:
-            raise RuntimeError(f"amendment {amendment_id} disappeared")
-        if amendment.status == AmendmentStatus.uploaded.value:
-            preview_amendment(session, tender_id, amendment_id, actor="demo-cli")
-        if amendment.status == AmendmentStatus.diff_ready.value:
-            confirm_amendment(
-                session, tender_id, amendment_id,
-                AmendmentConfirmation(reviewer="bid.manager@nimbus.example",
-                                      comment="Demo corrigendum confirmed"),
-            )
+        if amendment is not None and amendment.status == AmendmentStatus.diff_ready.value:
+            confirm_amendment(session, tender_id, amendment_id, AmendmentConfirmation(
+                reviewer="bid.manager@nimbus.example", comment="Corrigendum No. 1 confirmed (demo)"))
     return amendment_id
 
 
@@ -114,7 +104,18 @@ def summary(run: dict) -> dict:
         assessment = load_assessment(session, run["tender_id"], run["version"], run["run_id"]) or {}
         compliance = load_compliance(session, run["tender_id"], run["version"], run["run_id"])
     gates = [c for c in compliance if c.get("hard_gate")]
+    from backend.app.tools.facts import get_key_facts
+    with session_scope() as session:
+        kf = get_key_facts(session, run["tender_id"], run["version"])
+    failed = [g for g in gates if g["status"] == "gap"]
     return {
+        "tender_version": run["version"],
+        "submission_deadline": kf.submission_deadline.isoformat() if kf and kf.submission_deadline else None,
+        "rerun_checks": sorted(g["requirement_id"] for g in gates if not g.get("reused_from_version")),
+        "reused_checks": sorted(g["requirement_id"] for g in gates if g.get("reused_from_version")),
+        "failed_gate_evidence": [{"requirement": g["requirement_id"], "summary": g["summary"],
+                                  "calculations": [c["value"] for c in (g.get("rule_result") or {}).get(
+                                      "calculations", [])]} for g in failed],
         "run_id": run["run_id"], "status": run["status"], "error": run.get("error"),
         "score": assessment.get("score"), "recommendation": assessment.get("recommendation"),
         "factors": {c["key"]: c["raw_score"] for c in assessment.get("criteria", [])},
@@ -133,6 +134,12 @@ def main() -> None:
         started = start_run(DEMO_TENDER, version=1, analysis_mode="focused")
         print(json.dumps(summary(wait_for_gate(started["analysis_run_id"])), indent=2))
     else:
+        prepare_v1()
+        with session_scope() as session:
+            from backend.app.db.repositories.analysis import latest_run
+            has_v1 = latest_run(session, DEMO_TENDER, 1, completed_only=True) is not None
+        if not has_v1:  # impact mode needs the v1 results as its baseline
+            wait_for_gate(start_run(DEMO_TENDER, version=1, analysis_mode="focused")["analysis_run_id"])
         prepare_v2()
         started = start_run(DEMO_TENDER, version=2, mode="impact", analysis_mode="focused")
         print(json.dumps(summary(wait_for_gate(started["analysis_run_id"])), indent=2))

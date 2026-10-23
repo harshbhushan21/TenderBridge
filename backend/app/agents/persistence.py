@@ -23,6 +23,7 @@ def upsert_run(session: Session, state: dict[str, Any], *, status: str,
             version=state["tender_version"], thread_id=thread_id_for(state["analysis_run_id"]),
             mode=state.get("mode", "full_analysis"),
             analysis_mode=state.get("analysis_mode", "focused"),
+            previous_run_id=state.get("previous_run_id"),
         )
         session.add(run)
     run.status = status
