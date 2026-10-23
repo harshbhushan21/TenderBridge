@@ -1,0 +1,135 @@
+{
+  "company_id": "NIMBUS-001",
+  "synthetic": true,
+  "policy_doc_id": "KB-LEG-001",
+  "positions": [
+    {
+      "clause_type": "limitation_of_liability",
+      "standard_position": "Aggregate liability capped at 1x annual contract value; 1x total contract value acceptable with Legal approval",
+      "approval_required": "Head - Legal & Contracts; MD & CEO if cap exceeds 1x total contract value",
+      "negotiation_threshold": "Cap > 1x total contract value or any carve-out without cap",
+      "deal_breaker": "Unlimited liability for data breach or consequential losses without insurance backing requires CEO sign-off; otherwise no-bid",
+      "owner": "Head - Legal & Contracts",
+      "policy_source": "KB-LEG-001 s.3.1",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 1,
+      "span": "Standard position: Aggregate liability capped at 1x annual contract value; 1x total contract value acceptable with Legal approval."
+    },
+    {
+      "clause_type": "unlimited_liability",
+      "standard_position": "Not accepted by default",
+      "approval_required": "Legal escalation mandatory; MD & CEO decision",
+      "negotiation_threshold": "Any uncapped liability",
+      "deal_breaker": "Yes, unless CEO approves with insurance cover confirmed",
+      "owner": "Head - Legal & Contracts",
+      "policy_source": "KB-LEG-001 s.3.2",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 1,
+      "span": "Standard position: Not accepted by default."
+    },
+    {
+      "clause_type": "performance_guarantee",
+      "standard_position": "Up to 3% of contract value accepted as standard",
+      "approval_required": "CFO approval above 3%; CEO above 10%",
+      "negotiation_threshold": "> 3% of contract value",
+      "deal_breaker": "No",
+      "owner": "Chief Financial Officer",
+      "policy_source": "KB-LEG-001 s.4.1",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 1,
+      "span": "Standard position: Up to 3% of contract value accepted as standard."
+    },
+    {
+      "clause_type": "payment_terms",
+      "standard_position": "Payment within 30 days of invoice preferred; up to 45 days accepted",
+      "approval_required": "Cash-flow review by CFO if > 45 days",
+      "negotiation_threshold": "> 45 days from invoice/SLA verification",
+      "deal_breaker": "No",
+      "owner": "Chief Financial Officer",
+      "policy_source": "KB-LEG-001 s.4.2",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 1,
+      "span": "Standard position: Payment within 30 days of invoice preferred; up to 45 days accepted."
+    },
+    {
+      "clause_type": "sla_penalty_cap",
+      "standard_position": "Total SLA penalties capped at 10% of the periodic (quarterly) payment",
+      "approval_required": "Commercial risk assessment by Head - Bids if cap > 10%",
+      "negotiation_threshold": "> 10% of quarterly payment, or uncapped",
+      "deal_breaker": "Uncapped penalties",
+      "owner": "Head - Bids & Proposals",
+      "policy_source": "KB-LEG-001 s.4.3",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 2,
+      "span": "Standard position: Total SLA penalties capped at 10% of the periodic (quarterly) payment."
+    },
+    {
+      "clause_type": "liquidated_damages",
+      "standard_position": "LD capped at 10% of contract value",
+      "approval_required": "Head - Bids if cap > 10%",
+      "negotiation_threshold": "> 10%",
+      "deal_breaker": "Uncapped LD",
+      "owner": "Head - Bids & Proposals",
+      "policy_source": "KB-LEG-001 s.4.4",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 2,
+      "span": "Standard position: LD capped at 10% of contract value."
+    },
+    {
+      "clause_type": "ip_ownership",
+      "standard_position": "Client owns project-specific deliverables; Nimbus retains pre-existing IP, tools and generic runbook templates with a licence to client",
+      "approval_required": "Contract-specific legal review",
+      "negotiation_threshold": "Assignment of pre-existing IP or tools",
+      "deal_breaker": "No",
+      "owner": "Head - Legal & Contracts",
+      "policy_source": "KB-LEG-001 s.5",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 2,
+      "span": "Standard position: Client owns project-specific deliverables; Nimbus retains pre-existing IP, tools and generic runbook templates with a licence to client."
+    },
+    {
+      "clause_type": "subcontracting",
+      "standard_position": "Permitted only with client approval and disclosure; no subcontracting of key personnel roles",
+      "approval_required": "Head - Bids and Legal",
+      "negotiation_threshold": "Any undisclosed subcontracting",
+      "deal_breaker": "No",
+      "owner": "Head - Bids & Proposals",
+      "policy_source": "KB-LEG-001 s.6",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 2,
+      "span": "Standard position: Permitted only with client approval and disclosure; no subcontracting of key personnel roles."
+    },
+    {
+      "clause_type": "termination_for_convenience",
+      "standard_position": "Acceptable with >= 90 days notice and payment for work done",
+      "approval_required": "Legal if notice < 90 days",
+      "negotiation_threshold": "< 90 days notice",
+      "deal_breaker": "No",
+      "owner": "Head - Legal & Contracts",
+      "policy_source": "KB-LEG-001 s.7",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 2,
+      "span": "Standard position: Acceptable with >= 90 days notice and payment for work done."
+    },
+    {
+      "clause_type": "data_protection",
+      "standard_position": "Comply with DPDP Act 2023 and CERT-In Directions (6-hour incident reporting); data residency in India accepted",
+      "approval_required": "CISO review",
+      "negotiation_threshold": "Obligations beyond law without cost recovery",
+      "deal_breaker": "No",
+      "owner": "CISO",
+      "policy_source": "KB-LEG-001 s.8; KB-POL-004",
+      "policy_doc_id": "KB-LEG-001",
+      "page": 2,
+      "span": "Standard position: Comply with DPDP Act 2023 and CERT-In Directions (6-hour incident reporting); data residency in India accepted."
+    }
+  ],
+  "numeric_thresholds": {
+    "pbg_pct_standard_max": 3,
+    "payment_days_max": 45,
+    "sla_penalty_cap_pct_max": 10,
+    "ld_cap_pct_max": 10,
+    "termination_notice_days_min": 90,
+    "liability_cap_multiple_max": 1.0
+  }
+}

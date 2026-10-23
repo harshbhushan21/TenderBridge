@@ -1,0 +1,55 @@
+{
+  "company_id": "NIMBUS-001",
+  "version": "1.0",
+  "synthetic": true,
+  "principle": "Hard gates are evaluated first and cannot be overridden by the weighted score. Scores are computed in code; the LLM only explains them.",
+  "hard_gates": "Every mandatory pre-qualification criterion (requirement_gold category eligibility/experience/certification/commercial/legal with hard_gate=true in eligibility_gold).",
+  "eligibility_confidence_values": {
+    "meets": 1.0,
+    "meets_with_undertaking": 0.9,
+    "meets_with_substitution": 0.9,
+    "needs_action": 0.75,
+    "partial": 0.5,
+    "needs_human": 0.5,
+    "gap": 0.0
+  },
+  "weights": {
+    "strategic_fit": 20,
+    "technical_capability": 25,
+    "eligibility_confidence": 20,
+    "commercial_risk": 20,
+    "delivery_capacity": 15
+  },
+  "factor_definitions": {
+    "strategic_fit": "Match of tender scope and buyer type with Nimbus core services and target sectors (0-100). DC/DR/NOC O&M for a state government = 85.",
+    "technical_capability": "Estimated technical evaluation score out of 100: objective marks computed from facts (T1-T5) + labelled assumptions for subjective marks (T6-T8).",
+    "eligibility_confidence": "Mean of eligibility_confidence_values over hard-gate items x 100.",
+    "commercial_risk": "100 minus risk_deductions per clause verdict from risk_positions.json comparison.",
+    "delivery_capacity": "Availability of proposed key personnel and ability to staff Table 6.10 by the takeover date (0-100)."
+  },
+  "risk_deductions": {
+    "within_policy": 0,
+    "review": 5,
+    "escalate": 25
+  },
+  "thresholds": {
+    "bid": 70,
+    "conditional": 55
+  },
+  "recommendation_logic": [
+    "If any hard gate = gap -> NO_BID (human may override only per KB-LEG-002: MD & CEO with documented mitigation that closes the gap before submission).",
+    "Else if score >= 70 -> BID, downgraded to BID_WITH_CONDITIONS when any deal-breaker clause needs approval or any hard gate needs an action.",
+    "Else if score >= 55 -> BID_WITH_CONDITIONS.",
+    "Else -> NO_BID."
+  ],
+  "human_override": {
+    "allowed": true,
+    "requires": [
+      "named approver per KB-LEG-002",
+      "written justification",
+      "audit log entry"
+    ],
+    "hard_gate_override": "only with mitigation evidence; logged as exception"
+  },
+  "assumptions_disclosure": "Weights and factor values are demo policy choices, not calibrated on historical win rates."
+}

@@ -1,0 +1,867 @@
+{
+  "tender_id": "TDR-001",
+  "extraction_method": "reference extraction by the data generator (heading positions recorded at render time; text via poppler pdftotext). Use it to check parser output, not as the parser.",
+  "documents": [
+    {
+      "file": "original/main_rfp.pdf",
+      "pages": 19,
+      "sections": [
+        {
+          "section_id": "main_rfp::Disclaimer",
+          "heading": "Disclaimer",
+          "level": 1,
+          "page_start": 2,
+          "page_end": 2,
+          "text": "Disclaimer The information contained in this Request for Proposal (RFP) document, or subsequently provided to Bidders, whether verbally or in documentary form, by or on behalf of DSEDC, is provided to Bidders on the terms and conditions set out in this RFP and such other terms and conditions subject to which such information is provided. This RFP is not an agreement and is neither an offer nor an invitation by DSEDC to the prospective Bidders or any other person. The purpose of this RFP is to provide interested parties with information that may be useful to them in making their proposals. DSEDC, its employees and advisors make no representation or warranty and shall have no liability to any person, including any Bidder, under any law, statute, rules or regulations or tort, principles of restitution or unjust enrichment or otherwise for any loss, damages, cost or expense which may arise from or be incurred or suffered on account of anything contained in this RFP. DSEDC may, in its absolute discretion but without being under any obligation to do so, update, amend or supplement the information in this RFP through a corrigendum published on the eProcurement portal.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::Abbreviations",
+          "heading": "Abbreviations",
+          "level": 2,
+          "page_start": 2,
+          "page_end": 3,
+          "text": "Abbreviations Term Meaning DSDC Deccan State Data Centre, Navapur (primary site) DR Site Disaster Recovery Site at Shivgiri, approximately 610 km from Navapur NOC Network Operations Centre co-located at DSDC MSP Managed Service Provider, the successful Bidder EMD Earnest Money Deposit (bid security) PBG Performance Bank Guarantee QGR Quarterly Guaranteed Revenue: the fixed quarterly payment payable to the MSP before SLA deductions QCBS Quality and Cost Based Selection MSE Micro and Small Enterprise as defined under the MSMED Act, 2006 and registered on the Udyam portal EMS / NMS / ITSM Enterprise Management System / Network Management System / IT Service Management tool RPO / RTO Recovery Point Objective / Recovery Time Objective TPA Third Party Auditor appointed by DSEDC LoA Letter of Award CERT-In Indian Computer Emergency Response Team",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::Section 1",
+          "heading": "Section 1: Invitation for Bids and Fact Sheet",
+          "level": 1,
+          "page_start": 3,
+          "page_end": 3,
+          "text": "Section 1: Invitation for Bids and Fact Sheet 1.1 Deccan State Electronics Development Corporation Limited (DSEDC), on behalf of the Department of Information Technology, Government of Deccan State, invites online bids from eligible bidders for the Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years (the \"Project\"). Bids shall be submitted only through the Deccan State eProcurement Portal (simulated): https://eproc.deccan.example/. 1.2 The fact sheet below summarises key information. In case of any conflict between the fact sheet and the detailed clauses of this RFP, the detailed clauses shall prevail, and in case of conflict between the RFP and any corrigendum, the latest corrigendum shall prevail.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::1.3",
+          "heading": "1.3 Fact Sheet",
+          "level": 2,
+          "page_start": 3,
+          "page_end": 4,
+          "text": "1.3 Fact Sheet Sl. Item Details 1 RFP reference DSEDC/DSDC-MSP/2026/014 2 Name of work Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years 3 Tendering authority General Manager (IT Infrastructure), DSEDC, Deccan State Electronics Development Corporation Limited (DSEDC) 4 Estimated cost of the Project Rs. 38.40 Crore (Rupees Thirty Eight Crore Forty Lakh only), inclusive of all taxes, for five years 5 Tender fee Rs. 25,000/- (Rupees Twenty Five Thousand only), non-refundable; exempted for eligible MSEs (Clause 2.10) 6 Earnest Money Deposit (EMD) Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) in the form of Bank Guarantee / e-BG / online transfer; exempted for eligible MSEs (Clause 2.10) 7 Date of publication and start of download 05-10-2026 at 10:00 hrs 8 Last date for submission of pre-bid queries 13-10-2026 at 17:00 hrs by e-mail to gm-infra@dsedc.example 9 Pre-bid meeting 15-10-2026 at 11:00 hrs, Conference Hall, DSEDC Bhavan, Navapur (also via video conference) 10 Bid submission end date and time Last date and time for online bid submission: 06-11-2026 at 15:00 hrs 11 Opening of pre-qualification and technical bids 09-11-2026 at 11:00 hrs 12 Technical presentation by qualified bidders Week commencing 16-11-2026 (tentative; schedule will be intimated) 13 Opening of commercial bids To be intimated to technically qualified bidders 14 Bid validity Bids shall remain valid for 180 days from the bid submission end date. 15 Method of selection QCBS 70:30 (Technical 70%, Financial 30%); minimum technical score 70 out of 100 16 Contract period Five (5) years from the date of takeover of operations (Go-Live), plus a transition period of up to three (3) months before Go-Live 17 Performance Bank Guarantee 5% of the total contract value, valid for 60 days beyond the contract period 18 Consortium / Joint Venture Not allowed 19 Contact General Manager (IT Infrastructure), DSEDC, e-mail: gm-infra@dsedc.example",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::Section 2",
+          "heading": "Section 2: Instructions to Bidders",
+          "level": 1,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "Section 2: Instructions to Bidders",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.1",
+          "heading": "2.1 Eligible Bidders",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "2.1 Eligible Bidders 2.1.1 This invitation is open to bidders who satisfy the pre-qualification criteria specified in Section 3. Bidders shall provide all documentary evidence called for in Section 3 and in the formats in the Annexures. Claims not supported by documentary evidence shall not be considered. 2.1.2 Bids from a consortium or joint venture shall not be accepted. The Bidder shall be a single legal entity and shall be solely responsible for the delivery of all services under this RFP. 2.1.3 A Bidder shall submit only one bid. A Bidder who submits or participates in more than one bid shall be disqualified.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.2",
+          "heading": "2.2 Cost of Bidding",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "2.2 Cost of Bidding The Bidder shall bear all costs associated with the preparation and submission of its bid, including presentations and site visits, and DSEDC shall not be responsible or liable for those costs, regardless of the conduct or outcome of the bidding process.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.3",
+          "heading": "2.3 Site Visit",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "2.3 Site Visit Bidders may visit DSDC and the DR Site, with prior permission, between the date of publication and the pre-bid meeting. Requests for a site visit shall be sent by e-mail at least two working days in advance. Bidders shall not be allowed to access production systems or records during a visit.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.4",
+          "heading": "2.4 Pre-bid Queries and Pre-bid Meeting",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "2.4 Pre-bid Queries and Pre-bid Meeting 2.4.1 Bidders shall submit pre-bid queries only by e-mail to gm-infra@dsedc.example in the MS-Excel format prescribed in Annexure F, on or before 13-10-2026 at 17:00 hrs. 2.4.2 Queries received after the deadline, or not in the prescribed format, may not be answered. DSEDC will publish consolidated responses to queries, without identifying the source of the queries, on the eProcurement portal. Responses to pre-bid queries form part of the RFP only to the extent they are issued as a corrigendum or as a published pre-bid response document.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.5",
+          "heading": "2.5 Clarifications During Evaluation",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "2.5 Clarifications During Evaluation DSEDC may, at its discretion, seek clarifications from any Bidder during evaluation. No change in the substance of the bid, including price, shall be sought, offered or permitted. Clarifications shall not be used to supply documents that establish eligibility for the first time, except documents that are of a historical nature and existed on or before the bid submission end date.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.6",
+          "heading": "2.6 Amendment of RFP (Corrigendum)",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 4,
+          "text": "2.6 Amendment of RFP (Corrigendum) 2.6.1 At any time before the bid submission end date, DSEDC may, for any reason, modify this RFP by issuing a corrigendum. Corrigenda will be published only on the eProcurement portal and will not be sent individually to bidders. 2.6.2 Every corrigendum shall form an integral part of this RFP. In case of any conflict, the provisions of the latest corrigendum shall prevail over earlier corrigenda and over this RFP. 2.6.3 Bidders shall acknowledge all corrigenda issued by DSEDC in the bid covering letter (Format PQ-1). It shall be the responsibility of the Bidder to check the portal for corrigenda. 2.6.4 DSEDC may, at its discretion, extend the bid submission end date to give bidders reasonable time to take a corrigendum into account. All references in this RFP to the bid submission end date shall then refer to the extended date.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::2.7",
+          "heading": "2.7 Language of Bid",
+          "level": 2,
+          "page_start": 4,
+          "page_end": 5,
+          "text": "2.7 Language of Bid The bid and all correspondence and documents relating to the bid shall be in English. Supporting documents in any other language shall be accompanied by a self-attested English translation.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.8",
+          "heading": "2.8 Documents Comprising the Bid",
+          "level": 2,
+          "page_start": 5,
+          "page_end": 5,
+          "text": "2.8 Documents Comprising the Bid 2.8.1 The bid shall be submitted online in three separate covers: Cover Contents Format reference Cover 1: Pre-qualification Covering letter, bidder profile, proof of EMD or MSE exemption, documents for each criterion in Section 3, declarations Formats PQ-1 to PQ-10 Cover 2: Technical Technical proposal, approach and methodology, key personnel CVs, manpower deployment plan, tool details, transition and exit plan, compliance to scope Formats T-1 to T-7 Cover 3: Commercial Commercial covering letter and price schedule Format C-1 and C-2 (MS-Excel price schedule) 2.8.2 The pre-qualification and technical covers shall not contain any commercial information. A bid that discloses prices in the pre-qualification or technical cover shall be summarily rejected. 2.8.3 The technical proposal (Format T-1, approach and methodology) shall not exceed 40 pages of A4 size, using a font size of not less than 10 points, excluding CVs and formats.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::2.9",
+          "heading": "2.9 Bid Prices",
+          "level": 2,
+          "page_start": 5,
+          "page_end": 5,
+          "text": "2.9 Bid Prices 2.9.1 Prices shall be quoted in Indian Rupees only, in the MS-Excel price schedule (Format C-2) uploaded on the portal. Prices shall be inclusive of all duties, levies and taxes except GST, which shall be shown separately. 2.9.2 Prices quoted shall remain firm and fixed for the entire contract period of five years and shall not be subject to any price variation, including on account of changes in minimum wages or exchange rates. 2.9.3 Conditional or alternative prices shall not be accepted. If the price schedule contains a discrepancy between unit price and total price, the unit price shall prevail.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.10",
+          "heading": "2.10 Earnest Money Deposit (EMD) and Tender Fee",
+          "level": 2,
+          "page_start": 5,
+          "page_end": 5,
+          "text": "2.10 Earnest Money Deposit (EMD) and Tender Fee 2.10.1 The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as a Bank Guarantee or e-Bank Guarantee from a scheduled commercial bank, or by online transfer, valid for 45 days beyond the bid validity period. 2.10.2 Micro and Small Enterprises (MSEs) registered on the Udyam portal for the services being procured are exempted from payment of tender fee and EMD, subject to submission of a valid Udyam Registration Certificate along with the bid. Traders and medium enterprises are not eligible for this exemption. 2.10.3 The original EMD Bank Guarantee (if not an e-BG) shall be submitted in a sealed envelope at DSEDC Bhavan before the bid submission end date. Bids without a valid EMD or a valid MSE exemption shall be rejected. 2.10.4 The EMD of unsuccessful bidders shall be returned within 30 days of award. The EMD of the successful bidder shall be returned on receipt of the Performance Bank Guarantee. The EMD shall be forfeited if a bidder withdraws its bid during the validity period, or if the successful bidder fails to sign the contract or furnish the PBG.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::2.11",
+          "heading": "2.11 Format and Signing of Bid",
+          "level": 2,
+          "page_start": 5,
+          "page_end": 6,
+          "text": "2.11 Format and Signing of Bid 2.11.1 All bid documents shall be digitally signed using a valid Class III Digital Signature Certificate of the authorised signatory, and every page of the scanned documents shall be signed and stamped by the authorised signatory. 2.11.2 The authorised signatory shall be authorised by a Board Resolution and a Power of Attorney in Format PQ-10. 2.11.3 Any interlineation, erasure or overwriting shall be valid only if initialled by the authorised signatory.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.12",
+          "heading": "2.12 Submission of Bids",
+          "level": 2,
+          "page_start": 6,
+          "page_end": 6,
+          "text": "2.12 Submission of Bids 2.12.1 Bids shall be submitted online on the eProcurement portal. Bids submitted by e-mail, fax or in physical form shall not be accepted, except the original EMD instrument where applicable. 2.12.2 The portal will not permit submission after the bid submission end date and time. DSEDC shall not be responsible for delays due to portal congestion, bandwidth or any technical issue at the bidder's end. Bidders are advised to upload bids well in advance. 2.12.3 A bidder may modify or withdraw its bid on the portal before the bid submission end date. No bid may be modified after that time.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.13",
+          "heading": "2.13 Opening of Bids",
+          "level": 2,
+          "page_start": 6,
+          "page_end": 6,
+          "text": "2.13 Opening of Bids Pre-qualification and technical covers will be opened online on 09-11-2026 at 11:00 hrs. Bidders may view the opening on the portal. Commercial covers of only technically qualified bidders will be opened, on a date to be intimated.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.14",
+          "heading": "2.14 Integrity Pact",
+          "level": 2,
+          "page_start": 6,
+          "page_end": 6,
+          "text": "2.14 Integrity Pact The Bidder shall sign the Integrity Pact in the format at Annexure C and submit it with the pre-qualification cover. A bid without a signed Integrity Pact shall be rejected.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.15",
+          "heading": "2.15 Fraud and Corrupt Practices",
+          "level": 2,
+          "page_start": 6,
+          "page_end": 6,
+          "text": "2.15 Fraud and Corrupt Practices Bidders shall observe the highest standards of ethics during procurement and execution. DSEDC shall reject a bid, and may debar the bidder, if it determines that the bidder has engaged in corrupt, fraudulent, collusive, coercive or obstructive practices, or has submitted false or forged documents. A false declaration in any format shall be treated as a fraudulent practice.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.16",
+          "heading": "2.16 Conflict of Interest",
+          "level": 2,
+          "page_start": 6,
+          "page_end": 6,
+          "text": "2.16 Conflict of Interest A Bidder shall not have a conflict of interest. A Bidder that is, or is affiliated with, the Third Party Auditor of DSDC, or with any OEM whose products it will be required to audit or certify under this contract, shall be considered to have a conflict of interest.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::2.17",
+          "heading": "2.17 Award of Contract and Signing",
+          "level": 2,
+          "page_start": 6,
+          "page_end": 7,
+          "text": "2.17 Award of Contract and Signing 2.17.1 DSEDC shall issue a Letter of Award (LoA) to the bidder with the highest combined QCBS score. Within 15 days of the LoA, the successful bidder shall furnish the Performance Bank Guarantee and sign the contract. 2.17.2 DSEDC reserves the right to accept or reject any bid, and to annul the bidding process and reject all bids at any time before award, without incurring any liability to the affected bidders.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::Section 3",
+          "heading": "Section 3: Pre-qualification Criteria",
+          "level": 1,
+          "page_start": 7,
+          "page_end": 7,
+          "text": "Section 3: Pre-qualification Criteria 3.1 Only bidders that meet all of the following pre-qualification criteria will be considered for technical evaluation. Bidders shall submit documentary evidence for each criterion, with page references in the pre-qualification checklist (Format PQ-1, Schedule A). 3.2 Unless stated otherwise, compliance with each criterion shall be determined as on the bid submission end date. Sl. Pre-qualification criterion Documentary evidence required PQ-01 The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall have been in existence and operation in India for at least five (5) years as on the bid submission end date. Certificate of Incorporation; Format PQ-2 (Bidder profile) PQ-02 The Bidder shall have an average annual turnover of not less than Rs. 55 Crore from IT/ITeS services during the last three audited financial years, i.e. 2022-23, 2023-24 and 2024-25. For Micro and Small Enterprises (MSEs) holding a valid Udyam Registration for IT services (NIC division 62 or 63) as on the bid submission end date, the average annual turnover requirement shall be Rs. 45 Crore. Audited Balance Sheet and Profit and Loss Statement for each of the three financial years; Certificate from statutory auditor / Chartered Accountant in Format PQ-3; Udyam Registration Certificate (for MSE relaxation) PQ-03 Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services during the same three financial years shall be not less than Rs. 20 Crore. Chartered Accountant certificate in Format PQ-3 showing segment-wise turnover PQ-04 The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-25). Audited Balance Sheets; CA certificate in Format PQ-3 PQ-05 The Bidder shall have successfully completed similar works during the last Work order / contract, and completion seven (7) years ending on the last day of the month previous to the one in certificate from the client, in Format which bids are invited, i.e. between 01-10-2019 and 30-09-2026, as under: (a) PQ-4, for each work cited three similar completed works, each costing not less than 40% of the estimated cost, i.e. Rs. 15.36 Crore each; OR (b) two similar completed works, each costing not less than 60% of the estimated cost, i.e. Rs. 23.04 Crore each; OR (c) one similar completed work costing not less than 80% of the estimated cost, i.e. Rs. 30.72 Crore. PQ-06 The Bidder shall possess the following certifications, each valid as on the bid submission end date: (i) ISO 9001:2015; AND (ii) ISO/IEC 27001:2022 with scope covering data centre or IT infrastructure managed services; AND (iii) either CMMI Maturity Level 3 or above (DEV or SVC) OR ISO/IEC 20000-1:2018. Copies of valid certificates with scope; Format PQ-5 PQ-07 The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its payroll as on 30-09-2026. Certificate from the Bidder's HR head and authorised signatory with employee count as on 30-09-2026 PQ-08 The Bidder shall have an operational office in Deccan State. If the Bidder does Proof of office address (GST not have such an office, it shall submit an undertaking to establish an office in registration / lease deed), or undertaking Navapur within 60 days of issue of the Letter of Award, in Format PQ-9. in Format PQ-9 PQ-09 The Bidder shall not be blacklisted or debarred by any Ministry or Department Self-declaration in Format PQ-6 of the Government of India, any State Government or any Public Sector Undertaking as on the bid submission end date. PQ-10 The Bidder shall submit a bid-specific Manufacturer's Authorisation Form (MAF) from the OEM of the proposed EMS/NMS and ITSM tool, with an undertaking of back-to-back support for the contract period, in Format PQ-8. MAF from OEM in Format PQ-8 PQ-11 The Bidder shall comply with the restrictions under Rule 144(xi) of the General Financial Rules, 2017 on procurement from bidders from a country sharing a land border with India, and shall submit the certificate in Format PQ-7. Certificate in Format PQ-7 PQ-12 The Bidder shall submit the EMD as per Clause 2.10, or a valid MSE exemption. EMD instrument, or Udyam Registration Certificate",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::3.3",
+          "heading": "3.3 Notes to the Pre-qualification Criteria",
+          "level": 2,
+          "page_start": 7,
+          "page_end": 9,
+          "text": "3.3 Notes to the Pre-qualification Criteria 3.3.1 \"Similar work\" means Operation & Maintenance or Facility Management Services of a Data Centre or Disaster Recovery site of at least 20 racks, or of a 24x7 Network Operations Centre, executed for a Central or State Government Department, Public Sector Undertaking, Government autonomous body, Urban Local Body or Scheduled Commercial Bank in India. 3.3.2 Only completed works shall be considered. Ongoing works, works covering only Annual Maintenance Contract (AMC) of equipment, and in-house or captive works shall not be considered. 3.3.3 The cost of a work shall be the value of the work executed by the Bidder, including taxes, as stated in the completion certificate. Where the work was executed as a member of a consortium, the value of the work executed by the Bidder shall be considered. 3.3.4 The date of completion shall be the date stated in the completion certificate issued by the client. Where a work was completed within the period stated in PQ-05 but commenced earlier, the work shall be considered. 3.3.5 Values in foreign currency shall be converted into Indian Rupees at the RBI reference rate on the date of the completion certificate. Values expressed in lakh shall be read as 1 Crore = 100 lakh. 3.3.6 Financial years shall be read as April to March. Provisional or unaudited figures shall not be accepted for PQ-02 to PQ-04.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::Section 4",
+          "heading": "Section 4: Technical Evaluation Criteria",
+          "level": 1,
+          "page_start": 9,
+          "page_end": 9,
+          "text": "Section 4: Technical Evaluation Criteria 4.1 Bids that meet all the pre-qualification criteria will be evaluated on the following criteria. A bidder must score at least 70 marks out of 100 in the technical evaluation to qualify for opening of its commercial bid. Sl. Criterion Marking scheme Max marks T1 Average annual turnover from IT/ITeS services (FY 2022-23 to 2024-25) Below Rs. 55 Cr (MSEs under relaxation): 2; Rs. 55 Cr to Rs. 75 Cr: 3; above Rs. 75 Cr to Rs. 100 Cr: 4; above Rs. 100 Cr: 5 5 T2 Number of similar completed works (as 1 work: 5; 2 works: 7; 3 works: 9; 4 or more works: 10 defined in Clause 3.3.1) each of value not less than Rs. 10 Crore, completed between 01-10-2019 and 30-09-2026 T3 Additional certifications valid as on the bid submission end date ISO/IEC 20000-1:2018: 3; CMMI Maturity Level 5: 3, Level 4: 8 2, Level 3: 1; ISO 22301:2019: 2 T4 Technically qualified IT professionals on payroll as on 30-09-2026 150 to 250: 4; 251 to 400: 4.5; above 400: 5 5 T5 Qualification and experience of key personnel (Clause 4.3) Project Manager: 7; DC Operations Lead: 5; Network Lead: 5; Security Lead: 4; Cloud Lead: 4 25 T6 Approach and methodology (Format T-1) Understanding of scope, O&M methodology, ITIL processes, tools, security operations, DR approach, innovation 20 T7 Transition and exit management plan (Format Takeover plan, knowledge transfer, risk mitigation, exit plan T-6) 7 T8 Technical presentation 20 Clarity, solution fit, team interaction (presentation by proposed Project Manager is mandatory) Total 10 100",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::4.2",
+          "heading": "4.2 Evaluation of Key Personnel",
+          "level": 2,
+          "page_start": 9,
+          "page_end": 9,
+          "text": "4.2 Evaluation of Key Personnel 4.2.1 All key personnel proposed shall be on the payroll of the Bidder as on the bid submission end date. 4.2.2 A key personnel CV that does not meet the minimum qualification in Clause 4.3 shall be awarded zero marks, and the Bidder shall be required to replace the person with a person meeting the minimum qualification before signing of the contract. 4.2.3 Professional certifications claimed for key personnel shall be valid as on the bid submission end date, and copies shall be enclosed with the CV in Format T-2. 4.2.4 The proposed Project Manager shall make the technical presentation. Key personnel shall not be replaced during the first twelve months of the contract except for death, medical incapacity or resignation, and any replacement shall have equal or better qualifications.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::4.3",
+          "heading": "4.3 Minimum Qualification of Key Personnel",
+          "level": 2,
+          "page_start": 9,
+          "page_end": 11,
+          "text": "4.3 Minimum Qualification of Key Personnel Role Minimum qualification and experience (mandatory) Preferred (additional marks) Project Manager (1, onsite) B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification. MBA; experience as PM of a State Data Centre DC Operations Lead (1, B.E./B.Tech; at least 10 years of experience including at least 6 years in onsite) data centre operations; ITIL v4 Foundation or higher certification. Uptime Institute accreditation Network Lead (1, onsite) B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification. Valid CCIE Security Lead (1, onsite) B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM certification. ISO/IEC 27001 Lead Auditor Role Minimum qualification and experience (mandatory) Preferred (additional marks) Cloud Lead (1, onsite) B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level cloud architect certification (AWS Solutions Architect Professional, Microsoft Azure Solutions Architect Expert or Google Professional Cloud Architect). OpenStack or VMware certification 4.3.1 A key personnel CV meeting the minimum qualification shall be awarded 60% of the marks for that role. The balance 40% shall be awarded as follows: 20% for the preferred qualification, and 20% for experience above the minimum at 4% per additional year, up to five years.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::Section 5",
+          "heading": "Section 5: Commercial Evaluation and Selection",
+          "level": 1,
+          "page_start": 11,
+          "page_end": 12,
+          "text": "Section 5: Commercial Evaluation and Selection 5.1 Commercial bids of bidders that score at least 70 marks in technical evaluation shall be opened. The evaluated bid price shall be the total of the price schedule (Format C-2) for five years, excluding GST. 5.2 The combined score shall be computed as: Combined Score = 0.70 x Tn + 0.30 x Fn, where Tn = (technical score of the bidder / highest technical score) x 100, and Fn = (lowest evaluated bid price / evaluated bid price of the bidder) x 100. 5.3 The bidder with the highest combined score shall be declared the successful bidder. In case of a tie, the bidder with the higher technical score shall be preferred. 5.4 If the evaluated bid price of the successful bidder is more than 20% below the estimated cost, DSEDC may seek a detailed justification and an additional performance security of up to 5% of the contract value. 5.5 Purchase preference to MSEs and Make in India provisions shall apply only to the extent applicable to services under the policies of the Government of Deccan State. This procurement is of a composite service and is not divisible.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::Section 6",
+          "heading": "Section 6: Scope of Work",
+          "level": 1,
+          "page_start": 12,
+          "page_end": 12,
+          "text": "Section 6: Scope of Work",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.1",
+          "heading": "6.1 Background",
+          "level": 2,
+          "page_start": 12,
+          "page_end": 12,
+          "text": "6.1 Background 6.1.1 DSDC was commissioned in 2016 at Navapur as a Tier-III-designed facility to host the e-governance applications of the Government of Deccan State. The DR Site at Shivgiri was commissioned in 2019. DSDC also hosts the State Network Operations Centre that monitors the Deccan State Wide Area Network. The current operator's contract ends on 31-03-2027. 6.1.2 Current infrastructure at a glance (detailed inventory in Annexure A): Item DSDC Navapur DR Site Shivgiri Racks (installed / used) 120 / 96 40 / 31 Physical servers 640 182 Virtual machines 2,450 (VMware) + 380 (OpenStack) 760 (VMware) Usable storage 3.2 PB (block, file and object) 1.1 PB Backup Disk-to-disk-to-tape, 2 tape libraries Disk-based Hosted applications 184 applications of 62 departments; 42 Category A (critical) 42 Category A applications replicated Internet bandwidth 2 x 10 Gbps from two service providers 2 x 2 Gbps Security stack Next-generation firewalls, WAF, IPS, DDoS mitigation, SIEM, PAM, EDR Firewalls, IPS, PAM",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.2",
+          "heading": "6.2 Overview of Services",
+          "level": 2,
+          "page_start": 12,
+          "page_end": 12,
+          "text": "6.2 Overview of Services The MSP shall provide comprehensive operation and maintenance of the IT infrastructure at DSDC, the DR Site and the State NOC, and management of the State hybrid cloud, for five years, as described below. Physical facility management (power, cooling, fire suppression, civil works) is out of scope and is provided by a separate agency, but the MSP shall coordinate with that agency for all incidents with facility impact.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.3",
+          "heading": "6.3 Transition and Takeover",
+          "level": 2,
+          "page_start": 12,
+          "page_end": 12,
+          "text": "6.3 Transition and Takeover 6.3.1 The MSP shall complete takeover of operations from the current operator within 90 days of the Letter of Award, including inventory verification, knowledge transfer, shadowing for at least 30 days and reverse shadowing for at least 15 days. 6.3.2 The MSP shall submit a transition plan within 15 days of the LoA. Takeover shall be declared complete only on written acceptance by DSEDC after a readiness review. 6.3.3 During transition the MSP shall verify the asset inventory in Annexure A and report discrepancies to DSEDC within 30 days of the LoA. Assets not reported within this period shall be deemed to have been taken over in working condition.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.4",
+          "heading": "6.4 Data Centre and DR Site Operations",
+          "level": 2,
+          "page_start": 12,
+          "page_end": 13,
+          "text": "6.4 Data Centre and DR Site Operations 6.4.1 The MSP shall operate DSDC and the DR Site on a 24x7x365 basis. Services include: • Server administration (Windows, RHEL, Ubuntu, AIX) including OS hardening, patching, performance tuning and capacity management. • Virtualisation and private cloud administration: VMware vSphere, vSAN and NSX; OpenStack (Yoga or later) including Nova, Neutron, Cinder and Swift. • Storage administration: SAN, NAS and object storage, LUN provisioning, replication and storage capacity reporting. • Database support (L1/L2): Oracle, PostgreSQL, MySQL and MS SQL Server: availability, backups, patching and performance monitoring. Application-level support remains with departments. • Network and security device management within DSDC: core and access switches, load balancers, firewalls, WAF, IPS and DDoS appliances. • Coordination with OEMs for warranty and AMC support, including logging of calls and tracking until closure. 6.4.2 The MSP shall apply critical security patches to operating systems, hypervisors and network devices within 7 days of release by the OEM, after testing in the staging environment, and shall document any exception approved by DSEDC. 6.4.3 The MSP shall conduct capacity planning reviews every quarter and submit a capacity report with 12-month projections for compute, storage, network and backup.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.5",
+          "heading": "6.5 Backup and Disaster Recovery",
+          "level": 2,
+          "page_start": 13,
+          "page_end": 13,
+          "text": "6.5 Backup and Disaster Recovery 6.5.1 The MSP shall perform backups as per the backup policy approved by DSEDC, and shall perform a test restoration of at least 5% of backed-up systems every month. 6.5.2 The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours. 6.5.3 The MSP shall conduct a DR drill every quarter, including at least one full switchover of all Category A applications to the DR Site every year, and shall submit a drill report within 7 days.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::6.6",
+          "heading": "6.6 Network Operations Centre",
+          "level": 2,
+          "page_start": 13,
+          "page_end": 13,
+          "text": "6.6 Network Operations Centre 6.6.1 The MSP shall operate the State NOC 24x7 to monitor the Deccan State Wide Area Network (approximately 1,200 points of presence), DSDC internet links and links to the DR Site, using the NMS supplied under this contract. 6.6.2 The MSP shall log every network incident in the ITSM tool, coordinate with bandwidth service providers for restoration, and publish a daily network health report by 10:00 hrs.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.7",
+          "heading": "6.7 Hybrid Cloud Management",
+          "level": 2,
+          "page_start": 13,
+          "page_end": 13,
+          "text": "6.7 Hybrid Cloud Management 6.7.1 The State hybrid cloud consists of the DSDC private cloud (VMware and OpenStack) and capacity on a cloud service provider empanelled by MeitY. The MSP shall provide a self-service portal for departments, manage provisioning workflows, and produce monthly cost and usage reports. 6.7.2 All data of the Government of Deccan State, including backups and logs, shall be stored only in data centres located in India, and public cloud capacity shall be used only from cloud service providers empanelled by MeitY.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.8",
+          "heading": "6.8 Security Operations",
+          "level": 2,
+          "page_start": 13,
+          "page_end": 13,
+          "text": "6.8 Security Operations 6.8.1 The MSP shall provide 24x7 L1 and L2 security monitoring using the existing SIEM, including use-case tuning, triage of alerts, and escalation of confirmed incidents to DSEDC within 30 minutes. 6.8.2 The MSP shall maintain an Information Security Management System for DSDC aligned to ISO/IEC 27001:2022 and shall support DSEDC in obtaining and maintaining ISO/IEC 27001 certification of DSDC. 6.8.3 The MSP shall close critical vulnerabilities identified in VAPT within 7 days and high vulnerabilities within 15 days of the report, or record a risk acceptance approved by DSEDC.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::6.9",
+          "heading": "6.9 Tools: EMS, NMS and ITSM",
+          "level": 2,
+          "page_start": 13,
+          "page_end": 14,
+          "text": "6.9 Tools: EMS, NMS and ITSM 6.9.1 The MSP shall supply, install and maintain for the contract period an integrated EMS, NMS and ITSM tool with perpetual or subscription licences in the name of DSEDC, ITIL 4-aligned incident, problem, change, configuration and service request management, and an SLA dashboard accessible to DSEDC. 6.9.2 The SLA dashboard shall compute service levels automatically from tool data. Manually computed SLA reports shall not be accepted except for parameters that cannot be measured by the tool, as agreed with DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.10",
+          "heading": "6.10 Manpower Deployment",
+          "level": 2,
+          "page_start": 14,
+          "page_end": 14,
+          "text": "6.10 Manpower Deployment 6.10.1 The MSP shall deploy, at a minimum, the onsite manpower in Table 6.10 throughout the contract period. The deployment shall be maintained on a shift basis to provide 24x7 coverage. Table 6.10: Minimum onsite manpower Sl. Role Location Minimum number Shift 1 Project Manager (key) DSDC 1 General 2 DC Operations Lead (key) DSDC 1 General 3 Network Lead (key) DSDC 1 General 4 Security Lead (key) DSDC 1 General 5 Cloud Lead (key) DSDC 1 General 6 Shift In-charge DSDC 3 24x7 7 L2 Server / Virtualisation Engineer DSDC 8 24x7 8 L2 Network Engineer DSDC / NOC 6 24x7 9 L2 Storage and Backup Engineer DSDC 4 24x7 10 L2 Security Analyst DSDC 4 24x7 11 L1 NOC Operator NOC 12 24x7 12 Database Administrator (L2) DSDC 2 General + on-call 13 Helpdesk Agent DSDC 6 24x7 14 DR Site Engineer DR Site 4 24x7 6.10.2 Onsite engineers shall hold at least a diploma in engineering or a graduate degree with relevant OEM certification. The MSP shall submit monthly attendance records generated from the biometric system of DSEDC.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::6.11",
+          "heading": "6.11 Reporting and Governance",
+          "level": 2,
+          "page_start": 14,
+          "page_end": 14,
+          "text": "6.11 Reporting and Governance 6.11.1 The MSP shall submit the monthly SLA and performance report by the 7th day of the following month, and shall attend the monthly review meeting chaired by DSEDC. 6.11.2 The MSP shall support the Third Party Auditor appointed by DSEDC in quarterly SLA audits and annual security audits, and shall close audit observations within the timelines agreed with DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.11A",
+          "heading": "6.11A Service Management Processes",
+          "level": 2,
+          "page_start": 14,
+          "page_end": 15,
+          "text": "6.11A Service Management Processes The MSP shall implement the following ITIL 4-aligned practices in the ITSM tool within 60 days of Go-Live, document them in a process manual approved by DSEDC, and review them every year. Practice Minimum requirements Incident management Single point of contact; priority matrix (P1 to P4) based on impact and urgency agreed with DSEDC; automatic ticket creation from EMS/NMS alerts; major incident procedure with bridge call within 15 minutes for P1. Problem management Root cause analysis report for every P1 incident within 5 working days; known error database; quarterly trend analysis. Change management Change Advisory Board meeting weekly; emergency change procedure; no change to production without approval in the ITSM tool; post-implementation review for failed changes. Configuration management CMDB populated through auto-discovery covering 100% of servers, network and security devices within 90 days of Go-Live; monthly reconciliation with asset register. Service request management Service catalogue for departments (VM provisioning, firewall rule request, backup request, user access); self-service portal; fulfilment targets per catalogue item. Capacity and availability management Monthly utilisation reports; alerts at 70% and 85% thresholds; quarterly capacity plan (Clause 6.4.3). Information security management ISMS documentation, access reviews every quarter, privileged access only through PAM, log review. Practice Minimum requirements Service continuity management DR runbooks for each Category A application, updated after every drill and every major change.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.11B",
+          "heading": "6.11B Helpdesk",
+          "level": 2,
+          "page_start": 15,
+          "page_end": 15,
+          "text": "6.11B Helpdesk 6.11B.1 The MSP shall operate a 24x7 helpdesk for departments, reachable by toll-free telephone number, e-mail and the self-service portal, and shall ensure that 90% of calls are answered within 60 seconds. 6.11B.2 The helpdesk shall operate in English, Hindi and the official language of Deccan State. Customer satisfaction surveys shall be conducted every quarter and results reported to DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.11C",
+          "heading": "6.11C Documentation",
+          "level": 2,
+          "page_start": 15,
+          "page_end": 15,
+          "text": "6.11C Documentation The MSP shall prepare and keep current: standard operating procedures for each technology tower, network diagrams, DR runbooks, the CMDB, the shift handover log, the risk register and the exit management plan. All documentation shall be stored in the document repository of DSEDC and shall be the property of DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::6.11D",
+          "heading": "6.11D Compliance and Audits",
+          "level": 2,
+          "page_start": 15,
+          "page_end": 15,
+          "text": "6.11D Compliance and Audits 6.11D.1 The MSP shall support DSEDC in the following audits and certifications for DSDC: ISO/IEC 27001 surveillance and recertification audits, STQC or CERT-In empanelled auditor security audits, and the annual audit of SLA computation by the TPA. 6.11D.2 The MSP shall ensure that its own ISO/IEC 27001:2022 certification, with scope covering the services delivered under this contract, remains valid throughout the contract period, and shall submit a copy of each renewed certificate to DSEDC within 15 days of issue.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::6.12",
+          "heading": "6.12 Exit Management",
+          "level": 2,
+          "page_start": 15,
+          "page_end": 16,
+          "text": "6.12 Exit Management 6.12.1 The MSP shall submit a detailed exit management plan within 90 days of Go-Live, update it annually, and provide exit support for six months before the end of the contract, including knowledge transfer and handover of all configurations, documentation and credentials to DSEDC or its nominated agency.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::Section 7",
+          "heading": "Section 7: Service Level Agreement and Penalties",
+          "level": 1,
+          "page_start": 16,
+          "page_end": 16,
+          "text": "Section 7: Service Level Agreement and Penalties 7.1 Service levels shall be measured monthly through the EMS/ITSM tool, and penalties shall be deducted quarterly from the Quarterly Guaranteed Revenue (QGR). Planned downtime approved in advance by DSEDC shall be excluded from availability calculations. Sl. Service level parameter Target Penalty S1 Availability of DSDC IT infrastructure (servers, storage, network, security devices), measured monthly >= 99.95% 1% of QGR for every 0.05% (or part) below target S2 Availability of DR Site infrastructure, measured monthly >= 99.5% 0.5% of QGR for every 0.1% (or part) below target S3 Availability of NOC monitoring and NMS >= 99.9% 0.5% of QGR for every 0.1% (or part) below target S4 Priority 1 incident: response / resolution Response within 15 minutes; resolution within 4 hours 0.25% of QGR per incident per hour (or part) of delay S5 Priority 2 incident: response / resolution Response within 30 minutes; resolution within 8 hours 0.1% of QGR per incident per hour (or part) of delay S6 RPO / RTO for Category A applications during drill or actual disaster RPO <= 15 minutes; RTO <= 4 hours 2% of QGR per application per breach S7 Quarterly DR drill One drill per quarter, report within 7 days 1% of QGR per missed drill S8 Backup success rate (monthly) >= 99% 0.5% of QGR for every 1% (or part) below target S9 Critical patch compliance 100% within 7 days of OEM release (excluding approved exceptions) 0.25% of QGR per device-week of delay, capped at 2% per quarter S10 Absence of key personnel without approved replacement Nil Rs. 10,000 per key person per day of absence beyond 3 days in a month S11 Monthly SLA report By the 7th day of the following month Rs. 5,000 per day of delay 7.2 The total SLA penalty in a quarter shall be capped at 15% of the QGR for that quarter. If the penalty reaches the cap in two consecutive quarters, DSEDC may terminate the contract for default. 7.3 Penalties under this Section are in addition to, and not in substitution of, liquidated damages under Clause 8.5 and other remedies of DSEDC.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::7.3A",
+          "heading": "7.3A Measurement Definitions",
+          "level": 2,
+          "page_start": 16,
+          "page_end": 17,
+          "text": "7.3A Measurement Definitions Availability (%) = (Total minutes in the month - Downtime minutes) / Total minutes in the month x 100, where downtime is the period during which a component or service is not available for use, measured from the time of the alert or the ticket, whichever is earlier, to the time of restoration confirmed in the ITSM tool. Downtime of redundant components that does not affect service shall not be counted. Response time is the time from the logging of an incident to the first meaningful action by an assigned engineer recorded in the ITSM tool. Resolution time is the time from logging to restoration of service, excluding time awaiting a response from DSEDC or departments. Illustration: if the QGR is Rs. 1.80 Crore and monthly availability of DSDC IT infrastructure is 99.87%, the shortfall of 0.08% is two blocks of 0.05% (or part), so the penalty is 2% of QGR, i.e. Rs. 3.60 lakh, subject to the quarterly cap in Clause 7.2. 7.4 SLA parameters may be reviewed by DSEDC after the first year of operations in consultation with the MSP, without any change in the price.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::Section 8",
+          "heading": "Section 8: General Conditions of Contract",
+          "level": 1,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "Section 8: General Conditions of Contract",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.1",
+          "heading": "8.1 Definitions and Order of Precedence",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.1 Definitions and Order of Precedence The contract documents shall be read in the following order of precedence: (a) the Contract Agreement; (b) corrigenda and pre-bid responses, the latest prevailing; (c) the Special Conditions of Contract; (d) these General Conditions; (e) the Scope of Work and SLA; (f) the MSP's technical and commercial bid as accepted by DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.2",
+          "heading": "8.2 Term of Contract",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.2 Term of Contract The contract shall be valid for five years from Go-Live, plus the transition period. DSEDC may extend the contract by up to one year on the same terms and prices, by written notice at least 90 days before expiry.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.3",
+          "heading": "8.3 Performance Bank Guarantee",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.3 Performance Bank Guarantee The MSP shall furnish a Performance Bank Guarantee of 5% of the total contract value from a scheduled commercial bank, valid for 60 days beyond the end of the contract period, within 15 days of the Letter of Award.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::8.4",
+          "heading": "8.4 Payment Terms",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.4 Payment Terms Payment of the QGR shall be made quarterly in arrears, within 60 days of receipt of a correct invoice together with the SLA report verified by DSEDC or its TPA, after deduction of applicable penalties. 8.4.1 Transition costs, if quoted, shall be paid on successful takeover. Tool licence costs shall be paid on installation and acceptance, and annual technical support for tools shall be paid annually in advance against a bank guarantee of equal value.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::8.5",
+          "heading": "8.5 Liquidated Damages",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.5 Liquidated Damages If the MSP fails to complete takeover within the period in Clause 6.3.1, DSEDC shall levy liquidated damages of 0.5% of the annual contract value per week of delay or part thereof, subject to a maximum of 10% of the annual contract value.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.6",
+          "heading": "8.6 Limitation of Liability",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.6 Limitation of Liability Save for the exceptions below, the aggregate liability of the MSP under or in connection with this Contract shall not exceed the total contract value. The above limitation shall not apply to, and the liability of the MSP shall be unlimited for: (a) damages arising from gross negligence or wilful misconduct; (b) any breach of data protection or confidentiality obligations, including any data breach attributable to the MSP; and (c) indemnity for infringement of third-party intellectual property rights. Neither party shall be liable to the other for indirect or consequential losses, except in the cases listed in (a) to (c) above.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::8.7",
+          "heading": "8.7 Indemnity",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.7 Indemnity The MSP shall indemnify DSEDC against all third-party claims, losses and damages arising from the MSP's breach of contract, negligence, breach of law, or infringement of intellectual property rights in the deliverables or tools supplied by the MSP.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.8",
+          "heading": "8.8 Intellectual Property",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 17,
+          "text": "8.8 Intellectual Property All deliverables, configurations, scripts, runbooks, documentation and other work products created under this Contract shall be the exclusive property of DSEDC. The MSP shall grant DSEDC a perpetual, irrevocable, royalty-free licence to use any pre-existing tools or materials of the MSP embedded in the deliverables.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::8.9",
+          "heading": "8.9 Confidentiality and Data Protection",
+          "level": 2,
+          "page_start": 17,
+          "page_end": 18,
+          "text": "8.9 Confidentiality and Data Protection The MSP shall comply with the Digital Personal Data Protection Act, 2023, the Information Technology Act, 2000 and the rules and directions issued under them, and shall process personal data only on the documented instructions of DSEDC. The MSP shall ensure that its personnel sign non-disclosure undertakings, and that no data, logs or configuration is copied out of DSDC except with the written approval of DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.10",
+          "heading": "8.10 Audit and Inspection",
+          "level": 2,
+          "page_start": 18,
+          "page_end": 18,
+          "text": "8.10 Audit and Inspection DSEDC, its TPA, STQC or any agency appointed by the Government shall have the right to audit the MSP's processes, records and facilities related to this contract, with reasonable notice. The MSP shall maintain records for at least three years after the end of the contract.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.11",
+          "heading": "8.11 Subcontracting",
+          "level": 2,
+          "page_start": 18,
+          "page_end": 18,
+          "text": "8.11 Subcontracting The MSP shall not subcontract any part of the services without the prior written approval of DSEDC. Key personnel roles and 24x7 operations staff shall not be subcontracted.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.12",
+          "heading": "8.12 Termination",
+          "level": 2,
+          "page_start": 18,
+          "page_end": 18,
+          "text": "8.12 Termination 8.12.1 DSEDC may terminate the contract for default by giving 30 days' written notice if the MSP fails to perform any obligation and does not cure the failure within the notice period, or if penalties reach the cap as stated in Clause 7.2. 8.12.2 DSEDC may terminate the contract, in whole or in part, for its convenience by giving the MSP 60 days' written notice. The MSP shall be paid for services rendered up to the date of termination. 8.12.3 On termination for any reason, the MSP shall provide exit support as per Clause 6.12.",
+          "live_subset": true
+        },
+        {
+          "section_id": "main_rfp::8.13",
+          "heading": "8.13 Force Majeure",
+          "level": 2,
+          "page_start": 18,
+          "page_end": 18,
+          "text": "8.13 Force Majeure Neither party shall be liable for delay or failure to perform caused by force majeure events, provided that the affected party notifies the other within 7 days of the event. If force majeure continues for more than 90 days, either party may terminate the contract by written notice.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.14",
+          "heading": "8.14 Insurance",
+          "level": 2,
+          "page_start": 18,
+          "page_end": 18,
+          "text": "8.14 Insurance The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cyber liability insurance of not less than Rs. 10 Crore, and shall submit copies of the policies within 30 days of the LoA.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::8.15",
+          "heading": "8.15 Settlement of Disputes and Governing Law",
+          "level": 2,
+          "page_start": 18,
+          "page_end": 19,
+          "text": "8.15 Settlement of Disputes and Governing Law Disputes shall first be resolved by mutual discussion. Unresolved disputes shall be referred to arbitration by a sole arbitrator under the Arbitration and Conciliation Act, 1996. The seat and venue of arbitration shall be Navapur. The contract shall be governed by the laws of India, and the courts at Navapur shall have exclusive jurisdiction.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::Section 9",
+          "heading": "Section 9: Special Conditions of Contract",
+          "level": 1,
+          "page_start": 19,
+          "page_end": 19,
+          "text": "Section 9: Special Conditions of Contract 9.1 The MSP shall report cyber security incidents to CERT-In and to DSEDC as required by the directions issued by CERT-In under Section 70B of the Information Technology Act, 2000. 9.2 All logs of ICT systems shall be retained securely within India for a rolling period of 180 days, or longer if required by DSEDC. 9.3 The MSP shall not use any tool, agent or software that sends data from DSDC to a location outside India, including telemetry, without the prior written approval of DSEDC. 9.4 Background verification, including police verification, shall be completed for all personnel deployed at DSDC and the DR Site before deployment.",
+          "live_subset": false
+        },
+        {
+          "section_id": "main_rfp::9.5",
+          "heading": "9.5 List of Formats and Annexures (separate document)",
+          "level": 2,
+          "page_start": 19,
+          "page_end": 19,
+          "text": "9.5 List of Formats and Annexures (separate document) Reference Title PQ-1 Covering letter with pre-qualification checklist (Schedule A) and acknowledgement of corrigenda PQ-2 Bidder profile PQ-3 Financial capability: turnover, segment turnover and net worth (CA certificate) PQ-4 Similar work citation PQ-5 Certifications held PQ-6 Declaration of non-blacklisting PQ-7 Certificate regarding bidders from countries sharing a land border with India PQ-8 Manufacturer's Authorisation Form (MAF) PQ-9 Undertaking to establish local office PQ-10 Power of Attorney for authorised signatory T-1 to T-7 Technical formats: approach and methodology, CV, manpower deployment, compliance to scope, tool details, transition and exit plan, deviations C-1, C-2 Commercial covering letter and price schedule (MS-Excel) Annexure A to F Asset inventory, application categories, Integrity Pact, PBG format, draft contract agreement, pre-bid query format End of RFP document. Formats and annexures are issued as a separate document (annexures.pdf) and the price schedule as an MS-Excel file.",
+          "live_subset": false
+        }
+      ]
+    },
+    {
+      "file": "original/notice.pdf",
+      "pages": 1,
+      "sections": [
+        {
+          "section_id": "notice::NOTICE INVITING TENDER (e-Tend",
+          "heading": "NOTICE INVITING TENDER (e-Tender)",
+          "level": 1,
+          "page_start": 1,
+          "page_end": 1,
+          "text": "NOTICE INVITING TENDER (e-Tender) NIT No. DSEDC/DSDC-MSP/2026/014 Dated: 05-10-2026 DSEDC, on behalf of the Department of Information Technology, Government of Deccan State, invites online bids under the two-stage (technical and commercial) QCBS process from eligible bidders for the following work. The complete RFP can be downloaded from the Deccan State eProcurement Portal (simulated): https://eproc.deccan.example/. Sl. Particulars Details 1 Name of work Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years 2 Estimated cost Rs. 38.40 Crore (Rupees Thirty Eight Crore Forty Lakh only), inclusive of all taxes, for five years 3 Contract period 5 years from Go-Live plus up to 3 months of transition 4 Tender fee (non-refundable) Rs. 25,000/- (Rupees Twenty Five Thousand only), non-refundable 5 EMD Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) 6 Exemption Tender fee and EMD exempted for MSEs registered on Udyam for the services tendered (see RFP Clause 2.10) 7 Bid document download From 05-10-2026 at 10:00 hrs to 06-11-2026 at 15:00 hrs 8 Last date for pre-bid queries 13-10-2026 at 17:00 hrs 9 Pre-bid meeting 15-10-2026 at 11:00 hrs 10 Bid submission end date 06-11-2026 at 15:00 hrs 11 Opening of PQ and technical bids 09-11-2026 at 11:00 hrs 12 Bid validity 180 days from the bid submission end date 13 Performance Bank Guarantee 5% of contract value 14 Method of selection QCBS 70:30 (Technical 70%, Financial 30%) 15 Contact General Manager (IT Infrastructure), DSEDC; gm-infra@dsedc.example Brief eligibility (see RFP Section 3 for the complete criteria) • Company registered in India, in existence for at least 5 years. Consortium not allowed. • Average annual IT/ITeS turnover of Rs. 55 Crore (Rs. 45 Crore for eligible MSEs) in FY 2022-23 to 2024-25, with Rs. 20 Crore average from DC/network/managed infrastructure services. • Similar completed works in the last 7 years: 3 of Rs. 15.36 Cr, or 2 of Rs. 23.04 Cr, or 1 of Rs. 30.72 Cr. • Valid ISO 9001:2015 and ISO/IEC 27001:2022, and CMMI ML3+ or ISO/IEC 20000-1:2018, as on the bid submission end date. Bidders are advised to visit the portal regularly for corrigenda. DSEDC reserves the right to accept or reject any or all bids without assigning any reason. Sd/General Manager (IT Infrastructure) DSEDC, Navapur",
+          "live_subset": true
+        }
+      ]
+    },
+    {
+      "file": "original/annexures.pdf",
+      "pages": 27,
+      "sections": [
+        {
+          "section_id": "annexures::Format PQ-1",
+          "heading": "Format PQ-1: Covering Letter",
+          "level": 1,
+          "page_start": 2,
+          "page_end": 3,
+          "text": "Format PQ-1: Covering Letter (On the letterhead of the Bidder) To, General Manager (IT Infrastructure), DSEDC Deccan State Electronics Development Corporation Limited (DSEDC) DSEDC Bhavan, 4th Floor, Sector 9, Navapur - 500 901, Deccan State (fictional) Subject: Submission of bid for RFP No. DSEDC/DSDC-MSP/2026/014 Sir/Madam, having examined the RFP including all annexures and corrigenda, the receipt of which is hereby acknowledged, we the undersigned offer to provide the services in conformity with the RFP. We confirm that our bid shall remain valid for 180 days from the bid submission end date. We confirm that we have not taken any deviation from the RFP. We confirm that the information in our bid is true and correct, and we understand that any false information may lead to rejection of our bid or termination of the contract. Acknowledgement of corrigenda Corrigendum No. Date Acknowledged (Yes/No) Schedule A: Pre-qualification checklist (Bidder to fill page numbers of supporting documents) PQ No. Criterion (short) Document PQ-01 Incorporation and 5 years of existence Certificate of Incorporation, PQ-2 PQ-02 Average IT/ITeS turnover (or MSE relaxation) Audited accounts, PQ-3, Udyam PQ-03 Average DC/network/managed services turnover PQ-3 PQ-04 Positive net worth each year Audited accounts, PQ-3 PQ-05 Similar completed works PQ-4 with work orders and completion certificates PQ-06 Certifications Certificates, PQ-5 PQ-07 150 technically qualified staff HR certificate PQ-08 Office in Deccan State or undertaking Proof or PQ-9 PQ-09 Non-blacklisting PQ-6 PQ-10 OEM MAF PQ-8 PQ-11 Land border certificate PQ-7 PQ-12 EMD or MSE exemption EMD / Udyam certificate Page no. in bid Yours faithfully, (Signature of authorised signatory with name, designation, company seal and date)",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-2",
+          "heading": "Format PQ-2: Bidder Profile",
+          "level": 1,
+          "page_start": 3,
+          "page_end": 4,
+          "text": "Format PQ-2: Bidder Profile Sl. Particulars 1 Name of the Bidder 2 Registered office address 3 Date of incorporation and CIN 4 PAN and GSTIN 5 Udyam Registration No. and classification (if MSE) 6 Addresses of offices in India (indicate any office in Deccan State) 7 Name, designation, phone and e-mail of authorised signatory 8 Total employees and technically qualified IT professionals as on 30-09-2026 9 Certifications held (ISO 9001, ISO/IEC 27001, CMMI, ISO/IEC 20000-1, ISO 22301) 10 Main lines of business Details",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-3",
+          "heading": "Format PQ-3: Financial Capability (Certificate from Chartered Accountant)",
+          "level": 1,
+          "page_start": 4,
+          "page_end": 5,
+          "text": "Format PQ-3: Financial Capability (Certificate from Chartered Accountant) (On the letterhead of the statutory auditor or a practising Chartered Accountant, with UDIN) This is to certify that the following figures of M/s ________________ are extracted from the audited financial statements for the respective financial years: Financial year Total turnover from IT/ITeS services (Rs. Crore) Turnover from Data Centre, Network and managed IT infrastructure services (Rs. Crore) Net worth (Rs. Crore) 2022-23 2023-24 2024-25 Average -Note: The CA certificate shall bear a Unique Document Identification Number (UDIN) and the figures shall be stated in Rupees Crore up to two decimal places.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-4",
+          "heading": "Format PQ-4: Similar Work Citation",
+          "level": 1,
+          "page_start": 5,
+          "page_end": 6,
+          "text": "Format PQ-4: Similar Work Citation (One format per work cited; maximum five works) Sl. Item 1 Name of client and type of organisation (Government / PSU / autonomous body / ULB / Scheduled Commercial Bank) 2 Name of work and work order number and date 3 Value of work order (Rs. Crore, including taxes) 4 Value of work executed by the Bidder (Rs. Crore) and the Bidder's share if executed in a consortium 5 Date of start and date of completion 6 Number of racks at the Data Centre / DR site, or confirmation of 24x7 NOC operation 7 Brief scope of services 8 Client contact (name, designation, phone, e-mail) 9 Page numbers of work order and completion certificate in the bid Details",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-5",
+          "heading": "Format PQ-5: Certifications Held",
+          "level": 1,
+          "page_start": 6,
+          "page_end": 7,
+          "text": "Format PQ-5: Certifications Held Certification Certificate No. Issuing body Scope Valid from Valid to ISO 9001:2015 ISO/IEC 27001:2022 CMMI (level, model) ISO/IEC 20000-1:2018 ISO 22301:2019",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-6",
+          "heading": "Format PQ-6: Declaration of Non-blacklisting",
+          "level": 1,
+          "page_start": 7,
+          "page_end": 8,
+          "text": "Format PQ-6: Declaration of Non-blacklisting We hereby declare that M/s ________________ has not been blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking as on the bid submission end date. We understand that if this declaration is found false, our bid shall be rejected and the EMD forfeited, and DSEDC may take further action as per law.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-7",
+          "heading": "Format PQ-7: Certificate Regarding Bidders from Countries Sharing a Land Border with India",
+          "level": 1,
+          "page_start": 8,
+          "page_end": 9,
+          "text": "Format PQ-7: Certificate Regarding Bidders from Countries Sharing a Land Border with India We have read the clause regarding restrictions on procurement from a bidder of a country which shares a land border with India, and we certify that M/s ________________ is not from such a country or, if from such a country, has been registered with the Competent Authority. We hereby certify that we fulfil all requirements in this regard and are eligible to be considered.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-8",
+          "heading": "Format PQ-8: Manufacturer's Authorisation Form (MAF)",
+          "level": 1,
+          "page_start": 9,
+          "page_end": 10,
+          "text": "Format PQ-8: Manufacturer's Authorisation Form (MAF) (On the letterhead of the OEM) We, ________________, the original manufacturer of ________________ (EMS / NMS / ITSM tool), hereby authorise M/s ________________ to quote our products against RFP No. DSEDC/DSDC-MSP/2026/014, and undertake to provide back-to-back support, upgrades and patches for the contract period of five years through the authorised bidder. This authorisation is specific to this RFP.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-9",
+          "heading": "Format PQ-9: Undertaking to Establish Local Office",
+          "level": 1,
+          "page_start": 10,
+          "page_end": 11,
+          "text": "Format PQ-9: Undertaking to Establish Local Office We, M/s ________________, do not presently have an operational office in Deccan State. We undertake to establish an operational office in Navapur within 60 days of the issue of the Letter of Award, and to maintain it for the contract period. We understand that failure to do so shall be treated as a breach of contract.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format PQ-10",
+          "heading": "Format PQ-10: Power of Attorney for Authorised Signatory",
+          "level": 1,
+          "page_start": 11,
+          "page_end": 13,
+          "text": "Format PQ-10: Power of Attorney for Authorised Signatory The format of the Power of Attorney is reproduced on the next page as issued with the original tender (scanned copy).",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-1",
+          "heading": "Format T-1: Technical Proposal - Approach and Methodology",
+          "level": 1,
+          "page_start": 13,
+          "page_end": 14,
+          "text": "Format T-1: Technical Proposal - Approach and Methodology The technical proposal shall be organised under the following headings and shall not exceed 40 pages: (1) understanding of the scope; (2) O&M approach for DSDC, DR Site and NOC; (3) ITIL processes and tools; (4) security operations; (5) backup and DR approach; (6) hybrid cloud management; (7) governance and reporting; (8) value additions.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-2",
+          "heading": "Format T-2: Curriculum Vitae of Key Personnel",
+          "level": 1,
+          "page_start": 14,
+          "page_end": 15,
+          "text": "Format T-2: Curriculum Vitae of Key Personnel Sl. Field 1 Proposed role 2 Name 3 Employee ID and date of joining the Bidder 4 Educational qualifications (degree, institution, year) 5 Professional certifications with certificate number and validity (copies to be enclosed) 6 Total years of experience 7 Years of experience in the relevant domain (DC/infra O&M, DC operations, networking, security operations or cloud) 8 Details of relevant projects (client, period, role, scope) 9 Language proficiency 10 Declaration and signature of the person and the authorised signatory Details Each CV shall be signed by the proposed person and countersigned by the authorised signatory. Unsigned CVs shall not be evaluated.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-3",
+          "heading": "Format T-3: Manpower Deployment Plan",
+          "level": 1,
+          "page_start": 15,
+          "page_end": 16,
+          "text": "Format T-3: Manpower Deployment Plan Role Number proposed Shift pattern Qualification / certification On payroll (Y/N) Project Manager DC Operations Lead Network Lead Security Lead Cloud Lead Shift In-charge L2 Server / Virtualisation Engineer L2 Network Engineer L2 Storage and Backup Engineer L2 Security Analyst L1 NOC Operator Database Administrator Helpdesk Agent DR Site Engineer",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-4",
+          "heading": "Format T-4: Compliance to Scope of Work",
+          "level": 1,
+          "page_start": 16,
+          "page_end": 17,
+          "text": "Format T-4: Compliance to Scope of Work The Bidder shall state compliance (Complied / Not complied) against each clause of Section 6 and Section 7 of the RFP, with a reference to the relevant page of the technical proposal. RFP clause Requirement (summary) 6.3 Transition and takeover within 90 days 6.4 DC and DR operations 24x7 6.5 Backup, RPO 15 min, RTO 4 h, quarterly DR drills 6.6 State NOC operations 6.7 Hybrid cloud management and data in India 6.8 Security operations, VAPT closure 6.9 EMS, NMS and ITSM tool 6.10 Minimum manpower (Table 6.10) 6.11 Reporting, governance, ITIL processes 6.12 Exit management 7 Service levels and penalties Complied / Not complied Reference in proposal",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-5",
+          "heading": "Format T-5: Details of Proposed EMS, NMS and ITSM Tool",
+          "level": 1,
+          "page_start": 17,
+          "page_end": 18,
+          "text": "Format T-5: Details of Proposed EMS, NMS and ITSM Tool Sl. Item 1 Name of OEM and product, version 2 Modules offered (EMS, NMS, ITSM, CMDB, SLA dashboard) 3 Licence type and number of nodes/users 4 Deployment (on-premise at DSDC; confirm no data leaves India) 5 Integration with existing SIEM and PAM 6 Reference installations in India Details",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-6",
+          "heading": "Format T-6: Transition and Exit Management Plan",
+          "level": 1,
+          "page_start": 18,
+          "page_end": 19,
+          "text": "Format T-6: Transition and Exit Management Plan The Bidder shall describe: (a) the transition team and timeline with milestones for knowledge transfer, shadowing and reverse shadowing; (b) the approach to inventory verification; (c) transition risks and mitigation; (d) the exit management approach, including documentation, handover of credentials and knowledge transfer to the successor.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format T-7",
+          "heading": "Format T-7: Statement of Deviations",
+          "level": 1,
+          "page_start": 19,
+          "page_end": 20,
+          "text": "Format T-7: Statement of Deviations The Bidder shall state \"No deviation\" in this format. Bids with deviations from the RFP terms, other than those accepted by DSEDC through a corrigendum, are liable to be rejected.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format C-1",
+          "heading": "Format C-1: Commercial Bid Covering Letter",
+          "level": 1,
+          "page_start": 20,
+          "page_end": 21,
+          "text": "Format C-1: Commercial Bid Covering Letter We, the undersigned, offer to provide the services under RFP No. DSEDC/DSDC-MSP/2026/014 for the sum stated in our price schedule (Format C-2), exclusive of GST. Our prices are firm for the contract period. We understand that DSEDC is not bound to accept the lowest or any bid.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Format C-2",
+          "heading": "Format C-2: Price Schedule",
+          "level": 1,
+          "page_start": 21,
+          "page_end": 22,
+          "text": "Format C-2: Price Schedule The price schedule is issued as an MS-Excel file (price_schedule_boq.xlsx). The Bidder shall fill only the cells marked for the Bidder and shall not alter quantities or formulae. Quantities for optional items are indicative and shall not be included in the evaluated price.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Annexure A",
+          "heading": "Annexure A: Asset Inventory of DSDC and DR Site (as on 31-08-2026)",
+          "level": 1,
+          "page_start": 22,
+          "page_end": 23,
+          "text": "Annexure A: Asset Inventory of DSDC and DR Site (as on 31-08-2026) The inventory below is indicative and will be verified during transition (RFP Clause 6.3.3). A.1 Compute Category Make (indicative) DSDC qty DR qty Warranty / AMC till Rack servers (2-socket) OEM-1 / OEM-2 412 128 Mar 2028 Blade chassis (16 blades each) OEM-1 9 chassis / 138 blades 2 chassis / 30 blades Mar 2027 High-memory servers (DB) OEM-2 54 16 Mar 2028 Unix servers OEM-3 18 4 Dec 2026 Hyper-converged nodes OEM-4 18 4 Mar 2029 Category Capacity (usable) DSDC qty DR qty Warranty / AMC till All-flash block storage 1.2 PB 4 arrays 2 arrays Mar 2028 Unified NAS 0.8 PB 3 1 Mar 2027 Object storage 1.2 PB 1 cluster (12 nodes) -Mar 2029 Backup appliance (disk) 1.5 PB (logical) 2 1 Mar 2028 Tape library (LTO-8) 2,400 slots 2 -Dec 2026 A.2 Storage and backup A.3 Network and security Category DSDC qty DR qty Core switches (spine) 4 2 Leaf / access switches 64 18 Internet routers 4 2 Next-generation firewalls (HA pairs) 4 pairs 2 pairs Web application firewall 2 1 IPS 2 1 DDoS mitigation appliance 2 -Application delivery controllers 4 2 SIEM (collectors / correlation) 6/2 2/-Privileged access management 1 cluster 1 EDR licences 3,200 900",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Annexure B",
+          "heading": "Annexure B: Application Categories",
+          "level": 1,
+          "page_start": 23,
+          "page_end": 24,
+          "text": "Annexure B: Application Categories DSDC hosts 184 applications of 62 departments. Category A (critical) applications require replication to the DR Site with RPO 15 minutes and RTO 4 hours. Category B applications are backed up daily with RTO of 24 hours. Category C applications are backed up weekly. Sl. Category A application (illustrative, 24 of 42 listed) Department 1 Land records and mutation Revenue 2 e-District citizen services IT 3 State treasury and e-payments Finance 4 Commercial taxes (GST back-end) Finance 5 Public distribution system Food and Civil Supplies 6 Scholarship portal Social Welfare 7 Hospital management information system Health 8 Police CCTNS state instance Home 9 Vehicle registration and licensing Transport 10 Property registration Registration 11 State e-procurement IT 12 Grievance redressal Chief Minister's Office 13 Pensions and provident fund Finance 14 Birth and death registration Municipal Administration 15 Building plan approval Urban Development 16 Agriculture input subsidy Agriculture 17 Rural employment MIS Rural Development 18 Electricity consumer billing (state utility) Energy 19 Water supply billing Municipal Administration 20 School education MIS School Education 21 Excise management Excise 22 Mining permits Mines and Geology 23 Labour welfare board Labour 24 e-Office General Administration",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Annexure C",
+          "heading": "Annexure C: Integrity Pact (Summary)",
+          "level": 1,
+          "page_start": 24,
+          "page_end": 25,
+          "text": "Annexure C: Integrity Pact (Summary) The Integrity Pact shall be signed by the Bidder and DSEDC. Its principal commitments are: (1) the Bidder shall not offer or give any bribe, gift or advantage to any official of DSEDC; (2) the Bidder shall disclose all payments made to agents or intermediaries in connection with the bid; (3) the Bidder shall not collude with other bidders; (4) an Independent External Monitor appointed by DSEDC may review compliance; (5) a violation may lead to disqualification, forfeiture of EMD or PBG, and debarment for up to three years. The full text of the Integrity Pact is available on the portal and shall be signed on every page.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Annexure D",
+          "heading": "Annexure D: Format of Performance Bank Guarantee",
+          "level": 1,
+          "page_start": 25,
+          "page_end": 26,
+          "text": "Annexure D: Format of Performance Bank Guarantee To, Deccan State Electronics Development Corporation Limited (DSEDC). In consideration of DSEDC having awarded to M/s ________________ (the MSP) the contract for Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years, we ________________ (Bank) hereby irrevocably and unconditionally undertake to pay DSEDC on first written demand, without demur, any amount up to Rs. ________ (being the percentage of the contract value specified in the RFP, as amended by any corrigendum), without DSEDC having to substantiate its demand. This guarantee shall remain valid until 60 days after the end of the contract period. The Bank shall not revoke this guarantee during its currency except with the previous written consent of DSEDC.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Annexure E",
+          "heading": "Annexure E: Draft Contract Agreement (Outline)",
+          "level": 1,
+          "page_start": 26,
+          "page_end": 27,
+          "text": "Annexure E: Draft Contract Agreement (Outline) This Agreement is made on ____ day of ________ 20__ between DSEDC (the Purchaser) and M/s ________________ (the MSP). The following documents shall form part of this Agreement and be read in the order of precedence in Clause 8.1 of the RFP: Letter of Award; corrigenda and pre-bid responses; Special Conditions of Contract; General Conditions of Contract; Scope of Work and SLA; technical and commercial bid of the MSP as accepted; Integrity Pact; Non-disclosure Agreement. The contract value is Rs. ________ exclusive of GST for five years.",
+          "live_subset": false
+        },
+        {
+          "section_id": "annexures::Annexure F",
+          "heading": "Annexure F: Format for Pre-bid Queries",
+          "level": 1,
+          "page_start": 27,
+          "page_end": 27,
+          "text": "Annexure F: Format for Pre-bid Queries Sl. RFP volume / section Page no. Clause no. Clause text Query / suggestion 1 2 Queries shall be submitted in MS-Excel format only.",
+          "live_subset": false
+        }
+      ]
+    },
+    {
+      "file": "original/corrigendum.pdf",
+      "pages": 3,
+      "sections": [
+        {
+          "section_id": "corrigendum::Part A",
+          "heading": "Part A: Amendments to the RFP",
+          "level": 2,
+          "page_start": 1,
+          "page_end": 2,
+          "text": "Part A: Amendments to the RFP Sl. RFP reference Existing provision Amended provision 1 Section 1.3, Fact Sheet item 10 (page 3); NIT item 10 Last date and time for online bid submission: 06-11-2026 at 15:00 hrs Last date and time for online bid submission: 20-11-2026 at 15:00 hrs 2 Section 1.3, item 11; Clause 2.13 (page 6) Opening of PQ and technical bids: 09-11-2026 at 11:00 hrs Opening of PQ and technical bids: 23-11-2026 at 11:00 hrs 3 Section 1.3, item 12 Technical presentation: week commencing 16-11-2026 Technical presentation: week commencing 30-11-2026 (tentative) 4 Section 1.3, item 17; Clause 8.3 (page 17) Performance Bank Guarantee of 5% of The MSP shall furnish a Performance Bank Guarantee of the total contract value 3% of the total contract value, valid for 60 days beyond the end of the contract period, within 15 days of the Letter of Award. 5 Clause 3.3.3 (page 8) Where the work was executed as a member of a consortium, the value of the work executed by the Bidder shall be considered. Where the work was executed as a member of a consortium, only the Bidder's share of the work, as certified by the client in the completion certificate or a separate client certificate, shall be considered. A consortium agreement or a self-certificate of the Bidder shall not be accepted as proof of share. 6 PQ-06 (page 7) (No change in the requirement.) Clarification added. Certificates issued under ISO/IEC 27001:2013 shall not be accepted. All certificates shall be valid as on the bid submission end date as amended by this corrigendum. 7 Clause 7.2 (page 16) The total SLA penalty in a quarter shall be capped at 15% of the QGR The total SLA penalty in a quarter shall be capped at 10% of the QGR for that quarter. If the penalty reaches the cap in two consecutive quarters, DSEDC may terminate the contract for default. 8 Clause 2.10.3 (page 5) The original EMD Bank Guarantee (if not an e-BG) shall be submitted in a sealed envelope at DSEDC Bhavan before the bid submission end date. Deleted. EMD shall be submitted only as an e-Bank Guarantee or by online transfer. Physical submission of any document is not required. 9 Clause 8.4 (page 17) within 60 days of receipt of a correct invoice Payment of the QGR shall be made quarterly in arrears, within 45 days of receipt of a correct invoice together with the SLA report verified by DSEDC or its TPA. 10 Clause 8.6 (page 17) Limitation of liability No change. As per RFP. 11 Table 6.10, Sl. 8 (page 14) L2 Network Engineer: minimum 6 L2 Network Engineer (DSDC / NOC): minimum 8, 24x7 Sl. RFP reference Existing provision Amended provision 12 New Clause 9.1A (Special Conditions) -New clause 9.1A: The Bidder shall submit, with the technical bid, a self-declaration of compliance with the CERT-In Directions No. 20(3)/2022-CERT-In dated 28-04-2022, including reporting of cyber incidents to CERT-In within 6 hours of noticing them. 13 Clause 2.10.1 (EMD validity) valid for 45 days beyond the bid validity period No change in amount. The EMD shall be valid for 45 days beyond the bid validity period computed from the amended bid submission end date.",
+          "live_subset": true
+        },
+        {
+          "section_id": "corrigendum::Part B",
+          "heading": "Part B: Responses to Pre-bid Queries",
+          "level": 2,
+          "page_start": 2,
+          "page_end": 3,
+          "text": "Part B: Responses to Pre-bid Queries Responses below are issued for clarification. Where a response amends the RFP, the amendment is listed in Part A, which shall prevail. Sl. RFP clause Query (summary) DSEDC response 1 1.3 / 2.12 Request extension of bid submission date by four weeks to allow site visits and OEM tie-ups. Extended by two weeks. See Part A, item 1. 2 PQ-02 Request reduction of average turnover to Rs. 40 Crore Not accepted. As per RFP. The MSE relaxation in for all bidders. PQ-02 remains. 3 PQ-02 Can turnover of the parent or group company be considered? No. Only the turnover of the bidding entity shall be considered. 4 PQ-05 Request that ongoing projects with more than 80% completion be considered. Not accepted. Only completed works shall be considered. 5 PQ-05 For work executed in a consortium, how will the value be considered? See Part A, item 5. Only the client-certified share of the bidder. 6 PQ-05 Can projects for private sector banks be considered as Yes, if the bank is a Scheduled Commercial Bank in similar work? India and the work meets Clause 3.3.1. 7 PQ-05 Can AMC of data centre equipment be considered? No. As per Clause 3.3.2. 8 PQ-06 Request acceptance of ISO/IEC 27001:2013 certificates. Not accepted. See Part A, item 6. 9 PQ-06 Request that a certificate under renewal be accepted if Not accepted. The certificate shall be valid as on the the recertification audit is completed before the bid bid submission end date. Audit completion letters submission end date. shall not be accepted. 10 PQ-06 Can ISO/IEC 20000-1 be made mandatory in addition No change. As per RFP. to CMMI? 11 PQ-08 Request removal of the local office requirement. Not accepted. Bidders may submit the undertaking in Format PQ-9. 12 4.3 Request acceptance of CCNA for Network Lead. Not accepted. CCNP or equivalent professional-level certification is required. 13 4.3 Can an expired CISM be accepted if renewal is in process? No. Certifications shall be valid as on the bid submission end date (Clause 4.2.3). 14 6.10 Clarify the number of L2 network engineers given NOC scope. Increased to 8. See Part A, item 11. 15 7.2 Request reduction of the penalty cap to 10% of QGR. Accepted. See Part A, item 7. 16 8.3 Request reduction of PBG to 3%. Accepted. See Part A, item 4. 17 8.4 Request payment within 30 days. Partially accepted. Payment within 45 days. See Part A, item 9. 18 8.6 Request a cap on liability for data breach (e.g. 1x annual contract value). Not accepted. As per RFP. 19 8.8 Request that pre-existing IP and generic tools of the MSP remain with the MSP. Pre-existing IP of the MSP remains with the MSP, subject to the licence in Clause 8.8. No change to the clause. 20 8.12.2 Request a notice period of 90 days for termination for Not accepted. As per RFP. convenience. Sl. RFP clause Query (summary) DSEDC response 21 2.9.2 Request a price variation clause linked to minimum wages. Not accepted. Prices are firm. 22 General Will DSEDC share the current SLA performance of the existing operator? Summary SLA reports for the last 12 months will be shared with bidders on request after signing an NDA. All bidders are requested to take note of the above and to acknowledge this corrigendum in Format PQ-1. Sd/General Manager (IT Infrastructure) DSEDC, Navapur",
+          "live_subset": true
+        }
+      ]
+    }
+  ]
+}

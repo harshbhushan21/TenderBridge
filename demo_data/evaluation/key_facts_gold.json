@@ -1,0 +1,392 @@
+{
+  "tender_id": "TDR-001",
+  "scoring": "exact match after normalisation (dates ISO 8601 local time IST; money in INR; percentages as numbers)",
+  "versions": {
+    "v1": "original RFP",
+    "v2": "after Corrigendum No. 1 (effective for the demo)",
+    "c2": "only when the synthetic Corrigendum No. 2 test fixture is loaded"
+  },
+  "facts": [
+    {
+      "fact_id": "KF-01",
+      "name": "tender_reference",
+      "value_v1": "DSEDC/DSDC-MSP/2026/014",
+      "value_effective_v2": "DSEDC/DSDC-MSP/2026/014",
+      "unit": null,
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 1,
+        "span": "RFP No.: DSEDC/DSDC-MSP/2026/014"
+      }
+    },
+    {
+      "fact_id": "KF-02",
+      "name": "title",
+      "value_v1": "Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years",
+      "value_effective_v2": "Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years",
+      "unit": null
+    },
+    {
+      "fact_id": "KF-03",
+      "name": "buyer",
+      "value_v1": "Deccan State Electronics Development Corporation Limited (DSEDC)",
+      "value_effective_v2": "Deccan State Electronics Development Corporation Limited (DSEDC)",
+      "unit": null
+    },
+    {
+      "fact_id": "KF-04",
+      "name": "estimated_cost",
+      "value_v1": "Rs. 38.40 Crore",
+      "value_effective_v2": "Rs. 38.40 Crore",
+      "unit": "INR",
+      "normalized": {
+        "inr": 384000000,
+        "inr_cr": 38.4
+      },
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 3,
+        "span": "Rs. 38.40 Crore (Rupees Thirty Eight Crore Forty Lakh only)"
+      }
+    },
+    {
+      "fact_id": "KF-05",
+      "name": "emd_amount",
+      "value_v1": "Rs. 76,80,000/-",
+      "value_effective_v2": "Rs. 76,80,000/-",
+      "unit": "INR",
+      "normalized": {
+        "inr": 7680000,
+        "inr_lakh": 76.8,
+        "inr_cr": 0.768
+      },
+      "source": {
+        "file": "tender/TDR-001/original/notice.pdf",
+        "page": 1,
+        "span": "Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only)"
+      }
+    },
+    {
+      "fact_id": "KF-06",
+      "name": "emd_exemption",
+      "value_v1": "MSEs registered on Udyam for the services procured are exempt from EMD and tender fee",
+      "value_effective_v2": "MSEs registered on Udyam for the services procured are exempt from EMD and tender fee",
+      "unit": null,
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 5,
+        "span": "are exempted from payment of tender fee and EMD"
+      }
+    },
+    {
+      "fact_id": "KF-07",
+      "name": "tender_fee",
+      "value_v1": "Rs. 25,000/- (non-refundable)",
+      "value_effective_v2": "Rs. 25,000/- (non-refundable)",
+      "unit": "INR",
+      "normalized": {
+        "inr": 25000
+      }
+    },
+    {
+      "fact_id": "KF-08",
+      "name": "bid_validity",
+      "value_v1": "180 days from the bid submission end date",
+      "value_effective_v2": "180 days from the bid submission end date",
+      "unit": "days",
+      "normalized": {
+        "days": 180
+      },
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 3,
+        "span": "Bids shall remain valid for 180 days"
+      }
+    },
+    {
+      "fact_id": "KF-09",
+      "name": "publication_date",
+      "value_v1": "2026-10-05T10:00",
+      "value_effective_v2": "2026-10-05T10:00",
+      "unit": null
+    },
+    {
+      "fact_id": "KF-10",
+      "name": "prebid_query_deadline",
+      "value_v1": "2026-10-13T17:00",
+      "value_effective_v2": "2026-10-13T17:00",
+      "unit": null,
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 4,
+        "span": "on or before 13-10-2026 at 17:00 hrs"
+      }
+    },
+    {
+      "fact_id": "KF-11",
+      "name": "prebid_meeting",
+      "value_v1": "2026-10-15T11:00",
+      "value_effective_v2": "2026-10-15T11:00",
+      "unit": null
+    },
+    {
+      "fact_id": "KF-12",
+      "name": "bid_submission_end",
+      "value_v1": "2026-11-06T15:00",
+      "value_effective_v2": "2026-11-20T15:00",
+      "unit": null,
+      "value_c2_test_only": "2026-12-04T15:00",
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 3,
+        "span": "Last date and time for online bid submission: 06-11-2026 at 15:00 hrs"
+      },
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-13",
+      "name": "technical_bid_opening",
+      "value_v1": "2026-11-09T11:00",
+      "value_effective_v2": "2026-11-23T11:00",
+      "unit": null,
+      "value_c2_test_only": "2026-12-07T11:00",
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-14",
+      "name": "technical_presentation",
+      "value_v1": "week of 2026-11-16 (tentative)",
+      "value_effective_v2": "week of 2026-11-30 (tentative)",
+      "unit": null,
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-15",
+      "name": "evaluation_method",
+      "value_v1": "QCBS 70:30",
+      "value_effective_v2": "QCBS 70:30",
+      "unit": null,
+      "normalized": {
+        "technical_weight": 0.7,
+        "financial_weight": 0.3,
+        "formula": "0.70*Tn + 0.30*Fn"
+      },
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 11,
+        "span": "Combined Score = 0.70 x Tn + 0.30 x Fn"
+      }
+    },
+    {
+      "fact_id": "KF-16",
+      "name": "minimum_technical_score",
+      "value_v1": 70,
+      "value_effective_v2": 70,
+      "unit": "marks of 100",
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 9,
+        "span": "at least 70 marks out of 100"
+      }
+    },
+    {
+      "fact_id": "KF-17",
+      "name": "contract_period",
+      "value_v1": "5 years from Go-Live + up to 3 months transition",
+      "value_effective_v2": "5 years from Go-Live + up to 3 months transition",
+      "unit": null,
+      "normalized": {
+        "years": 5,
+        "transition_months": 3
+      }
+    },
+    {
+      "fact_id": "KF-18",
+      "name": "performance_bank_guarantee",
+      "value_v1": "5% of total contract value",
+      "value_effective_v2": "3% of total contract value",
+      "unit": null,
+      "normalized": {
+        "v1_pct": 5,
+        "v2_pct": 3
+      },
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-19",
+      "name": "payment_terms",
+      "value_v1": "Quarterly in arrears within 60 days",
+      "value_effective_v2": "Quarterly in arrears within 45 days",
+      "unit": null,
+      "normalized": {
+        "v1_days": 60,
+        "v2_days": 45
+      },
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-20",
+      "name": "sla_penalty_cap",
+      "value_v1": "15% of QGR per quarter",
+      "value_effective_v2": "10% of QGR per quarter",
+      "unit": null,
+      "normalized": {
+        "v1_pct": 15,
+        "v2_pct": 10
+      },
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-21",
+      "name": "technical_proposal_page_limit",
+      "value_v1": "40 pages A4, font >= 10 pt (excluding CVs and formats)",
+      "value_effective_v2": "40 pages A4, font >= 10 pt (excluding CVs and formats)",
+      "unit": null,
+      "normalized": {
+        "pages": 40,
+        "min_font_pt": 10
+      },
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 5,
+        "span": "shall not exceed 40 pages of A4 size"
+      }
+    },
+    {
+      "fact_id": "KF-22",
+      "name": "consortium_allowed",
+      "value_v1": false,
+      "value_effective_v2": false,
+      "unit": null,
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 4,
+        "span": "Bids from a consortium or joint venture shall not be accepted"
+      }
+    },
+    {
+      "fact_id": "KF-23",
+      "name": "experience_window",
+      "value_v1": {
+        "from": "2019-10-01",
+        "to": "2026-09-30"
+      },
+      "value_effective_v2": {
+        "from": "2019-10-01",
+        "to": "2026-09-30"
+      },
+      "unit": null,
+      "source": {
+        "file": "tender/TDR-001/original/main_rfp.pdf",
+        "page": 7,
+        "span": "between 01-10-2019 and 30-09-2026"
+      }
+    },
+    {
+      "fact_id": "KF-24",
+      "name": "similar_work_thresholds",
+      "value_v1": {
+        "a": "3 works >= Rs. 15.36 Cr each",
+        "b": "2 works >= Rs. 23.04 Cr each",
+        "c": "1 work >= Rs. 30.72 Cr"
+      },
+      "value_effective_v2": {
+        "a": "3 works >= Rs. 15.36 Cr each",
+        "b": "2 works >= Rs. 23.04 Cr each",
+        "c": "1 work >= Rs. 30.72 Cr"
+      },
+      "unit": null,
+      "normalized": {
+        "a": 15.36,
+        "b": 23.04,
+        "c": 30.72
+      }
+    },
+    {
+      "fact_id": "KF-25",
+      "name": "turnover_thresholds",
+      "value_v1": {
+        "general_avg_inr_cr": 55,
+        "mse_avg_inr_cr": 45,
+        "infra_services_avg_inr_cr": 20
+      },
+      "value_effective_v2": {
+        "general_avg_inr_cr": 55,
+        "mse_avg_inr_cr": 45,
+        "infra_services_avg_inr_cr": 20
+      },
+      "unit": null,
+      "value_c2_test_only": {
+        "general_avg_inr_cr": 55,
+        "mse_avg_inr_cr": null,
+        "infra_services_avg_inr_cr": 20
+      }
+    },
+    {
+      "fact_id": "KF-26",
+      "name": "certificate_validity_reference_date",
+      "value_v1": "bid submission end date (2026-11-06T15:00)",
+      "value_effective_v2": "bid submission end date as amended (2026-11-20T15:00)",
+      "unit": null,
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-27",
+      "name": "submission_mode",
+      "value_v1": "Online only on the eProcurement portal; three covers (PQ, technical, commercial)",
+      "value_effective_v2": "Online only; no physical submission of any document (EMD as e-BG/online)",
+      "unit": null,
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-28",
+      "name": "minimum_l2_network_engineers",
+      "value_v1": 6,
+      "value_effective_v2": 8,
+      "unit": null,
+      "changed_by": {
+        "file": "tender/TDR-001/original/corrigendum.pdf",
+        "page": 1
+      }
+    },
+    {
+      "fact_id": "KF-29",
+      "name": "corrigenda_issued",
+      "value_v1": [
+        "Corrigendum No. 1 dated 2026-10-21"
+      ],
+      "value_effective_v2": [
+        "Corrigendum No. 1 dated 2026-10-21"
+      ],
+      "unit": null,
+      "value_c2_test_only": [
+        "Corrigendum No. 1 dated 2026-10-21",
+        "Corrigendum No. 2 dated 2026-11-12 (test fixture)"
+      ]
+    }
+  ]
+}

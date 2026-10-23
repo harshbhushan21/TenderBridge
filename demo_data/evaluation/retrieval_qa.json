@@ -1,0 +1,593 @@
+{
+  "metrics": "recall@k (k=6 parent sections) and MRR over 'relevant'; a hit = same file and page",
+  "scope_rule": "tender questions must retrieve only from the tender index; company questions only from the company index",
+  "items": [
+    {
+      "qa_id": "QA-01",
+      "scope": "tender",
+      "question": "What is the last date for bid submission after the corrigendum?",
+      "expected_answer": "20-11-2026 at 15:00 hrs (extended from 06-11-2026).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-001",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 1",
+          "span": "Last date and time for online bid submission: 20-11-2026 at 15:00 hrs"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-02",
+      "scope": "tender",
+      "question": "How much is the EMD and who is exempt?",
+      "expected_answer": "Rs. 76,80,000; MSEs registered on Udyam for the services are exempt.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-ELG-012",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 5,
+          "section": "2.10 EMD",
+          "span": "The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as a Bank Guarantee or e-Bank Guarantee from a scheduled commercial bank, or by online transfer, valid for 45 days beyond the bid validity period."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-03",
+      "scope": "tender",
+      "question": "What turnover is required for an MSE bidder?",
+      "expected_answer": "Average Rs. 45 Crore over FY 2022-23 to 2024-25 (Rs. 55 Crore for others).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-ELG-003",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 7,
+          "section": "3 PQ table, PQ-02",
+          "span": "average annual turnover of not less than Rs. 55 Crore"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-04",
+      "scope": "tender",
+      "question": "Which projects count as similar work?",
+      "expected_answer": "O&M/FMS of a DC or DR site of >= 20 racks, or a 24x7 NOC, for Government, PSU, autonomous body, ULB or Scheduled Commercial Bank in India.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-ELG-007",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 8,
+          "section": "3.3 Notes to PQ",
+          "span": "\"Similar work\" means Operation & Maintenance or Facility Management Services of a Data Centre or Disaster Recovery site of at least 20 racks, or of a 24x7 Network Operations Centre, executed for a Central or State Government Department, Public Sector Undertaking, Government autonomous body, Urban Local Body or Scheduled Commercial Bank in India."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-05",
+      "scope": "tender",
+      "question": "What are the similar-work value thresholds?",
+      "expected_answer": "3 works >= Rs. 15.36 Cr, or 2 >= Rs. 23.04 Cr, or 1 >= Rs. 30.72 Cr, completed 01-10-2019 to 30-09-2026.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-ELG-006",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 7,
+          "section": "3 PQ table, PQ-05",
+          "span": "three similar completed works, each costing not less than 40% of the estimated cost"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-06",
+      "scope": "tender",
+      "question": "On what date must certificates be valid?",
+      "expected_answer": "On the bid submission end date as amended by the corrigendum (20-11-2026).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-006",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 6",
+          "span": "Certificates issued under ISO/IEC 27001:2013 shall not be accepted. All certificates shall be valid as on the bid submission end date as amended by this corrigendum."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-07",
+      "scope": "tender",
+      "question": "Is ISO/IEC 27001:2013 accepted?",
+      "expected_answer": "No.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-006",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 6",
+          "span": "Certificates issued under ISO/IEC 27001:2013 shall not be accepted. All certificates shall be valid as on the bid submission end date as amended by this corrigendum."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-08",
+      "scope": "tender",
+      "question": "How is consortium experience valued after the corrigendum?",
+      "expected_answer": "Only the bidder's share certified by the client; consortium agreements or self-certificates are not accepted.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-005",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 5",
+          "span": "only the Bidder's share of the work, as certified by the client"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-09",
+      "scope": "tender",
+      "question": "What is the RPO and RTO for Category A applications?",
+      "expected_answer": "RPO <= 15 minutes, RTO <= 4 hours.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-TEC-006",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 13,
+          "section": "6.5 Backup and DR",
+          "span": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-10",
+      "scope": "tender",
+      "question": "How often are DR drills required?",
+      "expected_answer": "Every quarter, with one full switchover per year; report within 7 days.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-TEC-007",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 13,
+          "section": "6.5 Backup and DR",
+          "span": "The MSP shall conduct a DR drill every quarter, including at least one full switchover of all Category A applications to the DR Site every year, and shall submit a drill report within 7 days."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-11",
+      "scope": "tender",
+      "question": "What is the SLA penalty cap now?",
+      "expected_answer": "10% of QGR per quarter (reduced from 15%).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-007",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 7",
+          "span": "capped at 10% of the QGR for that quarter"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-12",
+      "scope": "tender",
+      "question": "What is the PBG percentage?",
+      "expected_answer": "3% of total contract value (reduced from 5%).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-004",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 4",
+          "span": "Performance Bank Guarantee of 3% of the total contract value"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-13",
+      "scope": "tender",
+      "question": "What is the limitation of liability?",
+      "expected_answer": "Capped at total contract value, but unlimited for gross negligence/wilful misconduct, data protection breach and IP indemnity.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-LEG-001",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 17,
+          "section": "8.6 Limitation of Liability",
+          "span": "the liability of the MSP shall be unlimited"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-14",
+      "scope": "tender",
+      "question": "What qualifications does the Project Manager need?",
+      "expected_answer": "B.E./B.Tech/MCA, 15+ years IT incl. 8+ years DC/infra O&M, valid PMP or PRINCE2 Practitioner.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-PER-001",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 9,
+          "section": "4.3 Key Personnel table",
+          "span": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-15",
+      "scope": "tender",
+      "question": "Can a key person with an expired certification be proposed?",
+      "expected_answer": "No; certifications must be valid on the bid submission end date.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-PER-008",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 9,
+          "section": "4.2 Key Personnel",
+          "span": "Professional certifications claimed for key personnel shall be valid as on the bid submission end date, and copies shall be enclosed with the CV in Format T-2."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-16",
+      "scope": "tender",
+      "question": "How many L2 network engineers must be deployed?",
+      "expected_answer": "8 (increased from 6 by Corrigendum No. 1).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-011",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 1,
+          "section": "Corrigendum 1, Part A, item 11",
+          "span": "L2 Network Engineer (DSDC / NOC): minimum 8, 24x7"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-17",
+      "scope": "tender",
+      "question": "What is the page limit for the technical proposal?",
+      "expected_answer": "40 A4 pages, font >= 10 pt, excluding CVs and formats.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-SUB-007",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 5,
+          "section": "2.8 Documents Comprising the Bid",
+          "span": "The technical proposal (Format T-1, approach and methodology) shall not exceed 40 pages of A4 size, using a font size of not less than 10 points, excluding CVs and formats."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-18",
+      "scope": "tender",
+      "question": "What new declaration did the corrigendum add?",
+      "expected_answer": "Self-declaration of compliance with CERT-In Directions (6-hour reporting).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-COR-012",
+          "file": "tender/TDR-001/original/corrigendum.pdf",
+          "page": 2,
+          "section": "Corrigendum 1, Part A, item 12",
+          "span": "self-declaration of compliance with the CERT-In Directions"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-19",
+      "scope": "tender",
+      "question": "How must the Power of Attorney be executed?",
+      "expected_answer": "On Rs. 100 non-judicial stamp paper, notarised (scanned page; needs OCR).",
+      "relevant": [
+        {
+          "requirement_id": "REQ-SUB-014",
+          "file": "tender/TDR-001/original/annexures.pdf",
+          "page": 12,
+          "section": "Format PQ-10 (scanned page)",
+          "span": "The Power of Attorney shall be executed on non-judicial stamp paper of Rs. 100/- and shall be duly notarised.",
+          "ocr_required": true
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-20",
+      "scope": "tender",
+      "question": "What is the minimum technical score?",
+      "expected_answer": "70 out of 100.",
+      "relevant": [
+        {
+          "requirement_id": "REQ-EVL-001",
+          "file": "tender/TDR-001/original/main_rfp.pdf",
+          "page": 9,
+          "section": "4.1 Technical Evaluation",
+          "span": "A bidder must score at least 70 marks out of 100 in the technical evaluation to qualify for opening of its commercial bid."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-21",
+      "scope": "company",
+      "question": "What is Nimbus's average turnover for the last three years?",
+      "expected_answer": "Rs. 52.00 crore.",
+      "relevant": [
+        {
+          "doc_id": "KB-FIN-CA",
+          "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+          "page": 1,
+          "span": "The average annual turnover from IT/ITeS services for the three financial years is ₹52.00 crore"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-22",
+      "scope": "company",
+      "question": "What was Nimbus's revenue in FY 2024-25?",
+      "expected_answer": "Rs. 5,800.00 lakh (Rs. 58.00 crore).",
+      "relevant": [
+        {
+          "doc_id": "KB-FIN-2024-25",
+          "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+          "page": 2,
+          "span": "During the financial year 2024-25, the Company's revenue from operations was ₹5,800.00 lakh"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-23",
+      "scope": "company",
+      "question": "What is Nimbus's average infrastructure services turnover?",
+      "expected_answer": "Rs. 27.27 crore.",
+      "relevant": [
+        {
+          "doc_id": "KB-FIN-CA",
+          "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+          "page": 1,
+          "span": "The average annual turnover from data centre, network and managed IT infrastructure services for the same years is ₹27.27 crore"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-24",
+      "scope": "company",
+      "question": "When does Nimbus's ISO/IEC 27001 certificate expire?",
+      "expected_answer": "10 November 2026.",
+      "relevant": [
+        {
+          "doc_id": "KB-CERT-002",
+          "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+          "page": 1,
+          "span": "Valid until: 10 November 2026"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-25",
+      "scope": "company",
+      "question": "When is the ISO 27001 recertification audit?",
+      "expected_answer": "16 to 18 November 2026.",
+      "relevant": [
+        {
+          "doc_id": "KB-CERT-002",
+          "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+          "page": 1,
+          "span": "Scheduled 16 to 18 November 2026"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-26",
+      "scope": "company",
+      "question": "What CMMI level does Nimbus hold?",
+      "expected_answer": "Maturity Level 3 (Services); no Level 4 or 5 appraisal.",
+      "relevant": [
+        {
+          "doc_id": "KB-CERT-003",
+          "file": "company_kb/03_certifications/cmmi_ml3_appraisal_mock_record.pdf",
+          "page": 1,
+          "span": "Maturity level achieved: Maturity Level 3. No Level 4 or Level 5 appraisal has been performed."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-27",
+      "scope": "company",
+      "question": "Does Nimbus hold ISO/IEC 20000-1?",
+      "expected_answer": "No.",
+      "relevant": [
+        {
+          "doc_id": "KB-CERT-004",
+          "file": "company_kb/03_certifications/certification_register.pdf",
+          "page": 1,
+          "span": "ISO/IEC 20000-1:2018 is not held by Nimbus."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-28",
+      "scope": "company",
+      "question": "Is Nimbus an MSE?",
+      "expected_answer": "Yes, Udyam-registered Small enterprise (2025-26).",
+      "relevant": [
+        {
+          "doc_id": "KB-REG-004",
+          "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+          "page": 1,
+          "span": "Type of enterprise: Small (classification year 2025-26)"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-29",
+      "scope": "company",
+      "question": "What was the value of the Konkan State Data Centre project?",
+      "expected_answer": "Rs. 24.60 crore.",
+      "relevant": [
+        {
+          "doc_id": "KB-CC-001",
+          "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+          "page": 1,
+          "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-30",
+      "scope": "company",
+      "question": "How many racks did the Sahyadri bank DR site have?",
+      "expected_answer": "28 racks.",
+      "relevant": [
+        {
+          "doc_id": "KB-CC-002",
+          "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+          "page": 1,
+          "span": "The data centre covered under the contract has 28 racks"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-31",
+      "scope": "company",
+      "question": "Does the Vindhya SWAN completion certificate state Nimbus's share?",
+      "expected_answer": "No; it states the total value Rs. 38.00 crore and is issued to the lead member.",
+      "relevant": [
+        {
+          "doc_id": "KB-CC-004",
+          "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+          "page": 1,
+          "span": "The total value of the contract executed by the consortium is ₹38.00 crore (including taxes)"
+        },
+        {
+          "doc_id": "KB-CC-004",
+          "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+          "page": 1,
+          "span": "This certificate is issued to the lead member of the consortium at its request."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-32",
+      "scope": "company",
+      "question": "Which security lead has a valid certification?",
+      "expected_answer": "NDS-E110 (CISSP valid to 31-01-2028); NDS-E105's CISM expired 30-06-2026.",
+      "relevant": [
+        {
+          "doc_id": "KB-HR-001",
+          "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+          "page": 1,
+          "span": "NDS-E105 Imran Qureshi: CISM expired on 30 June 2026; renewal not yet applied for"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-33",
+      "scope": "company",
+      "question": "How many technically qualified staff does Nimbus have?",
+      "expected_answer": "236 as on 30-09-2026 (420 employees in total).",
+      "relevant": [
+        {
+          "doc_id": "KB-REG-006",
+          "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+          "page": 1,
+          "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-34",
+      "scope": "company",
+      "question": "Does Nimbus have an office in Deccan State?",
+      "expected_answer": "No; it may undertake to set one up within 60 days of award.",
+      "relevant": [
+        {
+          "doc_id": "KB-CO-001",
+          "file": "company_kb/01_company/company_profile.pdf",
+          "page": 3,
+          "span": "Nimbus does not currently have an office in Deccan State."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-35",
+      "scope": "company",
+      "question": "What is Nimbus's standard position on uncapped liability?",
+      "expected_answer": "Not accepted by default; Legal escalation and CEO decision.",
+      "relevant": [
+        {
+          "doc_id": "KB-LEG-001",
+          "file": "company_kb/08_legal_commercial/bid_risk_policy.pdf",
+          "page": 1,
+          "span": "Standard position: Not accepted by default."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-36",
+      "scope": "company",
+      "question": "What PBG does Nimbus accept without CFO approval?",
+      "expected_answer": "Up to 3% of contract value.",
+      "relevant": [
+        {
+          "doc_id": "KB-LEG-001",
+          "file": "company_kb/08_legal_commercial/bid_risk_policy.pdf",
+          "page": 1,
+          "span": "Standard position: Up to 3% of contract value accepted as standard."
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-37",
+      "scope": "company",
+      "question": "How fast does Nimbus apply critical patches?",
+      "expected_answer": "Within 14 days by default, or a shorter period if the contract requires it.",
+      "relevant": [
+        {
+          "doc_id": "KB-POL-001",
+          "file": "company_kb/07_policies/information_security_policy.pdf",
+          "page": 1,
+          "span": "Critical security patches are applied within 14 days of release, and high-severity patches within 30 days, unless the client contract sets a shorter period"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-38",
+      "scope": "company",
+      "question": "What does Nimbus's transition methodology include?",
+      "expected_answer": "Inventory verification, knowledge capture, >= 30 days shadowing, >= 15 days reverse shadowing, readiness review.",
+      "relevant": [
+        {
+          "doc_id": "KB-POL-005",
+          "file": "company_kb/07_policies/service_delivery_change_methodology.docx",
+          "page": null,
+          "span": "Transition includes inventory verification, knowledge capture, at least 30 days of shadowing and at least 15 days of reverse shadowing, followed by a readiness review with the client"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-39",
+      "scope": "company",
+      "question": "Within how many hours does Nimbus report incidents to CERT-In?",
+      "expected_answer": "6 hours.",
+      "relevant": [
+        {
+          "doc_id": "KB-POL-001",
+          "file": "company_kb/07_policies/information_security_policy.pdf",
+          "page": 1,
+          "span": "Cyber security incidents covered by the CERT-In Directions of 28 April 2022 are reported to CERT-In within 6 hours of being noticed"
+        }
+      ]
+    },
+    {
+      "qa_id": "QA-40",
+      "scope": "company",
+      "question": "Does Nimbus have a bid-specific MAF from OpsCentral?",
+      "expected_answer": "No; only a general 2026 partnership letter.",
+      "relevant": [
+        {
+          "doc_id": "KB-REG-008",
+          "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+          "page": 1,
+          "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+        }
+      ]
+    }
+  ]
+}

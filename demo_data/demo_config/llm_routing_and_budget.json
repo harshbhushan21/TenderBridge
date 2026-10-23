@@ -1,0 +1,92 @@
+{
+  "source": "TenderBridge_LLM_Implementation_Plan.md (quotas transcribed from account screenshots; verify model IDs with models.list before use)",
+  "routing": {
+    "shred_requirements": {
+      "primary": "groq/openai/gpt-oss-20b",
+      "fallback": "gemini-2.5-flash",
+      "batch": "2-3 short sections per call; tables intact"
+    },
+    "extract_key_facts": {
+      "primary": "groq/openai/gpt-oss-20b"
+    },
+    "reconcile_corrigenda": {
+      "primary": "groq/openai/gpt-oss-20b",
+      "deterministic": "date/amount diff in code"
+    },
+    "route_requirements": {
+      "primary": "keyword rules",
+      "fallback": "groq/openai/gpt-oss-20b (10-15 items per call)"
+    },
+    "similar_work_judge": {
+      "primary": "groq/openai/gpt-oss-120b",
+      "input": "exact tender definition + 2-4 project passages"
+    },
+    "technical_grading": {
+      "primary": "groq/openai/gpt-oss-120b"
+    },
+    "legal_interpretation": {
+      "primary": "groq/openai/gpt-oss-120b",
+      "plus": "risk_positions.json compare in code"
+    },
+    "plan_response": {
+      "primary": "gemini-3-flash"
+    },
+    "write_sections": {
+      "primary": "gemini-3-flash",
+      "fallback": "groq/openai/gpt-oss-120b"
+    },
+    "verify_claims": {
+      "exact": "code (facts tables)",
+      "semantic": "groq/openai/gpt-oss-120b"
+    },
+    "injection_screen": {
+      "primary": "groq/meta-llama/llama-prompt-guard-2-86m",
+      "plus": "hidden-text heuristics"
+    },
+    "no_llm": [
+      "arithmetic",
+      "date comparisons",
+      "hard gates",
+      "weighted score",
+      "citation ID validity",
+      "exports"
+    ]
+  },
+  "limits_per_model_from_plan": {
+    "groq/openai/gpt-oss-20b": {
+      "rpm": 30,
+      "rpd": 1000,
+      "tpm": 8000,
+      "tpd": 200000
+    },
+    "groq/openai/gpt-oss-120b": {
+      "rpm": 30,
+      "rpd": 1000,
+      "tpm": 8000,
+      "tpd": 200000
+    },
+    "groq/meta-llama/llama-prompt-guard-2-86m": {
+      "rpm": 30,
+      "rpd": 14400,
+      "tpm": 15000,
+      "tpd": 500000
+    },
+    "gemini-3-flash": {
+      "rpm": 5,
+      "rpd": 20,
+      "tpm": 250000
+    }
+  },
+  "tender_size_for_planning": {
+    "main_rfp_pages": 19,
+    "annexure_pages": 27,
+    "corrigendum_pages": 3,
+    "approx_words_main_rfp": 8022,
+    "live_subset_sections": "see tender_sections.json live_subset=true",
+    "gold_requirements": 105
+  },
+  "per_case_reserve": {
+    "gemini_3_flash_calls": "2 per drafting case (plan + write) + 1 rewrite; keep >= 5 unused on demo day"
+  },
+  "realism_vs_quota_note": "The pack favours realism (50+ tender pages, 52 KB documents). For the live run, process the live_subset sections and the live_subset KB docs; run full-pack evals offline before the demo and cache them."
+}

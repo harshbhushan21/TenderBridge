@@ -1,0 +1,70 @@
+{
+  "checks": [
+    {
+      "check": "requirements_gold: every span found on its stated page (scanned item must NOT be text-extractable)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "evidence spans found on stated pages (284 checked)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "structured_facts/financials.csv: spans on stated pages",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "structured_facts/certifications.csv: spans on stated pages",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "average revenue = 52.00",
+      "ok": true,
+      "detail": "52.0"
+    },
+    {
+      "check": "average infra revenue >= 20",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "tender manifest hashes match",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "company manifest hashes match (52 docs)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "every PDF page carries a SIMULATED/SYNTHETIC label",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "old product name never appears",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "all evidence files referenced exist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "ISO/IEC 27001 expiry falls between original and amended deadline",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "checks": 12,
+    "passed": 12,
+    "failed": 0
+  }
+}

@@ -1,0 +1,2703 @@
+{
+  "tender_id": "TDR-001",
+  "label_method": "Hand-designed with the tender text; each label's text is the exact string rendered into the PDF, and pages were located in the rendered PDFs by the generator. Labels are independent of any model output.",
+  "counts": {
+    "total": 105,
+    "mandatory": 96,
+    "optional": 9,
+    "live_subset": 42,
+    "live_subset_mandatory": 40,
+    "in_tables": 39,
+    "scanned_image": 1,
+    "from_corrigendum": 12
+  },
+  "metrics": {
+    "mandatory_recall": "matched mandatory gold items / all mandatory gold items in scope (target >= 0.95, a target not a result)",
+    "precision": "extracted items matching a gold item / all extracted items",
+    "matching_rule": "An extracted requirement matches a gold item if it is on the same page (+/-1) and token-level F1 with the gold text >= 0.6, or it contains the locate_span (case-insensitive, whitespace-normalised).",
+    "mandatory_classification_accuracy": "share of matched items whose mandatory flag equals gold",
+    "scope_note": "For the live run, evaluate on live_subset only and call it a focused live analysis, not full-tender coverage."
+  },
+  "enums": {
+    "category": [
+      "certification",
+      "commercial",
+      "eligibility",
+      "evaluation",
+      "experience",
+      "format",
+      "legal",
+      "personnel",
+      "sla",
+      "submission",
+      "technical"
+    ],
+    "location_type": [
+      "paragraph",
+      "scanned_image",
+      "table"
+    ],
+    "requirement_type": [
+      "added_clause",
+      "advisory",
+      "buried_in_table",
+      "clarification",
+      "complex_and_or_rule",
+      "complex_or_rule",
+      "compliance",
+      "conditional_obligation",
+      "continuing_obligation",
+      "declaration",
+      "definition",
+      "document",
+      "evaluation_rule",
+      "exclusion_rule",
+      "key_date",
+      "key_fact",
+      "obligation",
+      "optional",
+      "or_undertaking",
+      "page_limit",
+      "penalty",
+      "precedence_rule",
+      "preferred_scoring",
+      "quantitative_threshold",
+      "quantity",
+      "relaxation",
+      "removed_clause",
+      "risk_clause",
+      "scoring_rule",
+      "structure",
+      "validity_rule"
+    ]
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-COM-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.9 Bid Prices",
+      "text": "Prices quoted shall remain firm and fixed for the entire contract period of five years and shall not be subject to any price variation, including on account of changes in minimum wages or exchange rates.",
+      "locate_span": "Prices quoted shall remain firm and fixed for the entire contract period of five years and shall not be subject to any p",
+      "location_type": "paragraph",
+      "category": "commercial",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COM-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 6,
+      "section": "2.17 Award",
+      "text": "Within 15 days of the LoA, the successful bidder shall furnish the Performance Bank Guarantee and sign the contract.",
+      "locate_span": "Within 15 days of the LoA, the successful bidder shall furnish the Performance Bank Guarantee and sign the contract.",
+      "location_type": "paragraph",
+      "category": "commercial",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COM-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 11,
+      "section": "5 Commercial Evaluation",
+      "text": "If the evaluated bid price of the successful bidder is more than 20% below the estimated cost, DSEDC may seek a detailed justification and an additional performance security of up to 5% of the contract value.",
+      "locate_span": "If the evaluated bid price of the successful bidder is more than 20% below the estimated cost, DSEDC may seek a detailed",
+      "location_type": "paragraph",
+      "category": "commercial",
+      "requirement_type": "conditional_obligation",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COM-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 17,
+      "section": "8.3 PBG",
+      "text": "The MSP shall furnish a Performance Bank Guarantee of 5% of the total contract value from a scheduled commercial bank, valid for 60 days beyond the end of the contract period, within 15 days of the Letter of Award.",
+      "locate_span": "The MSP shall furnish a Performance Bank Guarantee of 5% of the total contract value from a scheduled commercial bank, v",
+      "location_type": "paragraph",
+      "category": "commercial",
+      "requirement_type": "key_fact",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-004",
+      "live_subset": true,
+      "structured_rule": {
+        "field": "pbg_pct",
+        "value": 5,
+        "compare_to_policy": "risk_positions.performance_guarantee (3%)"
+      },
+      "notes": "Reduced to 3% by Corrigendum No. 1, item 4."
+    },
+    {
+      "requirement_id": "REQ-COM-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 17,
+      "section": "8.4 Payment Terms",
+      "text": "Payment of the QGR shall be made quarterly in arrears, within 60 days of receipt of a correct invoice together with the SLA report verified by DSEDC or its TPA, after deduction of applicable penalties.",
+      "locate_span": "Payment of the QGR shall be made quarterly in arrears, within 60 days of receipt of a correct invoice together with the ",
+      "location_type": "paragraph",
+      "category": "commercial",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-009",
+      "live_subset": true,
+      "structured_rule": {
+        "field": "payment_days",
+        "value": 60,
+        "compare_to_policy": "risk_positions.payment_terms (45 days)"
+      },
+      "notes": "Reduced to 45 days by Corrigendum No. 1, item 9."
+    },
+    {
+      "requirement_id": "REQ-COM-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 17,
+      "section": "8.5 Liquidated Damages",
+      "text": "If the MSP fails to complete takeover within the period in Clause 6.3.1, DSEDC shall levy liquidated damages of 0.5% of the annual contract value per week of delay or part thereof, subject to a maximum of 10% of the annual contract value.",
+      "locate_span": "If the MSP fails to complete takeover within the period in Clause 6.3.1, DSEDC shall levy liquidated damages of 0.5% of ",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-000",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1 preamble",
+      "text": "This corrigendum forms an integral part of the RFP and shall prevail over the corresponding provisions of the RFP.",
+      "locate_span": "This corrigendum forms an integral part of the RFP and shall prevail over the corresponding provisions of the RFP.",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "precedence_rule",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-001",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 1",
+      "text": "Last date and time for online bid submission: 20-11-2026 at 15:00 hrs",
+      "locate_span": "Last date and time for online bid submission: 20-11-2026 at 15:00 hrs",
+      "location_type": "table",
+      "category": "submission",
+      "requirement_type": "key_date",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "supersedes": "REQ-KF-001",
+        "field": "bid_submission_end",
+        "old": "2026-11-06T15:00",
+        "new": "2026-11-20T15:00"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-002",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 2",
+      "text": "Opening of PQ and technical bids: 23-11-2026 at 11:00 hrs",
+      "locate_span": "Opening of PQ and technical bids: 23-11-2026 at 11:00 hrs",
+      "location_type": "table",
+      "category": "submission",
+      "requirement_type": "key_date",
+      "mandatory": false,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "field": "tech_bid_opening",
+        "old": "2026-11-09T11:00",
+        "new": "2026-11-23T11:00"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-004",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 4",
+      "text": "The MSP shall furnish a Performance Bank Guarantee of 3% of the total contract value, valid for 60 days beyond the end of the contract period, within 15 days of the Letter of Award.",
+      "locate_span": "Performance Bank Guarantee of 3% of the total contract value",
+      "location_type": "table",
+      "category": "commercial",
+      "requirement_type": "key_fact",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "supersedes": "REQ-COM-004",
+        "field": "pbg_pct",
+        "old": 5,
+        "new": 3
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-005",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 5",
+      "text": "Where the work was executed as a member of a consortium, only the Bidder's share of the work, as certified by the client in the completion certificate or a separate client certificate, shall be considered. A consortium agreement or a self-certificate of the Bidder shall not be accepted as proof of share.",
+      "locate_span": "only the Bidder's share of the work, as certified by the client",
+      "location_type": "table",
+      "category": "experience",
+      "requirement_type": "definition",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "supersedes": "REQ-ELG-008",
+        "evidence_required": "client-certified share",
+        "rejects": [
+          "consortium agreement",
+          "bidder self-certificate"
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-006",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 6",
+      "text": "Certificates issued under ISO/IEC 27001:2013 shall not be accepted. All certificates shall be valid as on the bid submission end date as amended by this corrigendum.",
+      "locate_span": "Certificates issued under ISO/IEC 27001:2013 shall not be accepted. All certificates shall be valid as on the bid submis",
+      "location_type": "table",
+      "category": "certification",
+      "requirement_type": "validity_rule",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "reaffirms": "REQ-ELG-009",
+        "valid_on": "2026-11-20T15:00",
+        "reject_versions": [
+          "ISO/IEC 27001:2013"
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-007",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 7",
+      "text": "The total SLA penalty in a quarter shall be capped at 10% of the QGR for that quarter. If the penalty reaches the cap in two consecutive quarters, DSEDC may terminate the contract for default.",
+      "locate_span": "capped at 10% of the QGR for that quarter",
+      "location_type": "table",
+      "category": "legal",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "supersedes": "REQ-SLA-005",
+        "field": "sla_penalty_cap_pct_of_qgr",
+        "old": 15,
+        "new": 10
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-008",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 8",
+      "text": "Deleted. EMD shall be submitted only as an e-Bank Guarantee or by online transfer. Physical submission of any document is not required.",
+      "locate_span": "Deleted. EMD shall be submitted only as an e-Bank Guarantee or by online transfer. Physical submission of any document i",
+      "location_type": "table",
+      "category": "submission",
+      "requirement_type": "removed_clause",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "removes": "REQ-SUB-008"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-009",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 9",
+      "text": "Payment of the QGR shall be made quarterly in arrears, within 45 days of receipt of a correct invoice together with the SLA report verified by DSEDC or its TPA.",
+      "locate_span": "within 45 days of receipt of a correct invoice",
+      "location_type": "table",
+      "category": "commercial",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "supersedes": "REQ-COM-005",
+        "field": "payment_days",
+        "old": 60,
+        "new": 45
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-011",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 1,
+      "section": "Corrigendum 1, Part A, item 11",
+      "text": "L2 Network Engineer (DSDC / NOC): minimum 8, 24x7",
+      "locate_span": "L2 Network Engineer (DSDC / NOC): minimum 8, 24x7",
+      "location_type": "table",
+      "category": "technical",
+      "requirement_type": "quantity",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "supersedes": "REQ-TEC-015",
+        "field": "min_l2_network_engineers",
+        "old": 6,
+        "new": 8
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-012",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 2,
+      "section": "Corrigendum 1, Part A, item 12",
+      "text": "New clause 9.1A: The Bidder shall submit, with the technical bid, a self-declaration of compliance with the CERT-In Directions No. 20(3)/2022-CERT-In dated 28-04-2022, including reporting of cyber incidents to CERT-In within 6 hours of noticing them.",
+      "locate_span": "self-declaration of compliance with the CERT-In Directions",
+      "location_type": "table",
+      "category": "legal",
+      "requirement_type": "added_clause",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "adds": true,
+        "field": "submission.certin_declaration",
+        "operator": "==",
+        "threshold": true
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-COR-013",
+      "source_file": "tender/TDR-001/original/corrigendum.pdf",
+      "page": 2,
+      "section": "Corrigendum 1, Part B, query 9",
+      "text": "Not accepted. The certificate shall be valid as on the bid submission end date. Audit completion letters shall not be accepted.",
+      "locate_span": "Not accepted. The certificate shall be valid as on the bid submission end date. Audit completion letters shall not be ac",
+      "location_type": "table",
+      "category": "certification",
+      "requirement_type": "clarification",
+      "mandatory": true,
+      "introduced_in": "v2",
+      "effective_in": [
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": "Closes the 'recertification audit in progress' mitigation for Nimbus's ISO/IEC 27001 gap."
+    },
+    {
+      "requirement_id": "REQ-ELG-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-01",
+      "text": "The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall have been in existence and operation in India for at least five (5) years as on the bid submission end date.",
+      "locate_span": "The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall ha",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "field": "company.incorporation_date",
+        "operator": "years_before",
+        "threshold": 5,
+        "reference_date": "effective.bid_submission_end"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 4,
+      "section": "2.1 Eligible Bidders",
+      "text": "Bids from a consortium or joint venture shall not be accepted. The Bidder shall be a single legal entity and shall be solely responsible for the delivery of all services under this RFP.",
+      "locate_span": "Bids from a consortium or joint venture shall not be accepted. The Bidder shall be a single legal entity and shall be so",
+      "location_type": "paragraph",
+      "category": "eligibility",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-02",
+      "text": "The Bidder shall have an average annual turnover of not less than Rs. 55 Crore from IT/ITeS services during the last three audited financial years, i.e. 2022-23, 2023-24 and 2024-25. For Micro and Small Enterprises (MSEs) holding a valid Udyam Registration for IT services (NIC division 62 or 63) as on the bid submission end date, the average annual turnover requirement shall be Rs. 45 Crore.",
+      "locate_span": "average annual turnover of not less than Rs. 55 Crore",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "OR",
+        "branches": [
+          {
+            "id": "general",
+            "field": "financials.revenue_it_ites_inr_cr",
+            "aggregation": "mean",
+            "window": [
+              "2022-23",
+              "2023-24",
+              "2024-25"
+            ],
+            "operator": ">=",
+            "threshold": 55.0,
+            "unit": "INR crore"
+          },
+          {
+            "id": "mse_relaxation",
+            "condition": {
+              "field": "company.udyam_classification",
+              "operator": "in",
+              "threshold": [
+                "Micro",
+                "Small"
+              ],
+              "and_nic_division_in": [
+                "62",
+                "63"
+              ],
+              "valid_on": "effective.bid_submission_end"
+            },
+            "field": "financials.revenue_it_ites_inr_cr",
+            "aggregation": "mean",
+            "window": [
+              "2022-23",
+              "2023-24",
+              "2024-25"
+            ],
+            "operator": ">=",
+            "threshold": 45.0,
+            "unit": "INR crore"
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-03",
+      "text": "Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services during the same three financial years shall be not less than Rs. 20 Crore.",
+      "locate_span": "Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services d",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "field": "financials.revenue_infra_services_inr_cr",
+        "aggregation": "mean",
+        "window": [
+          "2022-23",
+          "2023-24",
+          "2024-25"
+        ],
+        "operator": ">=",
+        "threshold": 20.0,
+        "unit": "INR crore"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-04",
+      "text": "The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-25).",
+      "locate_span": "The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "field": "financials.net_worth_inr_cr",
+        "aggregation": "each",
+        "window": [
+          "2022-23",
+          "2023-24",
+          "2024-25"
+        ],
+        "operator": ">",
+        "threshold": 0
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-05",
+      "text": "The Bidder shall have successfully completed similar works during the last seven (7) years ending on the last day of the month previous to the one in which bids are invited, i.e. between 01-10-2019 and 30-09-2026, as under: (a) three similar completed works, each costing not less than 40% of the estimated cost, i.e. Rs. 15.36 Crore each; OR (b) two similar completed works, each costing not less than 60% of the estimated cost, i.e. Rs. 23.04 Crore each; OR (c) one similar completed work costing not less than 80% of the estimated cost, i.e. Rs. 30.72 Crore.",
+      "locate_span": "three similar completed works, each costing not less than 40% of the estimated cost",
+      "location_type": "table",
+      "category": "experience",
+      "requirement_type": "complex_or_rule",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "OR",
+        "window": {
+          "from": "2019-10-01",
+          "to": "2026-09-30",
+          "date_field": "end_date"
+        },
+        "filters": [
+          "completion_status == completed",
+          "similar_work == true (see REQ-ELG-007)",
+          "value = bidder's executed value (see REQ-ELG-008)"
+        ],
+        "branches": [
+          {
+            "id": "a",
+            "count_gte": 3,
+            "value_each_gte_inr_cr": 15.36
+          },
+          {
+            "id": "b",
+            "count_gte": 2,
+            "value_each_gte_inr_cr": 23.04
+          },
+          {
+            "id": "c",
+            "count_gte": 1,
+            "value_each_gte_inr_cr": 30.72
+          }
+        ],
+        "base": "estimated_cost_inr_cr = 38.40"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-007",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 8,
+      "section": "3.3 Notes to PQ",
+      "text": "\"Similar work\" means Operation & Maintenance or Facility Management Services of a Data Centre or Disaster Recovery site of at least 20 racks, or of a 24x7 Network Operations Centre, executed for a Central or State Government Department, Public Sector Undertaking, Government autonomous body, Urban Local Body or Scheduled Commercial Bank in India.",
+      "locate_span": "\"Similar work\" means Operation & Maintenance or Facility Management Services of a Data Centre or Disaster Recovery site ",
+      "location_type": "paragraph",
+      "category": "experience",
+      "requirement_type": "definition",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "project.scope_type",
+            "operator": "in",
+            "threshold": [
+              "DC O&M/FMS (racks >= 20)",
+              "DR site O&M/FMS (racks >= 20)",
+              "24x7 NOC O&M"
+            ]
+          },
+          {
+            "field": "project.client_type",
+            "operator": "in",
+            "threshold": [
+              "Central/State Govt department",
+              "PSU",
+              "Govt autonomous body",
+              "Urban Local Body",
+              "Scheduled Commercial Bank"
+            ]
+          },
+          {
+            "field": "project.country",
+            "operator": "==",
+            "threshold": "India"
+          }
+        ],
+        "judgement": "semantic match of scope needs LLM (GPT-OSS 120B) with citations; client type and racks via SQL"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-008",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 8,
+      "section": "3.3 Notes to PQ",
+      "text": "The cost of a work shall be the value of the work executed by the Bidder, including taxes, as stated in the completion certificate. Where the work was executed as a member of a consortium, the value of the work executed by the Bidder shall be considered.",
+      "locate_span": "The cost of a work shall be the value of the work executed by the Bidder, including taxes, as stated in the completion c",
+      "location_type": "paragraph",
+      "category": "experience",
+      "requirement_type": "definition",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-005",
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": "Clarified by Corrigendum No. 1, item 5: only the Bidder's share as certified by the client counts."
+    },
+    {
+      "requirement_id": "REQ-ELG-009",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-06",
+      "text": "The Bidder shall possess the following certifications, each valid as on the bid submission end date: (i) ISO 9001:2015; AND (ii) ISO/IEC 27001:2022 with scope covering data centre or IT infrastructure managed services; AND (iii) either CMMI Maturity Level 3 or above (DEV or SVC) OR ISO/IEC 20000-1:2018.",
+      "locate_span": "each valid as on the bid submission end date",
+      "location_type": "table",
+      "category": "certification",
+      "requirement_type": "complex_and_or_rule",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "valid_on": "effective.bid_submission_end",
+        "branches": [
+          {
+            "id": "i",
+            "cert": "ISO 9001:2015"
+          },
+          {
+            "id": "ii",
+            "cert": "ISO/IEC 27001:2022",
+            "scope_must_cover": [
+              "data centre",
+              "IT infrastructure managed services"
+            ]
+          },
+          {
+            "id": "iii",
+            "logic": "OR",
+            "options": [
+              {
+                "cert": "CMMI",
+                "level_gte": 3,
+                "model_in": [
+                  "DEV",
+                  "SVC"
+                ]
+              },
+              {
+                "cert": "ISO/IEC 20000-1:2018"
+              }
+            ]
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-010",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-07",
+      "text": "The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its payroll as on 30-09-2026.",
+      "locate_span": "The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "field": "company.tech_staff_on_payroll",
+        "as_on": "2026-09-30",
+        "operator": ">=",
+        "threshold": 150
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-011",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-08",
+      "text": "The Bidder shall have an operational office in Deccan State. If the Bidder does not have such an office, it shall submit an undertaking to establish an office in Navapur within 60 days of issue of the Letter of Award, in Format PQ-9.",
+      "locate_span": "The Bidder shall have an operational office in Deccan State. If the Bidder does not have such an office, it shall submit",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "or_undertaking",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "OR",
+        "branches": [
+          {
+            "field": "company.offices.state",
+            "operator": "contains",
+            "threshold": "Deccan State"
+          },
+          {
+            "field": "submission.format_PQ9_undertaking",
+            "operator": "==",
+            "threshold": true
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-012",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.10 EMD",
+      "text": "The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as a Bank Guarantee or e-Bank Guarantee from a scheduled commercial bank, or by online transfer, valid for 45 days beyond the bid validity period.",
+      "locate_span": "The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as",
+      "location_type": "paragraph",
+      "category": "commercial",
+      "requirement_type": "key_fact",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-013",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.10 EMD",
+      "text": "Micro and Small Enterprises (MSEs) registered on the Udyam portal for the services being procured are exempted from payment of tender fee and EMD, subject to submission of a valid Udyam Registration Certificate along with the bid. Traders and medium enterprises are not eligible for this exemption.",
+      "locate_span": "Micro and Small Enterprises (MSEs) registered on the Udyam portal for the services being procured are exempted from paym",
+      "location_type": "paragraph",
+      "category": "eligibility",
+      "requirement_type": "relaxation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "field": "company.udyam_classification",
+        "operator": "in",
+        "threshold": [
+          "Micro",
+          "Small"
+        ],
+        "and": [
+          {
+            "field": "company.udyam_nic_codes",
+            "operator": "intersects",
+            "threshold": [
+              "62",
+              "63"
+            ]
+          },
+          {
+            "field": "company.udyam_valid_on",
+            "operator": ">=",
+            "threshold": "effective.bid_submission_end"
+          }
+        ],
+        "effect": "EMD and tender fee waived"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-014",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-09",
+      "text": "The Bidder shall not be blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking as on the bid submission end date.",
+      "locate_span": "The Bidder shall not be blacklisted or debarred by any Ministry or Department of the Government of India, any State Gove",
+      "location_type": "table",
+      "category": "legal",
+      "requirement_type": "declaration",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-015",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-10",
+      "text": "The Bidder shall submit a bid-specific Manufacturer's Authorisation Form (MAF) from the OEM of the proposed EMS/NMS and ITSM tool, with an undertaking of back-to-back support for the contract period, in Format PQ-8.",
+      "locate_span": "The Bidder shall submit a bid-specific Manufacturer's Authorisation Form (MAF) from the OEM of the proposed EMS/NMS and ",
+      "location_type": "table",
+      "category": "eligibility",
+      "requirement_type": "document",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-016",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-11",
+      "text": "The Bidder shall comply with the restrictions under Rule 144(xi) of the General Financial Rules, 2017 on procurement from bidders from a country sharing a land border with India, and shall submit the certificate in Format PQ-7.",
+      "locate_span": "The Bidder shall comply with the restrictions under Rule 144(xi) of the General Financial Rules, 2017 on procurement fro",
+      "location_type": "table",
+      "category": "legal",
+      "requirement_type": "declaration",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-017",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 7,
+      "section": "3 PQ table, PQ-12",
+      "text": "The Bidder shall submit the EMD as per Clause 2.10, or a valid MSE exemption.",
+      "locate_span": "The Bidder shall submit the EMD as per Clause 2.10, or a valid MSE exemption.",
+      "location_type": "table",
+      "category": "commercial",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-ELG-018",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 8,
+      "section": "3.3 Notes to PQ",
+      "text": "Only completed works shall be considered. Ongoing works, works covering only Annual Maintenance Contract (AMC) of equipment, and in-house or captive works shall not be considered.",
+      "locate_span": "Only completed works shall be considered. Ongoing works, works covering only Annual Maintenance Contract (AMC) of equipm",
+      "location_type": "paragraph",
+      "category": "experience",
+      "requirement_type": "exclusion_rule",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-EVL-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.1 Technical Evaluation",
+      "text": "A bidder must score at least 70 marks out of 100 in the technical evaluation to qualify for opening of its commercial bid.",
+      "locate_span": "A bidder must score at least 70 marks out of 100 in the technical evaluation to qualify for opening of its commercial bi",
+      "location_type": "paragraph",
+      "category": "evaluation",
+      "requirement_type": "key_fact",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-EVL-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 11,
+      "section": "5 Commercial Evaluation",
+      "text": "The combined score shall be computed as: Combined Score = 0.70 x Tn + 0.30 x Fn, where Tn = (technical score of the bidder / highest technical score) x 100, and Fn = (lowest evaluated bid price / evaluated bid price of the bidder) x 100.",
+      "locate_span": "The combined score shall be computed as: Combined Score = 0.70 x Tn + 0.30 x Fn, where Tn = (technical score of the bidd",
+      "location_type": "paragraph",
+      "category": "evaluation",
+      "requirement_type": "key_fact",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-EVL-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 10,
+      "section": "4.3 Key Personnel",
+      "text": "A key personnel CV meeting the minimum qualification shall be awarded 60% of the marks for that role. The balance 40% shall be awarded as follows: 20% for the preferred qualification, and 20% for experience above the minimum at 4% per additional year, up to five years.",
+      "locate_span": "A key personnel CV meeting the minimum qualification shall be awarded 60% of the marks for that role. The balance 40% sh",
+      "location_type": "paragraph",
+      "category": "evaluation",
+      "requirement_type": "scoring_rule",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-KF-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 3,
+      "section": "1.3 Fact Sheet",
+      "text": "Last date and time for online bid submission: 06-11-2026 at 15:00 hrs",
+      "locate_span": "Last date and time for online bid submission: 06-11-2026 at 15:00 hrs",
+      "location_type": "table",
+      "category": "submission",
+      "requirement_type": "key_date",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-001",
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-KF-002",
+      "source_file": "tender/TDR-001/original/notice.pdf",
+      "page": 1,
+      "section": "NIT table",
+      "text": "Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only)",
+      "locate_span": "Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only)",
+      "location_type": "table",
+      "category": "commercial",
+      "requirement_type": "key_fact",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 17,
+      "section": "8.6 Limitation of Liability",
+      "text": "Save for the exceptions below, the aggregate liability of the MSP under or in connection with this Contract shall not exceed the total contract value. The above limitation shall not apply to, and the liability of the MSP shall be unlimited for: (a) damages arising from gross negligence or wilful misconduct; (b) any breach of data protection or confidentiality obligations, including any data breach attributable to the MSP; and (c) indemnity for infringement of third-party intellectual property rights.",
+      "locate_span": "the liability of the MSP shall be unlimited",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "cap": "1x total contract value",
+        "uncapped_carve_outs": [
+          "gross negligence / wilful misconduct",
+          "data protection / confidentiality breach",
+          "IP infringement indemnity"
+        ],
+        "compare_to_policy": [
+          "risk_positions.limitation_of_liability",
+          "risk_positions.unlimited_liability"
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 17,
+      "section": "8.8 Intellectual Property",
+      "text": "All deliverables, configurations, scripts, runbooks, documentation and other work products created under this Contract shall be the exclusive property of DSEDC. The MSP shall grant DSEDC a perpetual, irrevocable, royalty-free licence to use any pre-existing tools or materials of the MSP embedded in the deliverables.",
+      "locate_span": "All deliverables, configurations, scripts, runbooks, documentation and other work products created under this Contract s",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "compare_to_policy": "risk_positions.ip_ownership"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 18,
+      "section": "8.9 Data Protection",
+      "text": "The MSP shall comply with the Digital Personal Data Protection Act, 2023, the Information Technology Act, 2000 and the rules and directions issued under them, and shall process personal data only on the documented instructions of DSEDC.",
+      "locate_span": "The MSP shall comply with the Digital Personal Data Protection Act, 2023, the Information Technology Act, 2000 and the r",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 18,
+      "section": "8.11 Subcontracting",
+      "text": "The MSP shall not subcontract any part of the services without the prior written approval of DSEDC. Key personnel roles and 24x7 operations staff shall not be subcontracted.",
+      "locate_span": "The MSP shall not subcontract any part of the services without the prior written approval of DSEDC. Key personnel roles ",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "compare_to_policy": "risk_positions.subcontracting"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 18,
+      "section": "8.12 Termination",
+      "text": "DSEDC may terminate the contract, in whole or in part, for its convenience by giving the MSP 60 days' written notice. The MSP shall be paid for services rendered up to the date of termination.",
+      "locate_span": "DSEDC may terminate the contract, in whole or in part, for its convenience by giving the MSP 60 days' written notice. Th",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "field": "termination_convenience_notice_days",
+        "value": 60,
+        "compare_to_policy": "risk_positions.termination_for_convenience (>= 90 days)"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 19,
+      "section": "9 SCC",
+      "text": "The MSP shall report cyber security incidents to CERT-In and to DSEDC as required by the directions issued by CERT-In under Section 70B of the Information Technology Act, 2000.",
+      "locate_span": "The MSP shall report cyber security incidents to CERT-In and to DSEDC as required by the directions issued by CERT-In un",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-007",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 18,
+      "section": "8.14 Insurance",
+      "text": "The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cyber liability insurance of not less than Rs. 10 Crore, and shall submit copies of the policies within 30 days of the LoA.",
+      "locate_span": "The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cybe",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "company.insurance.professional_indemnity_inr_cr",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "company.insurance.cyber_liability_inr_cr",
+            "operator": ">=",
+            "threshold": 10
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-008",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 19,
+      "section": "9 SCC",
+      "text": "All logs of ICT systems shall be retained securely within India for a rolling period of 180 days, or longer if required by DSEDC.",
+      "locate_span": "All logs of ICT systems shall be retained securely within India for a rolling period of 180 days, or longer if required ",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-LEG-009",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 19,
+      "section": "9 SCC",
+      "text": "Background verification, including police verification, shall be completed for all personnel deployed at DSDC and the DR Site before deployment.",
+      "locate_span": "Background verification, including police verification, shall be completed for all personnel deployed at DSDC and the DR",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-OPT-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 4,
+      "section": "2.3 Site Visit",
+      "text": "Bidders may visit DSDC and the DR Site, with prior permission, between the date of publication and the pre-bid meeting.",
+      "locate_span": "Bidders may visit DSDC and the DR Site, with prior permission, between the date of publication and the pre-bid meeting.",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "optional",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-OPT-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 6,
+      "section": "2.12 Submission",
+      "text": "Bidders are advised to upload bids well in advance.",
+      "locate_span": "Bidders are advised to upload bids well in advance.",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "advisory",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-OPT-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table (preferred)",
+      "text": "MBA; experience as PM of a State Data Centre",
+      "locate_span": "MBA; experience as PM of a State Data Centre",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "preferred_scoring",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-OPT-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table (preferred)",
+      "text": "Valid CCIE",
+      "locate_span": "Valid CCIE",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "preferred_scoring",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-OPT-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table (preferred)",
+      "text": "ISO/IEC 27001 Lead Auditor",
+      "locate_span": "ISO/IEC 27001 Lead Auditor",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "preferred_scoring",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-OPT-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 16,
+      "section": "7.4 SLA review",
+      "text": "SLA parameters may be reviewed by DSEDC after the first year of operations in consultation with the MSP, without any change in the price.",
+      "locate_span": "SLA parameters may be reviewed by DSEDC after the first year of operations in consultation with the MSP, without any cha",
+      "location_type": "paragraph",
+      "category": "sla",
+      "requirement_type": "optional",
+      "mandatory": false,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table",
+      "text": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification.",
+      "locate_span": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "degree",
+            "operator": "in",
+            "threshold": [
+              "B.E.",
+              "B.Tech",
+              "MCA"
+            ]
+          },
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 15
+          },
+          {
+            "field": "dc_infra_years",
+            "operator": ">=",
+            "threshold": 8
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "PMP",
+              "PRINCE2 Practitioner"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table",
+      "text": "B.E./B.Tech; at least 10 years of experience including at least 6 years in data centre operations; ITIL v4 Foundation or higher certification.",
+      "locate_span": "B.E./B.Tech; at least 10 years of experience including at least 6 years in data centre operations; ITIL v4 Foundation or",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "dc_infra_years",
+            "operator": ">=",
+            "threshold": 6
+          },
+          {
+            "field": "certifications",
+            "operator": "any",
+            "threshold": [
+              "ITIL 4 Foundation",
+              "ITIL 4 Managing Professional",
+              "ITIL 4 Strategic Leader"
+            ]
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table",
+      "text": "B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification.",
+      "locate_span": "B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification.",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "CCNP",
+              "JNCIP"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.3 Key Personnel table",
+      "text": "B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM certification.",
+      "locate_span": "B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM cert",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "security_years",
+            "operator": ">=",
+            "threshold": 5
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "CISSP",
+              "CISM"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 10,
+      "section": "4.3 Key Personnel table",
+      "text": "B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level cloud architect certification (AWS Solutions Architect Professional, Microsoft Azure Solutions Architect Expert or Google Professional Cloud Architect).",
+      "locate_span": "B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level",
+      "location_type": "table",
+      "category": "personnel",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 8
+          },
+          {
+            "field": "cloud_years",
+            "operator": ">=",
+            "threshold": 4
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "AWS Certified Solutions Architect - Professional",
+              "Microsoft Certified: Azure Solutions Architect Expert",
+              "Google Professional Cloud Architect"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.2 Key Personnel",
+      "text": "All key personnel proposed shall be on the payroll of the Bidder as on the bid submission end date.",
+      "locate_span": "All key personnel proposed shall be on the payroll of the Bidder as on the bid submission end date.",
+      "location_type": "paragraph",
+      "category": "personnel",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-007",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.2 Key Personnel",
+      "text": "A key personnel CV that does not meet the minimum qualification in Clause 4.3 shall be awarded zero marks, and the Bidder shall be required to replace the person with a person meeting the minimum qualification before signing of the contract.",
+      "locate_span": "A key personnel CV that does not meet the minimum qualification in Clause 4.3 shall be awarded zero marks, and the Bidde",
+      "location_type": "paragraph",
+      "category": "personnel",
+      "requirement_type": "evaluation_rule",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-PER-008",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 9,
+      "section": "4.2 Key Personnel",
+      "text": "Professional certifications claimed for key personnel shall be valid as on the bid submission end date, and copies shall be enclosed with the CV in Format T-2.",
+      "locate_span": "Professional certifications claimed for key personnel shall be valid as on the bid submission end date, and copies shall",
+      "location_type": "paragraph",
+      "category": "personnel",
+      "requirement_type": "validity_rule",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "field": "personnel.certifications.valid_to",
+        "operator": ">=",
+        "threshold": "effective.bid_submission_end"
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SLA-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 16,
+      "section": "7 SLA table, S1",
+      "text": ">= 99.95%",
+      "locate_span": "Availability of DSDC IT infrastructure",
+      "location_type": "table",
+      "category": "sla",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": {
+        "field": "monthly_availability_pct",
+        "operator": ">=",
+        "threshold": 99.95
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SLA-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 16,
+      "section": "7 SLA table, S4",
+      "text": "Response within 15 minutes; resolution within 4 hours",
+      "locate_span": "Response within 15 minutes; resolution within 4 hours",
+      "location_type": "table",
+      "category": "sla",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SLA-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 16,
+      "section": "7 SLA table, S7",
+      "text": "One drill per quarter, report within 7 days",
+      "locate_span": "Quarterly DR drill",
+      "location_type": "table",
+      "category": "sla",
+      "requirement_type": "buried_in_table",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SLA-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 16,
+      "section": "7 SLA table, S10",
+      "text": "Rs. 10,000 per key person per day of absence beyond 3 days in a month",
+      "locate_span": "per key person per day of absence",
+      "location_type": "table",
+      "category": "sla",
+      "requirement_type": "penalty",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SLA-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 16,
+      "section": "7.2 Penalty cap",
+      "text": "The total SLA penalty in a quarter shall be capped at 15% of the QGR for that quarter. If the penalty reaches the cap in two consecutive quarters, DSEDC may terminate the contract for default.",
+      "locate_span": "The total SLA penalty in a quarter shall be capped at 15% of the QGR for that quarter. If the penalty reaches the cap in",
+      "location_type": "paragraph",
+      "category": "legal",
+      "requirement_type": "risk_clause",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-007",
+      "live_subset": true,
+      "structured_rule": {
+        "field": "sla_penalty_cap_pct_of_qgr",
+        "value": 15,
+        "compare_to_policy": "risk_positions.sla_penalty_cap (10%)"
+      },
+      "notes": "Cap reduced to 10% by Corrigendum No. 1, item 7."
+    },
+    {
+      "requirement_id": "REQ-SUB-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 3,
+      "section": "1.3 Fact Sheet",
+      "text": "Bids shall remain valid for 180 days from the bid submission end date.",
+      "locate_span": "Bids shall remain valid for 180 days from the bid submission end date.",
+      "location_type": "table",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 4,
+      "section": "2.4 Pre-bid Queries",
+      "text": "Bidders shall submit pre-bid queries only by e-mail to gm-infra@dsedc.example in the MS-Excel format prescribed in Annexure F, on or before 13-10-2026 at 17:00 hrs.",
+      "locate_span": "Bidders shall submit pre-bid queries only by e-mail to gm-infra@dsedc.example in the MS-Excel format prescribed in Annex",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 4,
+      "section": "2.6 Amendment of RFP",
+      "text": "Every corrigendum shall form an integral part of this RFP. In case of any conflict, the provisions of the latest corrigendum shall prevail over earlier corrigenda and over this RFP.",
+      "locate_span": "Every corrigendum shall form an integral part of this RFP. In case of any conflict, the provisions of the latest corrige",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "precedence_rule",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 4,
+      "section": "2.6 Amendment of RFP",
+      "text": "Bidders shall acknowledge all corrigenda issued by DSEDC in the bid covering letter (Format PQ-1). It shall be the responsibility of the Bidder to check the portal for corrigenda.",
+      "locate_span": "Bidders shall acknowledge all corrigenda issued by DSEDC in the bid covering letter (Format PQ-1). It shall be the respo",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.7 Language",
+      "text": "The bid and all correspondence and documents relating to the bid shall be in English. Supporting documents in any other language shall be accompanied by a self-attested English translation.",
+      "locate_span": "The bid and all correspondence and documents relating to the bid shall be in English. Supporting documents in any other ",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.8 Documents Comprising the Bid",
+      "text": "The pre-qualification and technical covers shall not contain any commercial information. A bid that discloses prices in the pre-qualification or technical cover shall be summarily rejected.",
+      "locate_span": "The pre-qualification and technical covers shall not contain any commercial information. A bid that discloses prices in ",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-007",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.8 Documents Comprising the Bid",
+      "text": "The technical proposal (Format T-1, approach and methodology) shall not exceed 40 pages of A4 size, using a font size of not less than 10 points, excluding CVs and formats.",
+      "locate_span": "The technical proposal (Format T-1, approach and methodology) shall not exceed 40 pages of A4 size, using a font size of",
+      "location_type": "paragraph",
+      "category": "format",
+      "requirement_type": "page_limit",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-008",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.10 EMD",
+      "text": "The original EMD Bank Guarantee (if not an e-BG) shall be submitted in a sealed envelope at DSEDC Bhavan before the bid submission end date. Bids without a valid EMD or a valid MSE exemption shall be rejected.",
+      "locate_span": "The original EMD Bank Guarantee (if not an e-BG) shall be submitted in a sealed envelope at DSEDC Bhavan before the bid ",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-008",
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": "Physical submission requirement removed by Corrigendum No. 1 (e-BG / online only)."
+    },
+    {
+      "requirement_id": "REQ-SUB-009",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.11 Format and Signing",
+      "text": "All bid documents shall be digitally signed using a valid Class III Digital Signature Certificate of the authorised signatory, and every page of the scanned documents shall be signed and stamped by the authorised signatory.",
+      "locate_span": "All bid documents shall be digitally signed using a valid Class III Digital Signature Certificate of the authorised sign",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-010",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 5,
+      "section": "2.11 Format and Signing",
+      "text": "The authorised signatory shall be authorised by a Board Resolution and a Power of Attorney in Format PQ-10.",
+      "locate_span": "The authorised signatory shall be authorised by a Board Resolution and a Power of Attorney in Format PQ-10.",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-011",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 6,
+      "section": "2.12 Submission",
+      "text": "Bids submitted by e-mail, fax or in physical form shall not be accepted, except the original EMD instrument where applicable.",
+      "locate_span": "Bids submitted by e-mail, fax or in physical form shall not be accepted, except the original EMD instrument where applic",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-012",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 6,
+      "section": "2.14 Integrity Pact",
+      "text": "The Bidder shall sign the Integrity Pact in the format at Annexure C and submit it with the pre-qualification cover. A bid without a signed Integrity Pact shall be rejected.",
+      "locate_span": "The Bidder shall sign the Integrity Pact in the format at Annexure C and submit it with the pre-qualification cover. A b",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-013",
+      "source_file": "tender/TDR-001/original/annexures.pdf",
+      "page": 4,
+      "section": "Format PQ-3",
+      "text": "The CA certificate shall bear a Unique Document Identification Number (UDIN) and the figures shall be stated in Rupees Crore up to two decimal places.",
+      "locate_span": "The CA certificate shall bear a Unique Document Identification Number (UDIN) and the figures shall be stated in Rupees C",
+      "location_type": "paragraph",
+      "category": "format",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-014",
+      "source_file": "tender/TDR-001/original/annexures.pdf",
+      "page": 12,
+      "section": "Format PQ-10 (scanned page)",
+      "text": "The Power of Attorney shall be executed on non-judicial stamp paper of Rs. 100/- and shall be duly notarised.",
+      "locate_span": "The Power of Attorney shall be executed on non-judicial stamp paper of Rs. 100/- and shall be duly notarised.",
+      "location_type": "scanned_image",
+      "category": "submission",
+      "requirement_type": "document",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": "Text exists only as an image. Requires OCR. Used for the 'requirement on a scanned page' trap."
+    },
+    {
+      "requirement_id": "REQ-SUB-015",
+      "source_file": "tender/TDR-001/original/annexures.pdf",
+      "page": 13,
+      "section": "Format T-1",
+      "text": "The technical proposal shall be organised under the following headings and shall not exceed 40 pages: (1) understanding of the scope; (2) O&M approach for DSDC, DR Site and NOC; (3) ITIL processes and tools; (4) security operations; (5) backup and DR approach; (6) hybrid cloud management; (7) governance and reporting; (8) value additions.",
+      "locate_span": "The technical proposal shall be organised under the following headings",
+      "location_type": "paragraph",
+      "category": "format",
+      "requirement_type": "structure",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-016",
+      "source_file": "tender/TDR-001/original/annexures.pdf",
+      "page": 14,
+      "section": "Format T-2",
+      "text": "Each CV shall be signed by the proposed person and countersigned by the authorised signatory. Unsigned CVs shall not be evaluated.",
+      "locate_span": "Each CV shall be signed by the proposed person and countersigned by the authorised signatory. Unsigned CVs shall not be ",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-SUB-017",
+      "source_file": "tender/TDR-001/original/annexures.pdf",
+      "page": 19,
+      "section": "Format T-7",
+      "text": "The Bidder shall state \"No deviation\" in this format. Bids with deviations from the RFP terms, other than those accepted by DSEDC through a corrigendum, are liable to be rejected.",
+      "locate_span": "The Bidder shall state \"No deviation\" in this format. Bids with deviations from the RFP terms, other than those accepted",
+      "location_type": "paragraph",
+      "category": "submission",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-001",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 12,
+      "section": "6.3 Transition",
+      "text": "The MSP shall complete takeover of operations from the current operator within 90 days of the Letter of Award, including inventory verification, knowledge transfer, shadowing for at least 30 days and reverse shadowing for at least 15 days.",
+      "locate_span": "The MSP shall complete takeover of operations from the current operator within 90 days of the Letter of Award, including",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-002",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 12,
+      "section": "6.3 Transition",
+      "text": "During transition the MSP shall verify the asset inventory in Annexure A and report discrepancies to DSEDC within 30 days of the LoA. Assets not reported within this period shall be deemed to have been taken over in working condition.",
+      "locate_span": "During transition the MSP shall verify the asset inventory in Annexure A and report discrepancies to DSEDC within 30 day",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-003",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.4 DC Operations",
+      "text": "The MSP shall apply critical security patches to operating systems, hypervisors and network devices within 7 days of release by the OEM, after testing in the staging environment, and shall document any exception approved by DSEDC.",
+      "locate_span": "The MSP shall apply critical security patches to operating systems, hypervisors and network devices within 7 days of rel",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-004",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.4 DC Operations",
+      "text": "The MSP shall conduct capacity planning reviews every quarter and submit a capacity report with 12-month projections for compute, storage, network and backup.",
+      "locate_span": "The MSP shall conduct capacity planning reviews every quarter and submit a capacity report with 12-month projections for",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-005",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.5 Backup and DR",
+      "text": "The MSP shall perform backups as per the backup policy approved by DSEDC, and shall perform a test restoration of at least 5% of backed-up systems every month.",
+      "locate_span": "The MSP shall perform backups as per the backup policy approved by DSEDC, and shall perform a test restoration of at lea",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-006",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.5 Backup and DR",
+      "text": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours.",
+      "locate_span": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "quantitative_threshold",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "rpo_minutes",
+            "operator": "<=",
+            "threshold": 15
+          },
+          {
+            "field": "rto_hours",
+            "operator": "<=",
+            "threshold": 4
+          }
+        ]
+      },
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-007",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.5 Backup and DR",
+      "text": "The MSP shall conduct a DR drill every quarter, including at least one full switchover of all Category A applications to the DR Site every year, and shall submit a drill report within 7 days.",
+      "locate_span": "The MSP shall conduct a DR drill every quarter, including at least one full switchover of all Category A applications to",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-008",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.6 NOC",
+      "text": "The MSP shall log every network incident in the ITSM tool, coordinate with bandwidth service providers for restoration, and publish a daily network health report by 10:00 hrs.",
+      "locate_span": "The MSP shall log every network incident in the ITSM tool, coordinate with bandwidth service providers for restoration, ",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-009",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.7 Hybrid Cloud",
+      "text": "All data of the Government of Deccan State, including backups and logs, shall be stored only in data centres located in India, and public cloud capacity shall be used only from cloud service providers empanelled by MeitY.",
+      "locate_span": "All data of the Government of Deccan State, including backups and logs, shall be stored only in data centres located in ",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "compliance",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-010",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.8 Security Operations",
+      "text": "The MSP shall provide 24x7 L1 and L2 security monitoring using the existing SIEM, including use-case tuning, triage of alerts, and escalation of confirmed incidents to DSEDC within 30 minutes.",
+      "locate_span": "The MSP shall provide 24x7 L1 and L2 security monitoring using the existing SIEM, including use-case tuning, triage of a",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-011",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.8 Security Operations",
+      "text": "The MSP shall maintain an Information Security Management System for DSDC aligned to ISO/IEC 27001:2022 and shall support DSEDC in obtaining and maintaining ISO/IEC 27001 certification of DSDC.",
+      "locate_span": "The MSP shall maintain an Information Security Management System for DSDC aligned to ISO/IEC 27001:2022 and shall suppor",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-012",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.8 Security Operations",
+      "text": "The MSP shall close critical vulnerabilities identified in VAPT within 7 days and high vulnerabilities within 15 days of the report, or record a risk acceptance approved by DSEDC.",
+      "locate_span": "The MSP shall close critical vulnerabilities identified in VAPT within 7 days and high vulnerabilities within 15 days of",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-013",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 13,
+      "section": "6.9 Tools",
+      "text": "The MSP shall supply, install and maintain for the contract period an integrated EMS, NMS and ITSM tool with perpetual or subscription licences in the name of DSEDC, ITIL 4-aligned incident, problem, change, configuration and service request management, and an SLA dashboard accessible to DSEDC.",
+      "locate_span": "The MSP shall supply, install and maintain for the contract period an integrated EMS, NMS and ITSM tool with perpetual o",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-014",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 14,
+      "section": "6.10 Manpower",
+      "text": "The MSP shall deploy, at a minimum, the onsite manpower in Table 6.10 throughout the contract period. The deployment shall be maintained on a shift basis to provide 24x7 coverage.",
+      "locate_span": "The MSP shall deploy, at a minimum, the onsite manpower in Table 6.10 throughout the contract period. The deployment sha",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-015",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 14,
+      "section": "6.10 Manpower table",
+      "text": "6",
+      "locate_span": "L2 Network Engineer",
+      "location_type": "table",
+      "category": "technical",
+      "requirement_type": "quantity",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1"
+      ],
+      "superseded_by": "REQ-COR-011",
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": "Minimum L2 Network Engineers = 6 in v1; increased to 8 by Corrigendum No. 1, item 11."
+    },
+    {
+      "requirement_id": "REQ-TEC-016",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 14,
+      "section": "6.11 Reporting",
+      "text": "The MSP shall submit the monthly SLA and performance report by the 7th day of the following month, and shall attend the monthly review meeting chaired by DSEDC.",
+      "locate_span": "The MSP shall submit the monthly SLA and performance report by the 7th day of the following month, and shall attend the ",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-017",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 15,
+      "section": "6.12 Exit Management",
+      "text": "The MSP shall submit a detailed exit management plan within 90 days of Go-Live, update it annually, and provide exit support for six months before the end of the contract, including knowledge transfer and handover of all configurations, documentation and credentials to DSEDC or its nominated agency.",
+      "locate_span": "The MSP shall submit a detailed exit management plan within 90 days of Go-Live, update it annually, and provide exit sup",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-018",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 15,
+      "section": "6.11B Helpdesk",
+      "text": "The MSP shall operate a 24x7 helpdesk for departments, reachable by toll-free telephone number, e-mail and the self-service portal, and shall ensure that 90% of calls are answered within 60 seconds.",
+      "locate_span": "The MSP shall operate a 24x7 helpdesk for departments, reachable by toll-free telephone number, e-mail and the self-serv",
+      "location_type": "paragraph",
+      "category": "technical",
+      "requirement_type": "obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": false,
+      "structured_rule": null,
+      "notes": null
+    },
+    {
+      "requirement_id": "REQ-TEC-019",
+      "source_file": "tender/TDR-001/original/main_rfp.pdf",
+      "page": 15,
+      "section": "6.11D Compliance and Audits",
+      "text": "The MSP shall ensure that its own ISO/IEC 27001:2022 certification, with scope covering the services delivered under this contract, remains valid throughout the contract period, and shall submit a copy of each renewed certificate to DSEDC within 15 days of issue.",
+      "locate_span": "The MSP shall ensure that its own ISO/IEC 27001:2022 certification, with scope covering the services delivered under thi",
+      "location_type": "paragraph",
+      "category": "certification",
+      "requirement_type": "continuing_obligation",
+      "mandatory": true,
+      "introduced_in": "v1",
+      "effective_in": [
+        "v1",
+        "v2"
+      ],
+      "superseded_by": null,
+      "live_subset": true,
+      "structured_rule": null,
+      "notes": null
+    }
+  ]
+}

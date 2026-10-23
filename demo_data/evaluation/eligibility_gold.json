@@ -1,0 +1,3146 @@
+{
+  "tender_id": "TDR-001",
+  "company_id": "NIMBUS-001",
+  "verdict_enum": {
+    "meets": "criterion satisfied with evidence",
+    "meets_with_undertaking": "satisfied through an undertaking the tender allows",
+    "meets_with_substitution": "satisfied by proposing an alternate person/document",
+    "needs_action": "satisfiable by an action before submission (e.g. obtain MAF, sign declaration)",
+    "partial": "partly met; commitment or change needed",
+    "needs_human": "evidence ambiguous; human must decide",
+    "gap": "not met; mandatory gap if hard_gate"
+  },
+  "scenarios": {
+    "S-v1": {
+      "tender_version": "v1 (original RFP)",
+      "effective_bid_submission_end": "2026-11-06T15:00",
+      "items": [
+        {
+          "requirement_id": "REQ-ELG-001",
+          "criterion": "Registered in India, >= 5 years in existence on bid submission end date",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "incorporated 2011-06-14; 15.4 years at 2026-11-06T15:00 >= 5",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-01",
+            "span": "The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall have been in existence and operation in India for at least five (5) years as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-001",
+              "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+              "page": 1,
+              "span": "Date of incorporation: 14 June 2011"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-002",
+          "criterion": "Single bidder; consortium not allowed",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Nimbus bids alone",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-002",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 4,
+            "section": "2.1 Eligible Bidders",
+            "span": "Bids from a consortium or joint venture shall not be accepted. The Bidder shall be a single legal entity and shall be solely responsible for the delivery of all services under this RFP."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-001",
+              "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+              "page": 1,
+              "span": "Date of incorporation: 14 June 2011"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-003",
+          "criterion": "Average IT/ITeS turnover FY22-23..FY24-25 >= Rs. 55 Cr (Rs. 45 Cr for eligible MSEs)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "general branch: mean(46.00, 52.00, 58.00) = 52.00 < 55.00 FAIL; MSE branch: Udyam 'Small', NIC 62090/63111/62020 (divisions 62, 63), registration valid on 2026-11-06, 52.00 >= 45.00 PASS; OR => PASS (values converted from Rs. lakh: 4,600.00 / 5,200.00 / 5,800.00 lakh)",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-02",
+            "span": "average annual turnover of not less than Rs. 55 Crore"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-2022-23",
+              "file": "company_kb/02_financials/financial_statements_FY2022-23.pdf",
+              "page": 2,
+              "span": "During the financial year 2022-23, the Company's revenue from operations was ₹4,600.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2023-24",
+              "file": "company_kb/02_financials/financial_statements_FY2023-24.pdf",
+              "page": 2,
+              "span": "During the financial year 2023-24, the Company's revenue from operations was ₹5,200.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2024-25",
+              "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+              "page": 2,
+              "span": "During the financial year 2024-25, the Company's revenue from operations was ₹5,800.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-CA",
+              "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+              "page": 1,
+              "span": "The average annual turnover from IT/ITeS services for the three financial years is ₹52.00 crore"
+            },
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Type of enterprise: Small (classification year 2025-26)"
+            }
+          ],
+          "notes": "Naive check against Rs. 55 Cr alone would report a false gap; the rule engine must apply the MSE branch with Udyam evidence."
+        },
+        {
+          "requirement_id": "REQ-ELG-004",
+          "criterion": "Average DC/network/managed infra services turnover >= Rs. 20 Cr",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "mean(23.40, 27.10, 31.30) = 27.27 >= 20.00",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-004",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-03",
+            "span": "Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services during the same three financial years shall be not less than Rs. 20 Crore."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-CA",
+              "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+              "page": 1,
+              "span": "The average annual turnover from data centre, network and managed IT infrastructure services for the same years is ₹27.27 crore"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-005",
+          "criterion": "Positive net worth in each of FY22-23..FY24-25",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "12.00 > 0, 15.00 > 0, 18.00 > 0 (Rs. Cr)",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-005",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-04",
+            "span": "The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-25)."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-2022-23",
+              "file": "company_kb/02_financials/financial_statements_FY2022-23.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2023 was ₹1,200.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2023-24",
+              "file": "company_kb/02_financials/financial_statements_FY2023-24.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2024 was ₹1,500.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2024-25",
+              "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2025 was ₹1,800.00 lakh"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-006",
+          "criterion": "Similar completed works in window: 3 >= 15.36 OR 2 >= 23.04 OR 1 >= 30.72 (Rs. Cr)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "branch (a): definite ['PRJ-001', 'PRJ-002'] pending ['PRJ-005'] => needs_human; branch (b): definite ['PRJ-001', 'PRJ-002'] pending [] => meets; branch (c): definite [] pending [] => gap; OR => meets",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-05",
+            "span": "three similar completed works, each costing not less than 40% of the estimated cost"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CC-001",
+              "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+            },
+            {
+              "doc_id": "KB-CC-002",
+              "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+            },
+            {
+              "doc_id": "KB-CC-004",
+              "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+              "page": 1,
+              "span": "The total value of the contract executed by the consortium is ₹38.00 crore (including taxes)"
+            }
+          ],
+          "notes": "Branch (b) is met by PRJ-001 (24.60) and PRJ-002 (26.10). Verdict does not depend on the ambiguous PRJ-005."
+        },
+        {
+          "requirement_id": "REQ-ELG-009",
+          "criterion": "ISO 9001:2015 AND ISO/IEC 27001:2022 (scope DC/infra managed services) AND (CMMI ML3+ OR ISO/IEC 20000-1), each valid on bid submission end date",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "(i) ISO 9001 valid_to 2027-03-14 >= 2026-11-06: PASS; (ii) ISO/IEC 27001:2022 valid_to 2026-11-10 vs 2026-11-06: PASS (margin 4 days: WARNING); scope covers managed DC/NOC/cloud services: PASS; (iii) CMMI V2.0 ML3 (SVC) valid_to 2027-06-19: PASS, ISO/IEC 20000-1 not held; OR => PASS; AND => PASS",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-009",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-06",
+            "span": "each valid as on the bid submission end date"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CERT-001",
+              "file": "company_kb/03_certifications/iso9001_2015_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 14 March 2027"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 10 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Information security management system for the provision of managed data centre, network operations centre and cloud infrastructure services from the Bengaluru and Pune delivery centres, per Statement of Applicability version 3.1"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Scheduled 16 to 18 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-003",
+              "file": "company_kb/03_certifications/cmmi_ml3_appraisal_mock_record.pdf",
+              "page": 1,
+              "span": "Maturity level achieved: Maturity Level 3. No Level 4 or Level 5 appraisal has been performed."
+            },
+            {
+              "doc_id": "KB-CERT-004",
+              "file": "company_kb/03_certifications/certification_register.pdf",
+              "page": 1,
+              "span": "ISO/IEC 20000-1:2018 is not held by Nimbus."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-010",
+          "criterion": ">= 150 technically qualified IT professionals on payroll on 30-09-2026",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "236 >= 150",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-010",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-07",
+            "span": "The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its payroll as on 30-09-2026."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-006",
+              "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+              "page": 1,
+              "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-011",
+          "criterion": "Office in Deccan State OR undertaking (Format PQ-9)",
+          "expected_verdict": "meets_with_undertaking",
+          "hard_gate": true,
+          "computation": "no office in Deccan State; OR branch 2: undertaking allowed by tender and by company policy => PASS with obligation",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-011",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-08",
+            "span": "The Bidder shall have an operational office in Deccan State. If the Bidder does not have such an office, it shall submit an undertaking to establish an office in Navapur within 60 days of issue of the Letter of Award, in Format PQ-9."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CO-001",
+              "file": "company_kb/01_company/company_profile.pdf",
+              "page": 3,
+              "span": "Nimbus does not currently have an office in Deccan State."
+            },
+            {
+              "doc_id": "KB-REG-007",
+              "file": "company_kb/09_registrations/local_office_undertaking_template.pdf",
+              "page": 1,
+              "span": "Nimbus may undertake to establish a project office within 60 days of award, with the approval of the VP - Public Sector Business and the CFO."
+            }
+          ],
+          "action": "Sign Format PQ-9; budget ~Rs. 18 lakh for the Navapur office"
+        },
+        {
+          "requirement_id": "REQ-ELG-014",
+          "criterion": "Not blacklisted (declaration)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "declaration on record",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-014",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-09",
+            "span": "The Bidder shall not be blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-003",
+              "file": "company_kb/09_registrations/non_blacklisting_declaration.pdf",
+              "page": 1,
+              "span": "Nimbus Digital Services Private Limited has not been blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking."
+            }
+          ],
+          "action": "Sign Format PQ-6 dated near submission"
+        },
+        {
+          "requirement_id": "REQ-ELG-015",
+          "criterion": "Bid-specific MAF from EMS/NMS/ITSM OEM",
+          "expected_verdict": "needs_action",
+          "hard_gate": true,
+          "computation": "only a general partnership letter is held; bid-specific MAF not yet obtained",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-015",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-10",
+            "span": "The Bidder shall submit a bid-specific Manufacturer's Authorisation Form (MAF) from the OEM of the proposed EMS/NMS and ITSM tool, with an undertaking of back-to-back support for the contract period, in Format PQ-8."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-008",
+              "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+              "page": 1,
+              "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+            }
+          ],
+          "action": "Request bid-specific MAF from OpsCentral (owner: Head - Bids)"
+        },
+        {
+          "requirement_id": "REQ-ELG-016",
+          "criterion": "Land border compliance (Format PQ-7)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Indian-owned; declaration on record",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-016",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-11",
+            "span": "The Bidder shall comply with the restrictions under Rule 144(xi) of the General Financial Rules, 2017 on procurement from bidders from a country sharing a land border with India, and shall submit the certificate in Format PQ-7."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-005",
+              "file": "company_kb/09_registrations/land_border_declaration.pdf",
+              "page": 1,
+              "span": "Nimbus Digital Services Private Limited is not from a country sharing a land border with India and has no beneficial owner from such a country."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-012",
+          "criterion": "EMD Rs. 76.80 lakh OR MSE exemption",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Udyam Small enterprise for IT services => EMD and tender fee exempt",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-012",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 5,
+            "section": "2.10 EMD",
+            "span": "The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as a Bank Guarantee or e-Bank Guarantee from a scheduled commercial bank, or by online transfer, valid for 45 days beyond the bid validity period."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Type of enterprise: Small (classification year 2025-26)"
+            },
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Registration is valid and has no expiry date; classification is updated annually from ITR and GST data"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-001",
+          "criterion": "Key personnel minimum: Project Manager",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E102: PMP valid_to 2027-02-28 -> valid, ITIL 4 Managing Professional valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-102",
+              "file": "company_kb/05_personnel/CV_NDS-E102_Senior_Project_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 16 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-002",
+          "criterion": "Key personnel minimum: DC Operations Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E109: ITIL 4 Managing Professional valid_to None -> valid, Uptime Institute ATD (Accredited Tier Designer) valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-002",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience including at least 6 years in data centre operations; ITIL v4 Foundation or higher certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-109",
+              "file": "company_kb/05_personnel/CV_NDS-E109_Data_Centre_Operations_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 12 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-003",
+          "criterion": "Key personnel minimum: Network Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E108: Cisco CCNP Enterprise valid_to 2027-04-11 -> valid, Fortinet NSE 4 valid_to 2025-06-20 -> NOT valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-108",
+              "file": "company_kb/05_personnel/CV_NDS-E108_Network_Lead.pdf",
+              "page": 1,
+              "span": "Total experience: 12 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-005",
+          "criterion": "Key personnel minimum: Cloud Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E104: Microsoft Certified: Azure Solutions Architect Expert valid_to 2027-01-21 -> valid, AWS Certified Solutions Architect - Professional valid_to 2026-08-30 -> NOT valid, Certified OpenStack Administrator (COA) valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-005",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 10,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level cloud architect certification (AWS Solutions Architect Professional, Microsoft Azure Solutions Architect Expert or Google Professional Cloud Architect)."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-104",
+              "file": "company_kb/05_personnel/CV_NDS-E104_Cloud_Architect.pdf",
+              "page": 1,
+              "span": "Total experience: 11 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-004",
+          "criterion": "Key personnel minimum: Security Lead (CISSP/CISM valid on deadline, >= 10 yrs, >= 5 yrs security ops)",
+          "expected_verdict": "meets_with_substitution",
+          "hard_gate": false,
+          "computation": "NDS-E105: CISM valid_to 2026-06-30 < 2026-11-06 => FAILS (CV lists CISM without validity); NDS-E110: CISSP valid_to 2028-01-31 => MEETS. Propose NDS-E110.",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-004",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-105",
+              "file": "company_kb/05_personnel/CV_NDS-E105_Cybersecurity_Lead.pdf",
+              "page": 1,
+              "span": "Total experience: 13 years"
+            },
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-110",
+              "file": "company_kb/05_personnel/CV_NDS-E110_Security_Operations_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 11 years"
+            }
+          ],
+          "notes": "Trap: the CV of NDS-E105 claims CISM; HR tracker shows it expired. Pre-bid response 13 confirms expired certifications are not accepted."
+        },
+        {
+          "requirement_id": "REQ-PER-006",
+          "criterion": "Key personnel on payroll",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "all proposed key personnel are employees",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.2 Key Personnel",
+            "span": "All key personnel proposed shall be on the payroll of the Bidder as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-006",
+              "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+              "page": 1,
+              "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-LEG-007",
+          "criterion": "Insurance: PI >= Rs. 10 Cr and cyber >= Rs. 10 Cr through the contract",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "PI 15 >= 10; cyber 10 >= 10",
+          "tender_evidence": {
+            "requirement_id": "REQ-LEG-007",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 18,
+            "section": "8.14 Insurance",
+            "span": "The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cyber liability insurance of not less than Rs. 10 Crore, and shall submit copies of the policies within 30 days of the LoA."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-LEG-001",
+              "file": "company_kb/08_legal_commercial/bid_risk_policy.pdf",
+              "page": 1,
+              "span": "Standard position: Aggregate liability capped at 1x annual contract value; 1x total contract value acceptable with Legal approval."
+            }
+          ],
+          "notes": "Insurance figures from KB-LEG-001 s.9. Cyber cover equals the minimum; relevant to the uncapped data-breach liability decision."
+        },
+        {
+          "requirement_id": "REQ-TEC-003",
+          "criterion": "Critical patches within 7 days of OEM release",
+          "expected_verdict": "partial",
+          "hard_gate": false,
+          "computation": "Nimbus default is 14 days but its policy lets a shorter contract term prevail; engagement procedure must commit to 7 days",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 13,
+            "section": "6.4 DC Operations",
+            "span": "The MSP shall apply critical security patches to operating systems, hypervisors and network devices within 7 days of release by the OEM, after testing in the staging environment, and shall document any exception approved by DSEDC."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-001",
+              "file": "company_kb/07_policies/information_security_policy.pdf",
+              "page": 1,
+              "span": "Critical security patches are applied within 14 days of release, and high-severity patches within 30 days, unless the client contract sets a shorter period"
+            }
+          ],
+          "notes": "Graded by LLM (GPT-OSS 120B) with citations; expected 'partial' with an action, not 'meets' and not 'gap'."
+        },
+        {
+          "requirement_id": "REQ-TEC-006",
+          "criterion": "RPO <= 15 min, RTO <= 4 h for Category A apps",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "DR design standard and PRJ-002 drill record",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 13,
+            "section": "6.5 Backup and DR",
+            "span": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-003",
+              "file": "company_kb/07_policies/bc_dr_policy.pdf",
+              "page": 1,
+              "span": "For client DR services, Nimbus designs to the RPO and RTO stated in the client contract; typical designs target an RPO of 15 minutes and an RTO of 4 hours for critical applications"
+            },
+            {
+              "doc_id": "KB-CC-002",
+              "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-TEC-001",
+          "criterion": "Takeover within 90 days with >= 30 days shadowing and >= 15 days reverse shadowing",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "methodology KB-POL-005 s.2 and PRJ-001 delivery",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 12,
+            "section": "6.3 Transition",
+            "span": "The MSP shall complete takeover of operations from the current operator within 90 days of the Letter of Award, including inventory verification, knowledge transfer, shadowing for at least 30 days and reverse shadowing for at least 15 days."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-005",
+              "file": "company_kb/07_policies/service_delivery_change_methodology.docx",
+              "page": null,
+              "span": "Transition includes inventory verification, knowledge capture, at least 30 days of shadowing and at least 15 days of reverse shadowing, followed by a readiness review with the client"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-TEC-019",
+          "criterion": "Keep own ISO/IEC 27001:2022 certification valid through the contract",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "certificate expires 2026-11-10; recertification audit scheduled 16-18 Nov 2026",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-019",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 15,
+            "section": "6.11D Compliance and Audits",
+            "span": "The MSP shall ensure that its own ISO/IEC 27001:2022 certification, with scope covering the services delivered under this contract, remains valid throughout the contract period, and shall submit a copy of each renewed certificate to DSEDC within 15 days of issue."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 10 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Scheduled 16 to 18 November 2026"
+            }
+          ],
+          "notes": "Continuing obligation. Even in v1 the renewal must complete before contract start; track as a risk."
+        }
+      ],
+      "similar_work": {
+        "projects": [
+          {
+            "project_id": "PRJ-001",
+            "value_cr": 24.6,
+            "counted_value_cr": 24.6,
+            "in_window": true,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "certified",
+            "eligible_definite": true,
+            "eligible_possible": true,
+            "reason": "DC O&M, 42 racks, State Government society: matches Clause 3.3.1.",
+            "value_note": "Client completion certificate states the value.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-001",
+                "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+                "page": 1,
+                "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-002",
+            "value_cr": 26.1,
+            "counted_value_cr": 26.1,
+            "in_window": true,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "certified",
+            "eligible_definite": true,
+            "eligible_possible": true,
+            "reason": "DR site build plus 36 months of managed services (O&M), 28 racks, Scheduled Commercial Bank: matches Clause 3.3.1 (pre-bid response 6 confirms banks count).",
+            "value_note": "Client completion certificate states the value.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-002",
+                "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+                "page": 1,
+                "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-003",
+            "value_cr": 14.9,
+            "counted_value_cr": 14.9,
+            "in_window": true,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "certified",
+            "eligible_definite": true,
+            "eligible_possible": true,
+            "reason": "24x7 NOC O&M for an Urban Local Body: matches the NOC limb of Clause 3.3.1.",
+            "value_note": "Client completion certificate states the value.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-003",
+                "file": "company_kb/04_project_experience/PRJ-003_completion_certificate.pdf",
+                "page": 1,
+                "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹14.90 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-004",
+            "value_cr": 19.8,
+            "counted_value_cr": 19.8,
+            "in_window": false,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "Similar in nature (24-rack DC O&M, port trust) but completed 31-08-2019, before the window start of 01-10-2019.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-005",
+            "value_cr": 38.0,
+            "counted_value_cr": 17.1,
+            "in_window": true,
+            "completed": true,
+            "similar": "needs_human",
+            "value_status": "needs_human",
+            "eligible_definite": false,
+            "eligible_possible": true,
+            "reason": "24x7 State NOC O&M for a state agency (similar in nature), executed as consortium member. Bidder's share (45%) is evidenced only by the consortium agreement; the client certificate states total value only.",
+            "value_note": "Clause 3.3.3 (v1): bidder's executed value counts; share 45% = Rs. 17.10 Cr from consortium agreement, not in client certificate.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-004",
+                "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+                "page": 1,
+                "span": "The total value of the contract executed by the consortium is ₹38.00 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-006",
+            "value_cr": 13.5,
+            "counted_value_cr": 13.5,
+            "in_window": false,
+            "completed": false,
+            "similar": "excluded_ongoing",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "Ongoing (planned end 31-12-2026): excluded by Clause 3.3.2.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-007",
+            "value_cr": 8.4,
+            "counted_value_cr": 8.4,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_amc_only",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "AMC of hardware only, private client: excluded by Clause 3.3.2 and client type.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-008",
+            "value_cr": 6.8,
+            "counted_value_cr": 6.8,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_not_dc_noc",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "SOC modernisation: not DC/DR O&M or NOC.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-009",
+            "value_cr": 18.0,
+            "counted_value_cr": 18.0,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_application_work",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "Application modernisation for a bank: high value but not DC/DR/NOC work.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-010",
+            "value_cr": 11.2,
+            "counted_value_cr": 11.2,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_below_20_racks_not_noc",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "12-rack server room (< 20 racks) and campus network, not a 24x7 NOC.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          }
+        ],
+        "branches": {
+          "a": {
+            "required_count": 3,
+            "threshold_each_inr_cr": 15.36,
+            "definite": [
+              "PRJ-001",
+              "PRJ-002"
+            ],
+            "pending_human": [
+              "PRJ-005"
+            ],
+            "verdict": "needs_human"
+          },
+          "b": {
+            "required_count": 2,
+            "threshold_each_inr_cr": 23.04,
+            "definite": [
+              "PRJ-001",
+              "PRJ-002"
+            ],
+            "pending_human": [],
+            "verdict": "meets"
+          },
+          "c": {
+            "required_count": 1,
+            "threshold_each_inr_cr": 30.72,
+            "definite": [],
+            "pending_human": [],
+            "verdict": "gap"
+          }
+        },
+        "overall": "meets",
+        "naive_errors_to_avoid": {
+          "PRJ-005 total value Rs. 38.00 Cr >= 30.72 would wrongly satisfy branch (c)": "must not happen: only the bidder's share counts",
+          "PRJ-009 Rs. 18.00 Cr bank project": "must not count: not similar work",
+          "PRJ-004 Rs. 19.80 Cr": "must not count: outside the time window",
+          "Counting only branch (a)": "a tool that checks only '3 projects' reports a false gap; branch (b) is met"
+        }
+      },
+      "bid_assessment": {
+        "factors": {
+          "strategic_fit": 85,
+          "technical_capability": 72.52,
+          "eligibility_confidence": 97.31,
+          "commercial_risk": 50,
+          "delivery_capacity": 85
+        },
+        "weights": {
+          "strategic_fit": 20,
+          "technical_capability": 25,
+          "eligibility_confidence": 20,
+          "commercial_risk": 20,
+          "delivery_capacity": 15
+        },
+        "weighted_score": 77.34,
+        "risk_register": [
+          {
+            "requirement_id": "REQ-LEG-001",
+            "clause_type": "unlimited_liability",
+            "tender_term": "Cap 1x total contract value, but unlimited for gross negligence, data breach and IP indemnity",
+            "policy": "Uncapped liability not accepted by default; CEO decision with insurance cover",
+            "verdict": "escalate",
+            "deal_breaker": true,
+            "approver": "MD & CEO",
+            "action": "Raise with Legal; pre-bid query was rejected ('As per RFP'); CEO decision at Gate 1; check cyber insurance (Rs. 10 Cr) against exposure"
+          },
+          {
+            "requirement_id": "REQ-COM-004",
+            "clause_type": "performance_guarantee",
+            "tender_term": "PBG 5% of contract value",
+            "policy": "Up to 3% standard; CFO approval above 3%",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "CFO"
+          },
+          {
+            "requirement_id": "REQ-COM-005",
+            "clause_type": "payment_terms",
+            "tender_term": "Quarterly in arrears within 60 days",
+            "policy": "Up to 45 days accepted; CFO cash-flow review above 45",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "CFO"
+          },
+          {
+            "requirement_id": "REQ-SLA-005",
+            "clause_type": "sla_penalty_cap",
+            "tender_term": "15% of QGR per quarter; termination if cap hit 2 quarters running",
+            "policy": "Cap up to 10% of quarterly payment",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "Head - Bids"
+          },
+          {
+            "requirement_id": "REQ-LEG-005",
+            "clause_type": "termination_for_convenience",
+            "tender_term": "60 days' notice",
+            "policy": ">= 90 days' notice",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "Head - Legal",
+            "action": "Pre-bid query rejected; accept or decline at Gate 1"
+          },
+          {
+            "requirement_id": "REQ-LEG-002",
+            "clause_type": "ip_ownership",
+            "tender_term": "Deliverables owned by DSEDC; perpetual royalty-free licence to embedded pre-existing tools",
+            "policy": "Client owns project deliverables; Nimbus retains pre-existing IP with licence",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null,
+            "note": "Pre-bid response 19 confirms pre-existing IP stays with the MSP. Generic runbook templates: check with Legal (low risk)."
+          },
+          {
+            "requirement_id": "REQ-COM-001",
+            "clause_type": "price_firmness",
+            "tender_term": "Prices firm for 5 years; no wage or FX variation",
+            "policy": "No explicit position; commercial review",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "CFO",
+            "note": "Build wage inflation into pricing."
+          },
+          {
+            "requirement_id": "REQ-COM-006",
+            "clause_type": "liquidated_damages",
+            "tender_term": "0.5%/week of annual value, max 10% of annual value",
+            "policy": "LD cap up to 10% of contract value",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-LEG-004",
+            "clause_type": "subcontracting",
+            "tender_term": "Only with prior approval; key roles and 24x7 staff never",
+            "policy": "Approval and disclosure",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          }
+        ],
+        "hard_gate_failures": [],
+        "deal_breakers_needing_approval": [
+          "REQ-LEG-001"
+        ],
+        "recommendation": "BID_WITH_CONDITIONS",
+        "reason": "All hard gates met or closable by actions; conditions: REQ-LEG-001 unlimited_liability -> MD & CEO; REQ-ELG-015: Request bid-specific MAF from OpsCentral (owner: Head - Bids)",
+        "technical_marks_estimate": {
+          "objective": {
+            "T1": 2.0,
+            "T2": 9,
+            "T2_counted_projects": [
+              "PRJ-001",
+              "PRJ-002",
+              "PRJ-003"
+            ],
+            "T3": 1.0,
+            "T4": 4.0,
+            "T5": 19.92,
+            "T5_detail": [
+              {
+                "role": "Project Manager",
+                "employee_id": "NDS-E102",
+                "max": 7,
+                "estimated": 5.88,
+                "preferred_met": true,
+                "years_above_min": 1
+              },
+              {
+                "role": "DC Operations Lead",
+                "employee_id": "NDS-E109",
+                "max": 5,
+                "estimated": 4.4,
+                "preferred_met": true,
+                "years_above_min": 2
+              },
+              {
+                "role": "Network Lead",
+                "employee_id": "NDS-E108",
+                "max": 5,
+                "estimated": 3.4,
+                "preferred_met": false,
+                "years_above_min": 2
+              },
+              {
+                "role": "Security Lead",
+                "employee_id": "NDS-E110",
+                "max": 4,
+                "estimated": 2.56,
+                "preferred_met": false,
+                "years_above_min": 1
+              },
+              {
+                "role": "Cloud Lead",
+                "employee_id": "NDS-E104",
+                "max": 4,
+                "estimated": 3.68,
+                "preferred_met": true,
+                "years_above_min": 3
+              }
+            ]
+          },
+          "assumed_subjective": {
+            "T6_approach": 16.0,
+            "T7_transition_exit": 5.6,
+            "T8_presentation": 15.0
+          },
+          "assumption_note": "T6-T8 are assumptions (80% of T6/T7 and 75% of T8, based on the reusable approach in KB-PP-001), not measurements.",
+          "estimated_total": 72.52,
+          "qualifying_score": 70,
+          "margin": 2.52,
+          "biggest_levers": [
+            "T3 certifications: Nimbus earns 1 of 8 (no ISO/IEC 20000-1, CMMI ML3 only, no ISO 22301)",
+            "T2: PRJ-005 would add 1 mark if the client certified Nimbus's share",
+            "T5 Security Lead: NDS-E105 would score 0 (CISM expired); NDS-E110 must be proposed"
+          ]
+        },
+        "gate1": "Human decides. TenderBridge never submits a bid."
+      }
+    },
+    "S-v2": {
+      "tender_version": "v2 (after Corrigendum No. 1)",
+      "effective_bid_submission_end": "2026-11-20T15:00",
+      "items": [
+        {
+          "requirement_id": "REQ-ELG-001",
+          "criterion": "Registered in India, >= 5 years in existence on bid submission end date",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "incorporated 2011-06-14; 15.4 years at 2026-11-20T15:00 >= 5",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-01",
+            "span": "The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall have been in existence and operation in India for at least five (5) years as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-001",
+              "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+              "page": 1,
+              "span": "Date of incorporation: 14 June 2011"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-002",
+          "criterion": "Single bidder; consortium not allowed",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Nimbus bids alone",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-002",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 4,
+            "section": "2.1 Eligible Bidders",
+            "span": "Bids from a consortium or joint venture shall not be accepted. The Bidder shall be a single legal entity and shall be solely responsible for the delivery of all services under this RFP."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-001",
+              "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+              "page": 1,
+              "span": "Date of incorporation: 14 June 2011"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-003",
+          "criterion": "Average IT/ITeS turnover FY22-23..FY24-25 >= Rs. 55 Cr (Rs. 45 Cr for eligible MSEs)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "general branch: mean(46.00, 52.00, 58.00) = 52.00 < 55.00 FAIL; MSE branch: Udyam 'Small', NIC 62090/63111/62020 (divisions 62, 63), registration valid on 2026-11-20, 52.00 >= 45.00 PASS; OR => PASS (values converted from Rs. lakh: 4,600.00 / 5,200.00 / 5,800.00 lakh)",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-02",
+            "span": "average annual turnover of not less than Rs. 55 Crore"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-2022-23",
+              "file": "company_kb/02_financials/financial_statements_FY2022-23.pdf",
+              "page": 2,
+              "span": "During the financial year 2022-23, the Company's revenue from operations was ₹4,600.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2023-24",
+              "file": "company_kb/02_financials/financial_statements_FY2023-24.pdf",
+              "page": 2,
+              "span": "During the financial year 2023-24, the Company's revenue from operations was ₹5,200.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2024-25",
+              "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+              "page": 2,
+              "span": "During the financial year 2024-25, the Company's revenue from operations was ₹5,800.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-CA",
+              "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+              "page": 1,
+              "span": "The average annual turnover from IT/ITeS services for the three financial years is ₹52.00 crore"
+            },
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Type of enterprise: Small (classification year 2025-26)"
+            }
+          ],
+          "notes": "Naive check against Rs. 55 Cr alone would report a false gap; the rule engine must apply the MSE branch with Udyam evidence."
+        },
+        {
+          "requirement_id": "REQ-ELG-004",
+          "criterion": "Average DC/network/managed infra services turnover >= Rs. 20 Cr",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "mean(23.40, 27.10, 31.30) = 27.27 >= 20.00",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-004",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-03",
+            "span": "Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services during the same three financial years shall be not less than Rs. 20 Crore."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-CA",
+              "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+              "page": 1,
+              "span": "The average annual turnover from data centre, network and managed IT infrastructure services for the same years is ₹27.27 crore"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-005",
+          "criterion": "Positive net worth in each of FY22-23..FY24-25",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "12.00 > 0, 15.00 > 0, 18.00 > 0 (Rs. Cr)",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-005",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-04",
+            "span": "The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-25)."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-2022-23",
+              "file": "company_kb/02_financials/financial_statements_FY2022-23.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2023 was ₹1,200.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2023-24",
+              "file": "company_kb/02_financials/financial_statements_FY2023-24.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2024 was ₹1,500.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2024-25",
+              "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2025 was ₹1,800.00 lakh"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-006",
+          "criterion": "Similar completed works in window: 3 >= 15.36 OR 2 >= 23.04 OR 1 >= 30.72 (Rs. Cr)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "branch (a): definite ['PRJ-001', 'PRJ-002'] pending [] => gap; branch (b): definite ['PRJ-001', 'PRJ-002'] pending [] => meets; branch (c): definite [] pending [] => gap; OR => meets",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-05",
+            "span": "three similar completed works, each costing not less than 40% of the estimated cost"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CC-001",
+              "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+            },
+            {
+              "doc_id": "KB-CC-002",
+              "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+            },
+            {
+              "doc_id": "KB-CC-004",
+              "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+              "page": 1,
+              "span": "The total value of the contract executed by the consortium is ₹38.00 crore (including taxes)"
+            }
+          ],
+          "notes": "Branch (b) is met by PRJ-001 (24.60) and PRJ-002 (26.10). Verdict does not depend on the ambiguous PRJ-005."
+        },
+        {
+          "requirement_id": "REQ-ELG-009",
+          "criterion": "ISO 9001:2015 AND ISO/IEC 27001:2022 (scope DC/infra managed services) AND (CMMI ML3+ OR ISO/IEC 20000-1), each valid on bid submission end date",
+          "expected_verdict": "gap",
+          "hard_gate": true,
+          "computation": "(i) ISO 9001 valid_to 2027-03-14 >= 2026-11-20: PASS; (ii) ISO/IEC 27001:2022 valid_to 2026-11-10 vs 2026-11-20: FAIL (expired 10 days before the deadline); scope covers managed DC/NOC/cloud services: PASS; (iii) CMMI V2.0 ML3 (SVC) valid_to 2027-06-19: PASS, ISO/IEC 20000-1 not held; OR => PASS; AND => FAIL",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-009",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-06",
+            "span": "each valid as on the bid submission end date"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CERT-001",
+              "file": "company_kb/03_certifications/iso9001_2015_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 14 March 2027"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 10 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Information security management system for the provision of managed data centre, network operations centre and cloud infrastructure services from the Bengaluru and Pune delivery centres, per Statement of Applicability version 3.1"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Scheduled 16 to 18 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-003",
+              "file": "company_kb/03_certifications/cmmi_ml3_appraisal_mock_record.pdf",
+              "page": 1,
+              "span": "Maturity level achieved: Maturity Level 3. No Level 4 or Level 5 appraisal has been performed."
+            },
+            {
+              "doc_id": "KB-CERT-004",
+              "file": "company_kb/03_certifications/certification_register.pdf",
+              "page": 1,
+              "span": "ISO/IEC 20000-1:2018 is not held by Nimbus."
+            }
+          ],
+          "notes": "Mitigation check: recertification audit is 16-18 Nov 2026 and a renewed certificate typically issues 2-4 weeks later; pre-bid response 9 (Corrigendum No. 1, Part B) rejects audit-completion letters. Only a renewed certificate issued before the deadline would close the gap: needs human confirmation from the certification body.",
+          "action": "Gate 1: no-bid unless the certification body confirms issue of a renewed ISO/IEC 27001:2022 certificate before 20-11-2026 15:00."
+        },
+        {
+          "requirement_id": "REQ-ELG-010",
+          "criterion": ">= 150 technically qualified IT professionals on payroll on 30-09-2026",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "236 >= 150",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-010",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-07",
+            "span": "The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its payroll as on 30-09-2026."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-006",
+              "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+              "page": 1,
+              "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-011",
+          "criterion": "Office in Deccan State OR undertaking (Format PQ-9)",
+          "expected_verdict": "meets_with_undertaking",
+          "hard_gate": true,
+          "computation": "no office in Deccan State; OR branch 2: undertaking allowed by tender and by company policy => PASS with obligation",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-011",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-08",
+            "span": "The Bidder shall have an operational office in Deccan State. If the Bidder does not have such an office, it shall submit an undertaking to establish an office in Navapur within 60 days of issue of the Letter of Award, in Format PQ-9."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CO-001",
+              "file": "company_kb/01_company/company_profile.pdf",
+              "page": 3,
+              "span": "Nimbus does not currently have an office in Deccan State."
+            },
+            {
+              "doc_id": "KB-REG-007",
+              "file": "company_kb/09_registrations/local_office_undertaking_template.pdf",
+              "page": 1,
+              "span": "Nimbus may undertake to establish a project office within 60 days of award, with the approval of the VP - Public Sector Business and the CFO."
+            }
+          ],
+          "action": "Sign Format PQ-9; budget ~Rs. 18 lakh for the Navapur office"
+        },
+        {
+          "requirement_id": "REQ-ELG-014",
+          "criterion": "Not blacklisted (declaration)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "declaration on record",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-014",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-09",
+            "span": "The Bidder shall not be blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-003",
+              "file": "company_kb/09_registrations/non_blacklisting_declaration.pdf",
+              "page": 1,
+              "span": "Nimbus Digital Services Private Limited has not been blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking."
+            }
+          ],
+          "action": "Sign Format PQ-6 dated near submission"
+        },
+        {
+          "requirement_id": "REQ-ELG-015",
+          "criterion": "Bid-specific MAF from EMS/NMS/ITSM OEM",
+          "expected_verdict": "needs_action",
+          "hard_gate": true,
+          "computation": "only a general partnership letter is held; bid-specific MAF not yet obtained",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-015",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-10",
+            "span": "The Bidder shall submit a bid-specific Manufacturer's Authorisation Form (MAF) from the OEM of the proposed EMS/NMS and ITSM tool, with an undertaking of back-to-back support for the contract period, in Format PQ-8."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-008",
+              "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+              "page": 1,
+              "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+            }
+          ],
+          "action": "Request bid-specific MAF from OpsCentral (owner: Head - Bids)"
+        },
+        {
+          "requirement_id": "REQ-ELG-016",
+          "criterion": "Land border compliance (Format PQ-7)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Indian-owned; declaration on record",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-016",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-11",
+            "span": "The Bidder shall comply with the restrictions under Rule 144(xi) of the General Financial Rules, 2017 on procurement from bidders from a country sharing a land border with India, and shall submit the certificate in Format PQ-7."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-005",
+              "file": "company_kb/09_registrations/land_border_declaration.pdf",
+              "page": 1,
+              "span": "Nimbus Digital Services Private Limited is not from a country sharing a land border with India and has no beneficial owner from such a country."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-012",
+          "criterion": "EMD Rs. 76.80 lakh OR MSE exemption",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Udyam Small enterprise for IT services => EMD and tender fee exempt",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-012",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 5,
+            "section": "2.10 EMD",
+            "span": "The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as a Bank Guarantee or e-Bank Guarantee from a scheduled commercial bank, or by online transfer, valid for 45 days beyond the bid validity period."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Type of enterprise: Small (classification year 2025-26)"
+            },
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Registration is valid and has no expiry date; classification is updated annually from ITR and GST data"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-001",
+          "criterion": "Key personnel minimum: Project Manager",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E102: PMP valid_to 2027-02-28 -> valid, ITIL 4 Managing Professional valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-102",
+              "file": "company_kb/05_personnel/CV_NDS-E102_Senior_Project_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 16 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-002",
+          "criterion": "Key personnel minimum: DC Operations Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E109: ITIL 4 Managing Professional valid_to None -> valid, Uptime Institute ATD (Accredited Tier Designer) valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-002",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience including at least 6 years in data centre operations; ITIL v4 Foundation or higher certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-109",
+              "file": "company_kb/05_personnel/CV_NDS-E109_Data_Centre_Operations_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 12 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-003",
+          "criterion": "Key personnel minimum: Network Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E108: Cisco CCNP Enterprise valid_to 2027-04-11 -> valid, Fortinet NSE 4 valid_to 2025-06-20 -> NOT valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-108",
+              "file": "company_kb/05_personnel/CV_NDS-E108_Network_Lead.pdf",
+              "page": 1,
+              "span": "Total experience: 12 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-005",
+          "criterion": "Key personnel minimum: Cloud Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E104: Microsoft Certified: Azure Solutions Architect Expert valid_to 2027-01-21 -> valid, AWS Certified Solutions Architect - Professional valid_to 2026-08-30 -> NOT valid, Certified OpenStack Administrator (COA) valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-005",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 10,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level cloud architect certification (AWS Solutions Architect Professional, Microsoft Azure Solutions Architect Expert or Google Professional Cloud Architect)."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-104",
+              "file": "company_kb/05_personnel/CV_NDS-E104_Cloud_Architect.pdf",
+              "page": 1,
+              "span": "Total experience: 11 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-004",
+          "criterion": "Key personnel minimum: Security Lead (CISSP/CISM valid on deadline, >= 10 yrs, >= 5 yrs security ops)",
+          "expected_verdict": "meets_with_substitution",
+          "hard_gate": false,
+          "computation": "NDS-E105: CISM valid_to 2026-06-30 < 2026-11-20 => FAILS (CV lists CISM without validity); NDS-E110: CISSP valid_to 2028-01-31 => MEETS. Propose NDS-E110.",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-004",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-105",
+              "file": "company_kb/05_personnel/CV_NDS-E105_Cybersecurity_Lead.pdf",
+              "page": 1,
+              "span": "Total experience: 13 years"
+            },
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-110",
+              "file": "company_kb/05_personnel/CV_NDS-E110_Security_Operations_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 11 years"
+            }
+          ],
+          "notes": "Trap: the CV of NDS-E105 claims CISM; HR tracker shows it expired. Pre-bid response 13 confirms expired certifications are not accepted."
+        },
+        {
+          "requirement_id": "REQ-PER-006",
+          "criterion": "Key personnel on payroll",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "all proposed key personnel are employees",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.2 Key Personnel",
+            "span": "All key personnel proposed shall be on the payroll of the Bidder as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-006",
+              "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+              "page": 1,
+              "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-COR-012",
+          "criterion": "Self-declaration of CERT-In Directions compliance (6-hour reporting) [added by Corrigendum No. 1]",
+          "expected_verdict": "needs_action",
+          "hard_gate": false,
+          "computation": "policy KB-POL-001 s.5 already requires 6-hour CERT-In reporting; declaration document not yet signed",
+          "tender_evidence": {
+            "requirement_id": "REQ-COR-012",
+            "file": "tender/TDR-001/original/corrigendum.pdf",
+            "page": 2,
+            "section": "Corrigendum 1, Part A, item 12",
+            "span": "self-declaration of compliance with the CERT-In Directions"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-001",
+              "file": "company_kb/07_policies/information_security_policy.pdf",
+              "page": 1,
+              "span": "Cyber security incidents covered by the CERT-In Directions of 28 April 2022 are reported to CERT-In within 6 hours of being noticed"
+            }
+          ],
+          "action": "Prepare and sign the declaration (owner: CISO)"
+        },
+        {
+          "requirement_id": "REQ-LEG-007",
+          "criterion": "Insurance: PI >= Rs. 10 Cr and cyber >= Rs. 10 Cr through the contract",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "PI 15 >= 10; cyber 10 >= 10",
+          "tender_evidence": {
+            "requirement_id": "REQ-LEG-007",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 18,
+            "section": "8.14 Insurance",
+            "span": "The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cyber liability insurance of not less than Rs. 10 Crore, and shall submit copies of the policies within 30 days of the LoA."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-LEG-001",
+              "file": "company_kb/08_legal_commercial/bid_risk_policy.pdf",
+              "page": 1,
+              "span": "Standard position: Aggregate liability capped at 1x annual contract value; 1x total contract value acceptable with Legal approval."
+            }
+          ],
+          "notes": "Insurance figures from KB-LEG-001 s.9. Cyber cover equals the minimum; relevant to the uncapped data-breach liability decision."
+        },
+        {
+          "requirement_id": "REQ-TEC-003",
+          "criterion": "Critical patches within 7 days of OEM release",
+          "expected_verdict": "partial",
+          "hard_gate": false,
+          "computation": "Nimbus default is 14 days but its policy lets a shorter contract term prevail; engagement procedure must commit to 7 days",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 13,
+            "section": "6.4 DC Operations",
+            "span": "The MSP shall apply critical security patches to operating systems, hypervisors and network devices within 7 days of release by the OEM, after testing in the staging environment, and shall document any exception approved by DSEDC."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-001",
+              "file": "company_kb/07_policies/information_security_policy.pdf",
+              "page": 1,
+              "span": "Critical security patches are applied within 14 days of release, and high-severity patches within 30 days, unless the client contract sets a shorter period"
+            }
+          ],
+          "notes": "Graded by LLM (GPT-OSS 120B) with citations; expected 'partial' with an action, not 'meets' and not 'gap'."
+        },
+        {
+          "requirement_id": "REQ-TEC-006",
+          "criterion": "RPO <= 15 min, RTO <= 4 h for Category A apps",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "DR design standard and PRJ-002 drill record",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 13,
+            "section": "6.5 Backup and DR",
+            "span": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-003",
+              "file": "company_kb/07_policies/bc_dr_policy.pdf",
+              "page": 1,
+              "span": "For client DR services, Nimbus designs to the RPO and RTO stated in the client contract; typical designs target an RPO of 15 minutes and an RTO of 4 hours for critical applications"
+            },
+            {
+              "doc_id": "KB-CC-002",
+              "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-TEC-001",
+          "criterion": "Takeover within 90 days with >= 30 days shadowing and >= 15 days reverse shadowing",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "methodology KB-POL-005 s.2 and PRJ-001 delivery",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 12,
+            "section": "6.3 Transition",
+            "span": "The MSP shall complete takeover of operations from the current operator within 90 days of the Letter of Award, including inventory verification, knowledge transfer, shadowing for at least 30 days and reverse shadowing for at least 15 days."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-005",
+              "file": "company_kb/07_policies/service_delivery_change_methodology.docx",
+              "page": null,
+              "span": "Transition includes inventory verification, knowledge capture, at least 30 days of shadowing and at least 15 days of reverse shadowing, followed by a readiness review with the client"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-TEC-019",
+          "criterion": "Keep own ISO/IEC 27001:2022 certification valid through the contract",
+          "expected_verdict": "gap",
+          "hard_gate": false,
+          "computation": "certificate expires 2026-11-10; recertification audit scheduled 16-18 Nov 2026",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-019",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 15,
+            "section": "6.11D Compliance and Audits",
+            "span": "The MSP shall ensure that its own ISO/IEC 27001:2022 certification, with scope covering the services delivered under this contract, remains valid throughout the contract period, and shall submit a copy of each renewed certificate to DSEDC within 15 days of issue."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 10 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Scheduled 16 to 18 November 2026"
+            }
+          ],
+          "notes": "Continuing obligation. Even in v1 the renewal must complete before contract start; track as a risk."
+        }
+      ],
+      "similar_work": {
+        "projects": [
+          {
+            "project_id": "PRJ-001",
+            "value_cr": 24.6,
+            "counted_value_cr": 24.6,
+            "in_window": true,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "certified",
+            "eligible_definite": true,
+            "eligible_possible": true,
+            "reason": "DC O&M, 42 racks, State Government society: matches Clause 3.3.1.",
+            "value_note": "Client completion certificate states the value.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-001",
+                "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+                "page": 1,
+                "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-002",
+            "value_cr": 26.1,
+            "counted_value_cr": 26.1,
+            "in_window": true,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "certified",
+            "eligible_definite": true,
+            "eligible_possible": true,
+            "reason": "DR site build plus 36 months of managed services (O&M), 28 racks, Scheduled Commercial Bank: matches Clause 3.3.1 (pre-bid response 6 confirms banks count).",
+            "value_note": "Client completion certificate states the value.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-002",
+                "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+                "page": 1,
+                "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-003",
+            "value_cr": 14.9,
+            "counted_value_cr": 14.9,
+            "in_window": true,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "certified",
+            "eligible_definite": true,
+            "eligible_possible": true,
+            "reason": "24x7 NOC O&M for an Urban Local Body: matches the NOC limb of Clause 3.3.1.",
+            "value_note": "Client completion certificate states the value.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-003",
+                "file": "company_kb/04_project_experience/PRJ-003_completion_certificate.pdf",
+                "page": 1,
+                "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹14.90 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-004",
+            "value_cr": 19.8,
+            "counted_value_cr": 19.8,
+            "in_window": false,
+            "completed": true,
+            "similar": "yes",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "Similar in nature (24-rack DC O&M, port trust) but completed 31-08-2019, before the window start of 01-10-2019.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-005",
+            "value_cr": 38.0,
+            "counted_value_cr": null,
+            "in_window": true,
+            "completed": true,
+            "similar": "needs_human",
+            "value_status": "not_counted",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "24x7 State NOC O&M for a state agency (similar in nature), executed as consortium member. Bidder's share (45%) is evidenced only by the consortium agreement; the client certificate states total value only.",
+            "value_note": "Corrigendum No. 1 item 5: only client-certified share counts; consortium agreement not accepted. Client certificate KB-CC-004 states total value only, so the work cannot be counted.",
+            "evidence": [
+              {
+                "doc_id": "KB-CC-004",
+                "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+                "page": 1,
+                "span": "The total value of the contract executed by the consortium is ₹38.00 crore (including taxes)"
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-006",
+            "value_cr": 13.5,
+            "counted_value_cr": 13.5,
+            "in_window": false,
+            "completed": false,
+            "similar": "excluded_ongoing",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "Ongoing (planned end 31-12-2026): excluded by Clause 3.3.2.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-007",
+            "value_cr": 8.4,
+            "counted_value_cr": 8.4,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_amc_only",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "AMC of hardware only, private client: excluded by Clause 3.3.2 and client type.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-008",
+            "value_cr": 6.8,
+            "counted_value_cr": 6.8,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_not_dc_noc",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "SOC modernisation: not DC/DR O&M or NOC.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-009",
+            "value_cr": 18.0,
+            "counted_value_cr": 18.0,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_application_work",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "Application modernisation for a bank: high value but not DC/DR/NOC work.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          },
+          {
+            "project_id": "PRJ-010",
+            "value_cr": 11.2,
+            "counted_value_cr": 11.2,
+            "in_window": true,
+            "completed": true,
+            "similar": "no_below_20_racks_not_noc",
+            "value_status": "no_completion_certificate",
+            "eligible_definite": false,
+            "eligible_possible": false,
+            "reason": "12-rack server room (< 20 racks) and campus network, not a 24x7 NOC.",
+            "value_note": "No client completion certificate in the KB.",
+            "evidence": [
+              {
+                "doc_id": "KB-PRJ-REG",
+                "file": "company_kb/04_project_experience/project_register.pdf",
+                "page": 1
+              }
+            ]
+          }
+        ],
+        "branches": {
+          "a": {
+            "required_count": 3,
+            "threshold_each_inr_cr": 15.36,
+            "definite": [
+              "PRJ-001",
+              "PRJ-002"
+            ],
+            "pending_human": [],
+            "verdict": "gap"
+          },
+          "b": {
+            "required_count": 2,
+            "threshold_each_inr_cr": 23.04,
+            "definite": [
+              "PRJ-001",
+              "PRJ-002"
+            ],
+            "pending_human": [],
+            "verdict": "meets"
+          },
+          "c": {
+            "required_count": 1,
+            "threshold_each_inr_cr": 30.72,
+            "definite": [],
+            "pending_human": [],
+            "verdict": "gap"
+          }
+        },
+        "overall": "meets",
+        "naive_errors_to_avoid": {
+          "PRJ-005 total value Rs. 38.00 Cr >= 30.72 would wrongly satisfy branch (c)": "must not happen: only the bidder's share counts",
+          "PRJ-009 Rs. 18.00 Cr bank project": "must not count: not similar work",
+          "PRJ-004 Rs. 19.80 Cr": "must not count: outside the time window",
+          "Counting only branch (a)": "a tool that checks only '3 projects' reports a false gap; branch (b) is met"
+        }
+      },
+      "bid_assessment": {
+        "factors": {
+          "strategic_fit": 85,
+          "technical_capability": 72.52,
+          "eligibility_confidence": 89.62,
+          "commercial_risk": 65,
+          "delivery_capacity": 85
+        },
+        "weights": {
+          "strategic_fit": 20,
+          "technical_capability": 25,
+          "eligibility_confidence": 20,
+          "commercial_risk": 20,
+          "delivery_capacity": 15
+        },
+        "weighted_score": 78.8,
+        "risk_register": [
+          {
+            "requirement_id": "REQ-LEG-001",
+            "clause_type": "unlimited_liability",
+            "tender_term": "Cap 1x total contract value, but unlimited for gross negligence, data breach and IP indemnity",
+            "policy": "Uncapped liability not accepted by default; CEO decision with insurance cover",
+            "verdict": "escalate",
+            "deal_breaker": true,
+            "approver": "MD & CEO",
+            "action": "Raise with Legal; pre-bid query was rejected ('As per RFP'); CEO decision at Gate 1; check cyber insurance (Rs. 10 Cr) against exposure"
+          },
+          {
+            "requirement_id": "REQ-COR-004",
+            "clause_type": "performance_guarantee",
+            "tender_term": "PBG 3% of contract value",
+            "policy": "Up to 3% standard; CFO approval above 3%",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-COR-009",
+            "clause_type": "payment_terms",
+            "tender_term": "Quarterly in arrears within 45 days",
+            "policy": "Up to 45 days accepted; CFO cash-flow review above 45",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-COR-007",
+            "clause_type": "sla_penalty_cap",
+            "tender_term": "10% of QGR per quarter; termination if cap hit 2 quarters running",
+            "policy": "Cap up to 10% of quarterly payment",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-LEG-005",
+            "clause_type": "termination_for_convenience",
+            "tender_term": "60 days' notice",
+            "policy": ">= 90 days' notice",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "Head - Legal",
+            "action": "Pre-bid query rejected; accept or decline at Gate 1"
+          },
+          {
+            "requirement_id": "REQ-LEG-002",
+            "clause_type": "ip_ownership",
+            "tender_term": "Deliverables owned by DSEDC; perpetual royalty-free licence to embedded pre-existing tools",
+            "policy": "Client owns project deliverables; Nimbus retains pre-existing IP with licence",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null,
+            "note": "Pre-bid response 19 confirms pre-existing IP stays with the MSP. Generic runbook templates: check with Legal (low risk)."
+          },
+          {
+            "requirement_id": "REQ-COM-001",
+            "clause_type": "price_firmness",
+            "tender_term": "Prices firm for 5 years; no wage or FX variation",
+            "policy": "No explicit position; commercial review",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "CFO",
+            "note": "Build wage inflation into pricing."
+          },
+          {
+            "requirement_id": "REQ-COM-006",
+            "clause_type": "liquidated_damages",
+            "tender_term": "0.5%/week of annual value, max 10% of annual value",
+            "policy": "LD cap up to 10% of contract value",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-LEG-004",
+            "clause_type": "subcontracting",
+            "tender_term": "Only with prior approval; key roles and 24x7 staff never",
+            "policy": "Approval and disclosure",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          }
+        ],
+        "hard_gate_failures": [
+          "REQ-ELG-009"
+        ],
+        "deal_breakers_needing_approval": [
+          "REQ-LEG-001"
+        ],
+        "recommendation": "NO_BID",
+        "reason": "Hard gate failure: REQ-ELG-009. The weighted score (78.8) cannot override a hard gate.",
+        "technical_marks_estimate": {
+          "objective": {
+            "T1": 2.0,
+            "T2": 9,
+            "T2_counted_projects": [
+              "PRJ-001",
+              "PRJ-002",
+              "PRJ-003"
+            ],
+            "T3": 1.0,
+            "T4": 4.0,
+            "T5": 19.92,
+            "T5_detail": [
+              {
+                "role": "Project Manager",
+                "employee_id": "NDS-E102",
+                "max": 7,
+                "estimated": 5.88,
+                "preferred_met": true,
+                "years_above_min": 1
+              },
+              {
+                "role": "DC Operations Lead",
+                "employee_id": "NDS-E109",
+                "max": 5,
+                "estimated": 4.4,
+                "preferred_met": true,
+                "years_above_min": 2
+              },
+              {
+                "role": "Network Lead",
+                "employee_id": "NDS-E108",
+                "max": 5,
+                "estimated": 3.4,
+                "preferred_met": false,
+                "years_above_min": 2
+              },
+              {
+                "role": "Security Lead",
+                "employee_id": "NDS-E110",
+                "max": 4,
+                "estimated": 2.56,
+                "preferred_met": false,
+                "years_above_min": 1
+              },
+              {
+                "role": "Cloud Lead",
+                "employee_id": "NDS-E104",
+                "max": 4,
+                "estimated": 3.68,
+                "preferred_met": true,
+                "years_above_min": 3
+              }
+            ]
+          },
+          "assumed_subjective": {
+            "T6_approach": 16.0,
+            "T7_transition_exit": 5.6,
+            "T8_presentation": 15.0
+          },
+          "assumption_note": "T6-T8 are assumptions (80% of T6/T7 and 75% of T8, based on the reusable approach in KB-PP-001), not measurements.",
+          "estimated_total": 72.52,
+          "qualifying_score": 70,
+          "margin": 2.52,
+          "biggest_levers": [
+            "T3 certifications: Nimbus earns 1 of 8 (no ISO/IEC 20000-1, CMMI ML3 only, no ISO 22301)",
+            "T2: PRJ-005 would add 1 mark if the client certified Nimbus's share",
+            "T5 Security Lead: NDS-E105 would score 0 (CISM expired); NDS-E110 must be proposed"
+          ]
+        },
+        "gate1": "Human decides. TenderBridge never submits a bid."
+      }
+    },
+    "S-X1": {
+      "tender_version": "c2 stress (Corrigendum No. 2 test fixture loaded)",
+      "effective_bid_submission_end": "2026-12-04T15:00",
+      "items": [
+        {
+          "requirement_id": "REQ-ELG-001",
+          "criterion": "Registered in India, >= 5 years in existence on bid submission end date",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "incorporated 2011-06-14; 15.5 years at 2026-12-04T15:00 >= 5",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-01",
+            "span": "The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall have been in existence and operation in India for at least five (5) years as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-001",
+              "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+              "page": 1,
+              "span": "Date of incorporation: 14 June 2011"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-002",
+          "criterion": "Single bidder; consortium not allowed",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Nimbus bids alone",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-002",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 4,
+            "section": "2.1 Eligible Bidders",
+            "span": "Bids from a consortium or joint venture shall not be accepted. The Bidder shall be a single legal entity and shall be solely responsible for the delivery of all services under this RFP."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-001",
+              "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+              "page": 1,
+              "span": "Date of incorporation: 14 June 2011"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-003",
+          "criterion": "Average IT/ITeS turnover FY22-23..FY24-25 >= Rs. 55 Cr (Rs. 45 Cr for eligible MSEs)",
+          "expected_verdict": "gap",
+          "hard_gate": true,
+          "computation": "Corrigendum No. 2 (test fixture) withdraws the MSE relaxation: 52.00 < 55.00 => GAP",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-02",
+            "span": "average annual turnover of not less than Rs. 55 Crore"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-2022-23",
+              "file": "company_kb/02_financials/financial_statements_FY2022-23.pdf",
+              "page": 2,
+              "span": "During the financial year 2022-23, the Company's revenue from operations was ₹4,600.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2023-24",
+              "file": "company_kb/02_financials/financial_statements_FY2023-24.pdf",
+              "page": 2,
+              "span": "During the financial year 2023-24, the Company's revenue from operations was ₹5,200.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2024-25",
+              "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+              "page": 2,
+              "span": "During the financial year 2024-25, the Company's revenue from operations was ₹5,800.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-CA",
+              "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+              "page": 1,
+              "span": "The average annual turnover from IT/ITeS services for the three financial years is ₹52.00 crore"
+            },
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Type of enterprise: Small (classification year 2025-26)"
+            }
+          ],
+          "notes": "Stress case: precedence C2 > C1 > RFP. Turnover becomes a hard-gate failure."
+        },
+        {
+          "requirement_id": "REQ-ELG-004",
+          "criterion": "Average DC/network/managed infra services turnover >= Rs. 20 Cr",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "mean(23.40, 27.10, 31.30) = 27.27 >= 20.00",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-004",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-03",
+            "span": "Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services during the same three financial years shall be not less than Rs. 20 Crore."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-CA",
+              "file": "company_kb/02_financials/ca_certificate_turnover_networth.pdf",
+              "page": 1,
+              "span": "The average annual turnover from data centre, network and managed IT infrastructure services for the same years is ₹27.27 crore"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-005",
+          "criterion": "Positive net worth in each of FY22-23..FY24-25",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "12.00 > 0, 15.00 > 0, 18.00 > 0 (Rs. Cr)",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-005",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-04",
+            "span": "The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-25)."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-FIN-2022-23",
+              "file": "company_kb/02_financials/financial_statements_FY2022-23.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2023 was ₹1,200.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2023-24",
+              "file": "company_kb/02_financials/financial_statements_FY2023-24.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2024 was ₹1,500.00 lakh"
+            },
+            {
+              "doc_id": "KB-FIN-2024-25",
+              "file": "company_kb/02_financials/financial_statements_FY2024-25.pdf",
+              "page": 2,
+              "span": "Net worth as at 31 March 2025 was ₹1,800.00 lakh"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-006",
+          "criterion": "Similar completed works in window: 3 >= 15.36 OR 2 >= 23.04 OR 1 >= 30.72 (Rs. Cr)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "branch (a): definite ['PRJ-001', 'PRJ-002'] pending [] => gap; branch (b): definite ['PRJ-001', 'PRJ-002'] pending [] => meets; branch (c): definite [] pending [] => gap; OR => meets",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-05",
+            "span": "three similar completed works, each costing not less than 40% of the estimated cost"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CC-001",
+              "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+            },
+            {
+              "doc_id": "KB-CC-002",
+              "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+            },
+            {
+              "doc_id": "KB-CC-004",
+              "file": "company_kb/04_project_experience/PRJ-005_completion_certificate.pdf",
+              "page": 1,
+              "span": "The total value of the contract executed by the consortium is ₹38.00 crore (including taxes)"
+            }
+          ],
+          "notes": "Branch (b) is met by PRJ-001 (24.60) and PRJ-002 (26.10). Verdict does not depend on the ambiguous PRJ-005."
+        },
+        {
+          "requirement_id": "REQ-ELG-009",
+          "criterion": "ISO 9001:2015 AND ISO/IEC 27001:2022 (scope DC/infra managed services) AND (CMMI ML3+ OR ISO/IEC 20000-1), each valid on bid submission end date",
+          "expected_verdict": "gap",
+          "hard_gate": true,
+          "computation": "(i) ISO 9001 valid_to 2027-03-14 >= 2026-12-04: PASS; (ii) ISO/IEC 27001:2022 valid_to 2026-11-10 vs 2026-12-04: FAIL (expired 24 days before the deadline); scope covers managed DC/NOC/cloud services: PASS; (iii) CMMI V2.0 ML3 (SVC) valid_to 2027-06-19: PASS, ISO/IEC 20000-1 not held; OR => PASS; AND => FAIL",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-009",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-06",
+            "span": "each valid as on the bid submission end date"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CERT-001",
+              "file": "company_kb/03_certifications/iso9001_2015_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 14 March 2027"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 10 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Information security management system for the provision of managed data centre, network operations centre and cloud infrastructure services from the Bengaluru and Pune delivery centres, per Statement of Applicability version 3.1"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Scheduled 16 to 18 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-003",
+              "file": "company_kb/03_certifications/cmmi_ml3_appraisal_mock_record.pdf",
+              "page": 1,
+              "span": "Maturity level achieved: Maturity Level 3. No Level 4 or Level 5 appraisal has been performed."
+            },
+            {
+              "doc_id": "KB-CERT-004",
+              "file": "company_kb/03_certifications/certification_register.pdf",
+              "page": 1,
+              "span": "ISO/IEC 20000-1:2018 is not held by Nimbus."
+            }
+          ],
+          "notes": "Mitigation check: recertification audit is 16-18 Nov 2026 and a renewed certificate typically issues 2-4 weeks later; pre-bid response 9 (Corrigendum No. 1, Part B) rejects audit-completion letters. Only a renewed certificate issued before the deadline would close the gap: needs human confirmation from the certification body.",
+          "action": "Gate 1: no-bid unless the certification body confirms issue of a renewed ISO/IEC 27001:2022 certificate before 20-11-2026 15:00."
+        },
+        {
+          "requirement_id": "REQ-ELG-010",
+          "criterion": ">= 150 technically qualified IT professionals on payroll on 30-09-2026",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "236 >= 150",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-010",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-07",
+            "span": "The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its payroll as on 30-09-2026."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-006",
+              "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+              "page": 1,
+              "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-011",
+          "criterion": "Office in Deccan State OR undertaking (Format PQ-9)",
+          "expected_verdict": "meets_with_undertaking",
+          "hard_gate": true,
+          "computation": "no office in Deccan State; OR branch 2: undertaking allowed by tender and by company policy => PASS with obligation",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-011",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-08",
+            "span": "The Bidder shall have an operational office in Deccan State. If the Bidder does not have such an office, it shall submit an undertaking to establish an office in Navapur within 60 days of issue of the Letter of Award, in Format PQ-9."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CO-001",
+              "file": "company_kb/01_company/company_profile.pdf",
+              "page": 3,
+              "span": "Nimbus does not currently have an office in Deccan State."
+            },
+            {
+              "doc_id": "KB-REG-007",
+              "file": "company_kb/09_registrations/local_office_undertaking_template.pdf",
+              "page": 1,
+              "span": "Nimbus may undertake to establish a project office within 60 days of award, with the approval of the VP - Public Sector Business and the CFO."
+            }
+          ],
+          "action": "Sign Format PQ-9; budget ~Rs. 18 lakh for the Navapur office"
+        },
+        {
+          "requirement_id": "REQ-ELG-014",
+          "criterion": "Not blacklisted (declaration)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "declaration on record",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-014",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-09",
+            "span": "The Bidder shall not be blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-003",
+              "file": "company_kb/09_registrations/non_blacklisting_declaration.pdf",
+              "page": 1,
+              "span": "Nimbus Digital Services Private Limited has not been blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking."
+            }
+          ],
+          "action": "Sign Format PQ-6 dated near submission"
+        },
+        {
+          "requirement_id": "REQ-ELG-015",
+          "criterion": "Bid-specific MAF from EMS/NMS/ITSM OEM",
+          "expected_verdict": "needs_action",
+          "hard_gate": true,
+          "computation": "only a general partnership letter is held; bid-specific MAF not yet obtained",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-015",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-10",
+            "span": "The Bidder shall submit a bid-specific Manufacturer's Authorisation Form (MAF) from the OEM of the proposed EMS/NMS and ITSM tool, with an undertaking of back-to-back support for the contract period, in Format PQ-8."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-008",
+              "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+              "page": 1,
+              "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+            }
+          ],
+          "action": "Request bid-specific MAF from OpsCentral (owner: Head - Bids)"
+        },
+        {
+          "requirement_id": "REQ-ELG-016",
+          "criterion": "Land border compliance (Format PQ-7)",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Indian-owned; declaration on record",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-016",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 7,
+            "section": "3 PQ table, PQ-11",
+            "span": "The Bidder shall comply with the restrictions under Rule 144(xi) of the General Financial Rules, 2017 on procurement from bidders from a country sharing a land border with India, and shall submit the certificate in Format PQ-7."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-005",
+              "file": "company_kb/09_registrations/land_border_declaration.pdf",
+              "page": 1,
+              "span": "Nimbus Digital Services Private Limited is not from a country sharing a land border with India and has no beneficial owner from such a country."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-ELG-012",
+          "criterion": "EMD Rs. 76.80 lakh OR MSE exemption",
+          "expected_verdict": "meets",
+          "hard_gate": true,
+          "computation": "Udyam Small enterprise for IT services => EMD and tender fee exempt",
+          "tender_evidence": {
+            "requirement_id": "REQ-ELG-012",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 5,
+            "section": "2.10 EMD",
+            "span": "The Bidder shall furnish an EMD of Rs. 76,80,000/- (Rupees Seventy Six Lakh Eighty Thousand only) along with the bid, as a Bank Guarantee or e-Bank Guarantee from a scheduled commercial bank, or by online transfer, valid for 45 days beyond the bid validity period."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Type of enterprise: Small (classification year 2025-26)"
+            },
+            {
+              "doc_id": "KB-REG-004",
+              "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+              "page": 1,
+              "span": "Registration is valid and has no expiry date; classification is updated annually from ITR and GST data"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-001",
+          "criterion": "Key personnel minimum: Project Manager",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E102: PMP valid_to 2027-02-28 -> valid, ITIL 4 Managing Professional valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-102",
+              "file": "company_kb/05_personnel/CV_NDS-E102_Senior_Project_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 16 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-002",
+          "criterion": "Key personnel minimum: DC Operations Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E109: ITIL 4 Managing Professional valid_to None -> valid, Uptime Institute ATD (Accredited Tier Designer) valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-002",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience including at least 6 years in data centre operations; ITIL v4 Foundation or higher certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-109",
+              "file": "company_kb/05_personnel/CV_NDS-E109_Data_Centre_Operations_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 12 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-003",
+          "criterion": "Key personnel minimum: Network Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E108: Cisco CCNP Enterprise valid_to 2027-04-11 -> valid, Fortinet NSE 4 valid_to 2025-06-20 -> NOT valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-108",
+              "file": "company_kb/05_personnel/CV_NDS-E108_Network_Lead.pdf",
+              "page": 1,
+              "span": "Total experience: 12 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-005",
+          "criterion": "Key personnel minimum: Cloud Lead",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "NDS-E104: Microsoft Certified: Azure Solutions Architect Expert valid_to 2027-01-21 -> valid, AWS Certified Solutions Architect - Professional valid_to 2026-08-30 -> NOT valid, Certified OpenStack Administrator (COA) valid_to None -> valid",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-005",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 10,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level cloud architect certification (AWS Solutions Architect Professional, Microsoft Azure Solutions Architect Expert or Google Professional Cloud Architect)."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-104",
+              "file": "company_kb/05_personnel/CV_NDS-E104_Cloud_Architect.pdf",
+              "page": 1,
+              "span": "Total experience: 11 years"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-PER-004",
+          "criterion": "Key personnel minimum: Security Lead (CISSP/CISM valid on deadline, >= 10 yrs, >= 5 yrs security ops)",
+          "expected_verdict": "meets_with_substitution",
+          "hard_gate": false,
+          "computation": "NDS-E105: CISM valid_to 2026-06-30 < 2026-12-04 => FAILS (CV lists CISM without validity); NDS-E110: CISSP valid_to 2028-01-31 => MEETS. Propose NDS-E110.",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-004",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.3 Key Personnel table",
+            "span": "B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM certification."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-105",
+              "file": "company_kb/05_personnel/CV_NDS-E105_Cybersecurity_Lead.pdf",
+              "page": 1,
+              "span": "Total experience: 13 years"
+            },
+            {
+              "doc_id": "KB-HR-001",
+              "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+              "page": 1
+            },
+            {
+              "doc_id": "KB-CV-110",
+              "file": "company_kb/05_personnel/CV_NDS-E110_Security_Operations_Manager.pdf",
+              "page": 1,
+              "span": "Total experience: 11 years"
+            }
+          ],
+          "notes": "Trap: the CV of NDS-E105 claims CISM; HR tracker shows it expired. Pre-bid response 13 confirms expired certifications are not accepted."
+        },
+        {
+          "requirement_id": "REQ-PER-006",
+          "criterion": "Key personnel on payroll",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "all proposed key personnel are employees",
+          "tender_evidence": {
+            "requirement_id": "REQ-PER-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 9,
+            "section": "4.2 Key Personnel",
+            "span": "All key personnel proposed shall be on the payroll of the Bidder as on the bid submission end date."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-REG-006",
+              "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+              "page": 1,
+              "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-COR-012",
+          "criterion": "Self-declaration of CERT-In Directions compliance (6-hour reporting) [added by Corrigendum No. 1]",
+          "expected_verdict": "needs_action",
+          "hard_gate": false,
+          "computation": "policy KB-POL-001 s.5 already requires 6-hour CERT-In reporting; declaration document not yet signed",
+          "tender_evidence": {
+            "requirement_id": "REQ-COR-012",
+            "file": "tender/TDR-001/original/corrigendum.pdf",
+            "page": 2,
+            "section": "Corrigendum 1, Part A, item 12",
+            "span": "self-declaration of compliance with the CERT-In Directions"
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-001",
+              "file": "company_kb/07_policies/information_security_policy.pdf",
+              "page": 1,
+              "span": "Cyber security incidents covered by the CERT-In Directions of 28 April 2022 are reported to CERT-In within 6 hours of being noticed"
+            }
+          ],
+          "action": "Prepare and sign the declaration (owner: CISO)"
+        },
+        {
+          "requirement_id": "REQ-LEG-007",
+          "criterion": "Insurance: PI >= Rs. 10 Cr and cyber >= Rs. 10 Cr through the contract",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "PI 15 >= 10; cyber 10 >= 10",
+          "tender_evidence": {
+            "requirement_id": "REQ-LEG-007",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 18,
+            "section": "8.14 Insurance",
+            "span": "The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cyber liability insurance of not less than Rs. 10 Crore, and shall submit copies of the policies within 30 days of the LoA."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-LEG-001",
+              "file": "company_kb/08_legal_commercial/bid_risk_policy.pdf",
+              "page": 1,
+              "span": "Standard position: Aggregate liability capped at 1x annual contract value; 1x total contract value acceptable with Legal approval."
+            }
+          ],
+          "notes": "Insurance figures from KB-LEG-001 s.9. Cyber cover equals the minimum; relevant to the uncapped data-breach liability decision."
+        },
+        {
+          "requirement_id": "REQ-TEC-003",
+          "criterion": "Critical patches within 7 days of OEM release",
+          "expected_verdict": "partial",
+          "hard_gate": false,
+          "computation": "Nimbus default is 14 days but its policy lets a shorter contract term prevail; engagement procedure must commit to 7 days",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-003",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 13,
+            "section": "6.4 DC Operations",
+            "span": "The MSP shall apply critical security patches to operating systems, hypervisors and network devices within 7 days of release by the OEM, after testing in the staging environment, and shall document any exception approved by DSEDC."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-001",
+              "file": "company_kb/07_policies/information_security_policy.pdf",
+              "page": 1,
+              "span": "Critical security patches are applied within 14 days of release, and high-severity patches within 30 days, unless the client contract sets a shorter period"
+            }
+          ],
+          "notes": "Graded by LLM (GPT-OSS 120B) with citations; expected 'partial' with an action, not 'meets' and not 'gap'."
+        },
+        {
+          "requirement_id": "REQ-TEC-006",
+          "criterion": "RPO <= 15 min, RTO <= 4 h for Category A apps",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "DR design standard and PRJ-002 drill record",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-006",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 13,
+            "section": "6.5 Backup and DR",
+            "span": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-003",
+              "file": "company_kb/07_policies/bc_dr_policy.pdf",
+              "page": 1,
+              "span": "For client DR services, Nimbus designs to the RPO and RTO stated in the client contract; typical designs target an RPO of 15 minutes and an RTO of 4 hours for critical applications"
+            },
+            {
+              "doc_id": "KB-CC-002",
+              "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+              "page": 1,
+              "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹26.10 crore (including taxes)"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-TEC-001",
+          "criterion": "Takeover within 90 days with >= 30 days shadowing and >= 15 days reverse shadowing",
+          "expected_verdict": "meets",
+          "hard_gate": false,
+          "computation": "methodology KB-POL-005 s.2 and PRJ-001 delivery",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-001",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 12,
+            "section": "6.3 Transition",
+            "span": "The MSP shall complete takeover of operations from the current operator within 90 days of the Letter of Award, including inventory verification, knowledge transfer, shadowing for at least 30 days and reverse shadowing for at least 15 days."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-POL-005",
+              "file": "company_kb/07_policies/service_delivery_change_methodology.docx",
+              "page": null,
+              "span": "Transition includes inventory verification, knowledge capture, at least 30 days of shadowing and at least 15 days of reverse shadowing, followed by a readiness review with the client"
+            }
+          ]
+        },
+        {
+          "requirement_id": "REQ-TEC-019",
+          "criterion": "Keep own ISO/IEC 27001:2022 certification valid through the contract",
+          "expected_verdict": "gap",
+          "hard_gate": false,
+          "computation": "certificate expires 2026-11-10; recertification audit scheduled 16-18 Nov 2026",
+          "tender_evidence": {
+            "requirement_id": "REQ-TEC-019",
+            "file": "tender/TDR-001/original/main_rfp.pdf",
+            "page": 15,
+            "section": "6.11D Compliance and Audits",
+            "span": "The MSP shall ensure that its own ISO/IEC 27001:2022 certification, with scope covering the services delivered under this contract, remains valid throughout the contract period, and shall submit a copy of each renewed certificate to DSEDC within 15 days of issue."
+          },
+          "company_evidence": [
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Valid until: 10 November 2026"
+            },
+            {
+              "doc_id": "KB-CERT-002",
+              "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+              "page": 1,
+              "span": "Scheduled 16 to 18 November 2026"
+            }
+          ],
+          "notes": "Continuing obligation. Even in v1 the renewal must complete before contract start; track as a risk."
+        }
+      ],
+      "bid_assessment": {
+        "factors": {
+          "strategic_fit": 85,
+          "technical_capability": 72.52,
+          "eligibility_confidence": 81.92,
+          "commercial_risk": 65,
+          "delivery_capacity": 85
+        },
+        "weights": {
+          "strategic_fit": 20,
+          "technical_capability": 25,
+          "eligibility_confidence": 20,
+          "commercial_risk": 20,
+          "delivery_capacity": 15
+        },
+        "weighted_score": 77.26,
+        "risk_register": [
+          {
+            "requirement_id": "REQ-LEG-001",
+            "clause_type": "unlimited_liability",
+            "tender_term": "Cap 1x total contract value, but unlimited for gross negligence, data breach and IP indemnity",
+            "policy": "Uncapped liability not accepted by default; CEO decision with insurance cover",
+            "verdict": "escalate",
+            "deal_breaker": true,
+            "approver": "MD & CEO",
+            "action": "Raise with Legal; pre-bid query was rejected ('As per RFP'); CEO decision at Gate 1; check cyber insurance (Rs. 10 Cr) against exposure"
+          },
+          {
+            "requirement_id": "REQ-COR-004",
+            "clause_type": "performance_guarantee",
+            "tender_term": "PBG 3% of contract value",
+            "policy": "Up to 3% standard; CFO approval above 3%",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-COR-009",
+            "clause_type": "payment_terms",
+            "tender_term": "Quarterly in arrears within 45 days",
+            "policy": "Up to 45 days accepted; CFO cash-flow review above 45",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-COR-007",
+            "clause_type": "sla_penalty_cap",
+            "tender_term": "10% of QGR per quarter; termination if cap hit 2 quarters running",
+            "policy": "Cap up to 10% of quarterly payment",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-LEG-005",
+            "clause_type": "termination_for_convenience",
+            "tender_term": "60 days' notice",
+            "policy": ">= 90 days' notice",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "Head - Legal",
+            "action": "Pre-bid query rejected; accept or decline at Gate 1"
+          },
+          {
+            "requirement_id": "REQ-LEG-002",
+            "clause_type": "ip_ownership",
+            "tender_term": "Deliverables owned by DSEDC; perpetual royalty-free licence to embedded pre-existing tools",
+            "policy": "Client owns project deliverables; Nimbus retains pre-existing IP with licence",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null,
+            "note": "Pre-bid response 19 confirms pre-existing IP stays with the MSP. Generic runbook templates: check with Legal (low risk)."
+          },
+          {
+            "requirement_id": "REQ-COM-001",
+            "clause_type": "price_firmness",
+            "tender_term": "Prices firm for 5 years; no wage or FX variation",
+            "policy": "No explicit position; commercial review",
+            "verdict": "review",
+            "deal_breaker": false,
+            "approver": "CFO",
+            "note": "Build wage inflation into pricing."
+          },
+          {
+            "requirement_id": "REQ-COM-006",
+            "clause_type": "liquidated_damages",
+            "tender_term": "0.5%/week of annual value, max 10% of annual value",
+            "policy": "LD cap up to 10% of contract value",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          },
+          {
+            "requirement_id": "REQ-LEG-004",
+            "clause_type": "subcontracting",
+            "tender_term": "Only with prior approval; key roles and 24x7 staff never",
+            "policy": "Approval and disclosure",
+            "verdict": "within_policy",
+            "deal_breaker": false,
+            "approver": null
+          }
+        ],
+        "hard_gate_failures": [
+          "REQ-ELG-003",
+          "REQ-ELG-009"
+        ],
+        "deal_breakers_needing_approval": [
+          "REQ-LEG-001"
+        ],
+        "recommendation": "NO_BID",
+        "reason": "Hard gate failure: REQ-ELG-003, REQ-ELG-009. The weighted score (77.26) cannot override a hard gate.",
+        "technical_marks_estimate": {
+          "objective": {
+            "T1": 2.0,
+            "T2": 9,
+            "T2_counted_projects": [
+              "PRJ-001",
+              "PRJ-002",
+              "PRJ-003"
+            ],
+            "T3": 1.0,
+            "T4": 4.0,
+            "T5": 19.92,
+            "T5_detail": [
+              {
+                "role": "Project Manager",
+                "employee_id": "NDS-E102",
+                "max": 7,
+                "estimated": 5.88,
+                "preferred_met": true,
+                "years_above_min": 1
+              },
+              {
+                "role": "DC Operations Lead",
+                "employee_id": "NDS-E109",
+                "max": 5,
+                "estimated": 4.4,
+                "preferred_met": true,
+                "years_above_min": 2
+              },
+              {
+                "role": "Network Lead",
+                "employee_id": "NDS-E108",
+                "max": 5,
+                "estimated": 3.4,
+                "preferred_met": false,
+                "years_above_min": 2
+              },
+              {
+                "role": "Security Lead",
+                "employee_id": "NDS-E110",
+                "max": 4,
+                "estimated": 2.56,
+                "preferred_met": false,
+                "years_above_min": 1
+              },
+              {
+                "role": "Cloud Lead",
+                "employee_id": "NDS-E104",
+                "max": 4,
+                "estimated": 3.68,
+                "preferred_met": true,
+                "years_above_min": 3
+              }
+            ]
+          },
+          "assumed_subjective": {
+            "T6_approach": 16.0,
+            "T7_transition_exit": 5.6,
+            "T8_presentation": 15.0
+          },
+          "assumption_note": "T6-T8 are assumptions (80% of T6/T7 and 75% of T8, based on the reusable approach in KB-PP-001), not measurements.",
+          "estimated_total": 72.52,
+          "qualifying_score": 70,
+          "margin": 2.52,
+          "biggest_levers": [
+            "T3 certifications: Nimbus earns 1 of 8 (no ISO/IEC 20000-1, CMMI ML3 only, no ISO 22301)",
+            "T2: PRJ-005 would add 1 mark if the client certified Nimbus's share",
+            "T5 Security Lead: NDS-E105 would score 0 (CISM expired); NDS-E110 must be proposed"
+          ]
+        },
+        "gate1": "Human decides. TenderBridge never submits a bid."
+      }
+    }
+  }
+}

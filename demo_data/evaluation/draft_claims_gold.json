@@ -1,0 +1,263 @@
+{
+  "labels": [
+    "supported",
+    "supported_with_condition",
+    "unsupported",
+    "contradicted"
+  ],
+  "draft_section": "Approach to Data Centre Operations and Security (draft for RFP Format T-1, sections 2 and 4)\n\nNimbus Digital Services will operate DSDC, the DR Site and the State NOC 24x7 with an onsite team that follows our ITIL 4-aligned Service Delivery and Change Management Methodology. [C01] Nimbus operated the 42-rack Konkan State Data Centre for five years under a contract worth Rs. 24.60 crore, completed in March 2025. [C02] We have managed three State Data Centres. [C03] Our takeover approach includes at least 30 days of shadowing and 15 days of reverse shadowing, followed by a readiness review with DSEDC.\n\n[C04] Critical security patches will be applied within 7 days of OEM release, after testing in staging, as required by Clause 6.4.2. [C05] For Sahyadri Commercial Bank we designed and ran a 28-rack DR site where an RPO of 15 minutes and an RTO of 4 hours were demonstrated in 12 quarterly DR drills. [C06] Nimbus guarantees 99.99% uptime for all DSDC infrastructure.\n\n[C07] Our ISMS is certified to ISO/IEC 27001:2022 for our Bengaluru and Pune delivery centres. [C08] The certificate will remain valid throughout the contract period. [C09] Nimbus is appraised at CMMI Maturity Level 5 and certified to ISO/IEC 20000-1:2018. [C10] Cyber incidents will be reported to CERT-In within 6 hours, in line with our Information Security Policy.\n\n[C11] Our proposed Security Lead, Imran Qureshi, is a CISM-certified professional with 13 years of experience. [C12] We will use the OpsCentral ITSM, EMS and NMS suite, for which Nimbus has been an authorised partner since 2019, [C13] and we already hold the OEM's bid-specific authorisation for this RFP. [C14] All DSEDC data, backups and logs will remain in India. [C15] Our remote NOC in Pune will provide L2/L3 back-up to the onsite team.",
+  "draft_note": "A deliberately flawed draft to test the claim verifier (Case 5). Markers [Cxx] precede each claim.",
+  "expected_after_verification": {
+    "remove_or_rewrite": [
+      "C02",
+      "C06",
+      "C08",
+      "C09",
+      "C11",
+      "C13"
+    ],
+    "keep_with_citation": [
+      "C01",
+      "C03",
+      "C05",
+      "C07",
+      "C10",
+      "C12",
+      "C14",
+      "C15"
+    ],
+    "keep_with_condition": [
+      "C04"
+    ],
+    "max_rewrite_attempts": 2
+  },
+  "claims": [
+    {
+      "claim_id": "C01",
+      "claim": "Operated the 42-rack Konkan SDC for five years, Rs. 24.60 Cr, completed March 2025",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-CC-001",
+          "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+          "page": 1,
+          "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+        },
+        {
+          "doc_id": "KB-CC-001",
+          "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+          "page": 1,
+          "span": "The work commenced on 1 April 2020 and was completed on 31 March 2025"
+        },
+        {
+          "doc_id": "KB-CC-001",
+          "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+          "page": 1,
+          "span": "The data centre covered under the contract has 42 racks"
+        }
+      ],
+      "rationale": "exact values match"
+    },
+    {
+      "claim_id": "C02",
+      "claim": "Managed three State Data Centres",
+      "expected_label": "contradicted",
+      "evidence": [
+        {
+          "doc_id": "KB-CC-001",
+          "file": "company_kb/04_project_experience/PRJ-001_completion_certificate.pdf",
+          "page": 1,
+          "span": "The value of the work executed by Nimbus Digital Services Private Limited is ₹24.60 crore (including taxes)"
+        }
+      ],
+      "rationale": "Only one State Data Centre (PRJ-001) in the KB; this claim came from the lost proposal KB-PP-003, which is not approved for reuse."
+    },
+    {
+      "claim_id": "C03",
+      "claim": "Takeover with >= 30 days shadowing and 15 days reverse shadowing",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-POL-005",
+          "file": "company_kb/07_policies/service_delivery_change_methodology.docx",
+          "page": null,
+          "span": "Transition includes inventory verification, knowledge capture, at least 30 days of shadowing and at least 15 days of reverse shadowing, followed by a readiness review with the client"
+        }
+      ],
+      "rationale": ""
+    },
+    {
+      "claim_id": "C04",
+      "claim": "Critical patches within 7 days",
+      "expected_label": "supported_with_condition",
+      "evidence": [
+        {
+          "doc_id": "KB-POL-001",
+          "file": "company_kb/07_policies/information_security_policy.pdf",
+          "page": 1,
+          "span": "Critical security patches are applied within 14 days of release, and high-severity patches within 30 days, unless the client contract sets a shorter period"
+        }
+      ],
+      "rationale": "Policy default is 14 days; contract term prevails, so the commitment is allowed but the engagement procedure must state 7 days."
+    },
+    {
+      "claim_id": "C05",
+      "claim": "Sahyadri 28-rack DR site; RPO 15 min / RTO 4 h demonstrated in 12 drills",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-CC-002",
+          "file": "company_kb/04_project_experience/PRJ-002_completion_certificate.pdf",
+          "page": 1,
+          "span": "The data centre covered under the contract has 28 racks"
+        }
+      ],
+      "rationale": "Case study KB-PRJ-002 records the drill outcome (synthetic illustrative figure)."
+    },
+    {
+      "claim_id": "C06",
+      "claim": "Guarantees 99.99% uptime",
+      "expected_label": "unsupported",
+      "evidence": [],
+      "rationale": "No evidence; exceeds the tender SLA (99.95%); same phrase caused the 2023 loss (KB-PP-003 debrief). Remove."
+    },
+    {
+      "claim_id": "C07",
+      "claim": "ISMS certified to ISO/IEC 27001:2022 for Bengaluru and Pune",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-CERT-002",
+          "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+          "page": 1,
+          "span": "Information security management system for the provision of managed data centre, network operations centre and cloud infrastructure services from the Bengaluru and Pune delivery centres, per Statement of Applicability version 3.1"
+        }
+      ],
+      "rationale": "True today; must carry the validity date."
+    },
+    {
+      "claim_id": "C08",
+      "claim": "Certificate valid throughout the contract period",
+      "expected_label": "contradicted",
+      "evidence": [
+        {
+          "doc_id": "KB-CERT-002",
+          "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+          "page": 1,
+          "span": "Valid until: 10 November 2026"
+        },
+        {
+          "doc_id": "KB-CERT-002",
+          "file": "company_kb/03_certifications/iso27001_2022_mock_record.pdf",
+          "page": 1,
+          "span": "Scheduled 16 to 18 November 2026"
+        }
+      ],
+      "rationale": "Expires 10-11-2026; renewal pending. Rewrite to state the expiry and the scheduled recertification."
+    },
+    {
+      "claim_id": "C09",
+      "claim": "CMMI Maturity Level 5 and ISO/IEC 20000-1 certified",
+      "expected_label": "contradicted",
+      "evidence": [
+        {
+          "doc_id": "KB-CERT-003",
+          "file": "company_kb/03_certifications/cmmi_ml3_appraisal_mock_record.pdf",
+          "page": 1,
+          "span": "Maturity level achieved: Maturity Level 3. No Level 4 or Level 5 appraisal has been performed."
+        },
+        {
+          "doc_id": "KB-CERT-004",
+          "file": "company_kb/03_certifications/certification_register.pdf",
+          "page": 1,
+          "span": "ISO/IEC 20000-1:2018 is not held by Nimbus."
+        }
+      ],
+      "rationale": "Nimbus holds CMMI ML3 only and does not hold ISO/IEC 20000-1. Never invent credentials."
+    },
+    {
+      "claim_id": "C10",
+      "claim": "CERT-In reporting within 6 hours",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-POL-001",
+          "file": "company_kb/07_policies/information_security_policy.pdf",
+          "page": 1,
+          "span": "Cyber security incidents covered by the CERT-In Directions of 28 April 2022 are reported to CERT-In within 6 hours of being noticed"
+        }
+      ],
+      "rationale": ""
+    },
+    {
+      "claim_id": "C11",
+      "claim": "Security Lead Imran Qureshi is CISM-certified",
+      "expected_label": "contradicted",
+      "evidence": [
+        {
+          "doc_id": "KB-HR-001",
+          "file": "company_kb/05_personnel/staff_certification_tracker.pdf",
+          "page": 1,
+          "span": "NDS-E105 Imran Qureshi: CISM expired on 30 June 2026; renewal not yet applied for"
+        }
+      ],
+      "rationale": "CISM expired 30-06-2026; propose NDS-E110 (CISSP valid). Also mask names before LLM calls."
+    },
+    {
+      "claim_id": "C12",
+      "claim": "OpsCentral authorised partner since 2019",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-REG-008",
+          "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+          "page": 1,
+          "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+        }
+      ],
+      "rationale": "Partner letter covers 2026; company profile states partner since 2019."
+    },
+    {
+      "claim_id": "C13",
+      "claim": "Already hold the bid-specific MAF",
+      "expected_label": "unsupported",
+      "evidence": [
+        {
+          "doc_id": "KB-REG-008",
+          "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+          "page": 1,
+          "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+        }
+      ],
+      "rationale": "Only a general partnership letter exists."
+    },
+    {
+      "claim_id": "C14",
+      "claim": "All DSEDC data, backups and logs remain in India",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-POL-001",
+          "file": "company_kb/07_policies/information_security_policy.pdf",
+          "page": 1,
+          "span": "Cyber security incidents covered by the CERT-In Directions of 28 April 2022 are reported to CERT-In within 6 hours of being noticed"
+        }
+      ],
+      "rationale": "Policy KB-POL-001 s.6 (data residency) and s.5 (logs in India)."
+    },
+    {
+      "claim_id": "C15",
+      "claim": "Pune remote NOC provides L2/L3 back-up",
+      "expected_label": "supported",
+      "evidence": [
+        {
+          "doc_id": "KB-CO-001",
+          "file": "company_kb/01_company/company_profile.pdf",
+          "page": 2,
+          "span": "420 employees as on 30 September 2026, of whom 236 are technically qualified IT professionals"
+        }
+      ],
+      "rationale": "Company profile s.6 delivery model."
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "tender_id": "TDR-001",
+  "simulated": true,
+  "simulation_notice": "Simulated tender with a fictional buyer, built for the TenderBridge AgentOps 2026 demo. Not an official procurement document. Clause patterns are modelled on public Indian State Data Centre O&M RFPs (see modelled_on).",
+  "domain": "IT Infrastructure (data centre, DR, NOC, hybrid cloud managed services)",
+  "buyer": "Deccan State Electronics Development Corporation Limited (DSEDC)",
+  "on_behalf_of": "Department of Information Technology, Government of Deccan State",
+  "country": "India (fictional state)",
+  "reference": "DSEDC/DSDC-MSP/2026/014",
+  "title": "Selection of Managed Service Provider (MSP) for Operation & Maintenance of Deccan State Data Centre (DSDC), Disaster Recovery Site and Network Operations Centre, including Hybrid Cloud Management, for a period of Five Years",
+  "portal": "Deccan State eProcurement Portal (simulated): https://eproc.deccan.example/",
+  "original_url": null,
+  "procurement_type": "Two-stage QCBS (70:30), online e-tender",
+  "estimated_cost_inr_cr": 38.4,
+  "currency": "INR",
+  "versions": [
+    {
+      "version": "v1",
+      "label": "Original RFP",
+      "date": "2026-10-05",
+      "files": [
+        "original/notice.pdf",
+        "original/main_rfp.pdf",
+        "original/annexures.pdf",
+        "original/price_schedule_boq.xlsx"
+      ]
+    },
+    {
+      "version": "v2",
+      "label": "Corrigendum No. 1 and pre-bid responses",
+      "date": "2026-10-21",
+      "files": [
+        "original/corrigendum.pdf"
+      ],
+      "precedence": "latest prevails (RFP Clause 2.6.2)"
+    }
+  ],
+  "test_only_versions": [
+    {
+      "version": "c2",
+      "label": "Corrigendum No. 2 (synthetic test fixture, NOT part of the main pack)",
+      "date": "2026-11-12",
+      "files": [
+        "../../evaluation/safety_traps/corrigendum_test.pdf"
+      ]
+    }
+  ],
+  "key_dates_effective_v2": {
+    "publish": "2026-10-05T10:00",
+    "download_start": "2026-10-05T10:00",
+    "prebid_query_deadline": "2026-10-13T17:00",
+    "prebid_meeting": "2026-10-15T11:00",
+    "bid_submission_end": "2026-11-20T15:00",
+    "tech_bid_opening": "2026-11-23T11:00",
+    "presentations": "2026-11-30"
+  },
+  "files": [
+    {
+      "file": "original/notice.pdf",
+      "sha256": "37a61cde92a6c9ac91560b5834eb9694e9d3d96b8d1c79edf42efb4ac057dd3a",
+      "bytes": 4974,
+      "document_roles": [
+        "notice_inviting_tender"
+      ],
+      "version": "v1 (original)",
+      "issue_date": "2026-10-05",
+      "pages": 1,
+      "precedence_rank": 1
+    },
+    {
+      "file": "original/main_rfp.pdf",
+      "sha256": "7f1e2db8acdbadb582bddf3e37785573dabd7af576f94e9c648ca556c465682c",
+      "bytes": 57811,
+      "document_roles": [
+        "main_rfp",
+        "instructions_to_bidders",
+        "eligibility",
+        "evaluation_criteria",
+        "scope_of_work",
+        "technical_specifications",
+        "sla",
+        "contract_conditions"
+      ],
+      "version": "v1 (original)",
+      "issue_date": "2026-10-05",
+      "pages": 19,
+      "precedence_rank": 1
+    },
+    {
+      "file": "original/annexures.pdf",
+      "sha256": "90307279a0337140c3ae1603ac927d6fef546c1c4fbbabf50fcea1796fdb7f60",
+      "bytes": 501840,
+      "document_roles": [
+        "bid_forms",
+        "annexures",
+        "asset_inventory"
+      ],
+      "version": "v1 (original)",
+      "issue_date": "2026-10-05",
+      "pages": 27,
+      "notes": "Page with Format PQ-10 (Power of Attorney) is a scanned image; OCR required.",
+      "precedence_rank": 1
+    },
+    {
+      "file": "original/price_schedule_boq.xlsx",
+      "sha256": "bc2df44038e55659572e477a2b677f2e52e25899100b49eefc40bfbb0fcbb598",
+      "bytes": 9561,
+      "document_roles": [
+        "price_schedule_boq"
+      ],
+      "version": "v1 (original)",
+      "issue_date": "2026-10-05",
+      "precedence_rank": 1
+    },
+    {
+      "file": "original/corrigendum.pdf",
+      "sha256": "7396a5c16734a7a1ac2eb986b38eb05c87df3cc80a0262848dc2c4aded56d289",
+      "bytes": 10833,
+      "document_roles": [
+        "corrigendum",
+        "prebid_responses"
+      ],
+      "version": "v2 (Corrigendum No. 1)",
+      "issue_date": "2026-10-21",
+      "pages": 3,
+      "supersedes": [
+        "original/main_rfp.pdf",
+        "original/notice.pdf"
+      ],
+      "precedence_rank": 2
+    }
+  ],
+  "modelled_on": {
+    "note": "Clause patterns (OR-style similar-work slabs, 'valid on the date of bid submission' certificates, CA turnover certificates, liability capped at contract value, SLA penalty caps, pre-bid query responses) are modelled on public Indian State Data Centre O&M RFPs and the standard GFR/CVC similar-works rule. No text, identifier or value is copied from any real tender, and the buyer is fictional.",
+    "reference_examples": [
+      {
+        "name": "Gujarat Informatics Ltd - RFP for O&M of Gujarat State Data Centre (GSDC), GEM/2022/B/2664262, Corrigendum-01 dated 03.12.2022",
+        "url": "https://gil.gujarat.gov.in/tendercms/TenderDocs/2022126121925414.pdf",
+        "status": "Located via web search on 22-10-2026; the generator sandbox could not download it (proxy 403). Download manually if an authentic second tender is wanted."
+      },
+      {
+        "name": "Govt of Punjab - Pre-bid responses, Selection of Third Party Auditor for State Data Centre",
+        "url": "https://dit.punjab.gov.in/wp-content/uploads/2020/03/5304-1.pdf",
+        "status": "Located via web search; used only as a format reference for pre-bid query response tables."
+      }
+    ]
+  },
+  "generated_at": "2026-10-22T18:00:00+05:30",
+  "hash_algorithm": "sha256",
+  "integrity_note": "Keep originals unchanged; TenderBridge caches parses by file hash."
+}

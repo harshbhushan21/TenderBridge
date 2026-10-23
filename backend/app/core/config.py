@@ -1,0 +1,157 @@
+"""Validated application settings and root-path resolution.
+
+All path resolution lives here so no other module needs `parents[...]` tricks.
+"""
+from __future__ import annotations
+
+import json
+from functools import lru_cache
+from pathlib import Path
+from typing import Any, Literal
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# backend/app/core/config.py -> parents[3] == project root
+_DEFAULT_ROOT = Path(__file__).resolve().parents[3]
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=str(_DEFAULT_ROOT / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    # --- Paths ---
+    project_root: Path = _DEFAULT_ROOT
+    demo_data_dir: Path = Field(default=_DEFAULT_ROOT / "demo_data", alias="DEMO_DATA_DIR")
+    storage_dir: Path = Field(default=_DEFAULT_ROOT / "storage", alias="STORAGE_DIR")
+
+    # --- Database ---
+    # SQLite works with zero setup; switch to postgresql+psycopg://... for pgvector.
+    database_url: str = Field(
+        default=f"sqlite:///{_DEFAULT_ROOT / 'storage' / 'tenderbridge.db'}",
+        alias="DATABASE_URL",
+    )
+    checkpoint_url: str | None = Field(default=None, alias="CHECKPOINT_URL")
+
+    # --- LLMs ---
+    llm_fast: str = Field(default="fake:fast", alias="LLM_FAST")
+    llm_strong: str = Field(default="fake:strong", alias="LLM_STRONG")
+    llm_timeout_s: float = Field(default=60.0, alias="LLM_TIMEOUT_S")
+
+    # --- Embeddings ---
+    # "hash" = deterministic local fallback (no download). Others: "huggingface:BAAI/bge-m3",
+    # "openai:text-embedding-3-small", "google_genai:models/text-embedding-004", "ollama:bge-m3"
+    embedding_provider: str = Field(default="hash", alias="EMBEDDING_PROVIDER")
+    embedding_dim: int = Field(default=1024, alias="EMBEDDING_DIM")
+    reranker: str = Field(default="none", alias="RERANKER")  # "none" | "bge-reranker-v2-m3"
+
+    # --- Tracing ---
+    langsmith_tracing: bool = Field(default=False, alias="LANGSMITH_TRACING")
+    langsmith_project: str = Field(default="tenderbridge", alias="LANGSMITH_PROJECT")
+
+    # --- Budget ---
+    max_cost_usd: float = Field(default=5.0, alias="MAX_COST_USD")
+    max_llm_calls: int = Field(default=400, alias="MAX_LLM_CALLS")
+    max_retries: int = Field(default=1, alias="MAX_RETRIES")
+    max_rewrites: int = Field(default=2, alias="MAX_REWRITES")
+    max_parallel_llm: int = Field(default=4, alias="MAX_PARALLEL_LLM")
+
+    # --- Behaviour ---
+    demo_mode: bool = Field(default=True, alias="DEMO_MODE")
+    analysis_mode: Literal["focused", "full"] = Field(default="focused", alias="ANALYSIS_MODE")
+    default_company_id: str = Field(default="NIMBUS", alias="DEFAULT_COMPANY_ID")
+    cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
+    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+    log_json: bool = Field(default=False, alias="LOG_JSON")
+
+    # --- Upload limits ---
+    max_upload_mb: int = Field(default=50, alias="MAX_UPLOAD_MB")
+    max_zip_entries: int = Field(default=200, alias="MAX_ZIP_ENTRIES")
+    max_zip_uncompressed_mb: int = Field(default=300, alias="MAX_ZIP_UNCOMPRESSED_MB")
+
+    @field_validator("demo_data_dir", "storage_dir", mode="before")
+    @classmethod
+    def _resolve_path(cls, v: Any) -> Path:
+        p = Path(v).expanduser()
+        return p if p.is_absolute() else (_DEFAULT_ROOT / p).resolve()
+
+    # ---- Derived paths ----
+    @property
+    def is_sqlite(self) -> bool:
+        return self.database_url.startswith("sqlite")
+
+    @property
+    def is_postgres(self) -> bool:
+        return self.database_url.startswith("postgresql")
+
+    @property
+    def uploads_dir(self) -> Path:
+        return self.storage_dir / "uploads"
+
+    @property
+    def parsed_dir(self) -> Path:
+        return self.storage_dir / "parsed"
+
+    @property
+    def cache_dir(self) -> Path:
+        return self.storage_dir / "cache"
+
+    @property
+    def exports_dir(self) -> Path:
+        return self.storage_dir / "exports"
+
+    @property
+    def replay_dir(self) -> Path:
+        return self.storage_dir / "replay"
+
+    @property
+    def company_kb_dir(self) -> Path:
+        return self.demo_data_dir / "company_kb"
+
+    @property
+    def structured_facts_dir(self) -> Path:
+        return self.demo_data_dir / "structured_facts"
+
+    @property
+    def demo_config_dir(self) -> Path:
+        return self.demo_data_dir / "demo_config"
+
+    @property
+    def evaluation_dir(self) -> Path:
+        """Gold labels. ONLY the evaluator may read from here (principle 6)."""
+        return self.demo_data_dir / "evaluation"
+
+    @property
+    def tender_data_dir(self) -> Path:
+        return self.demo_data_dir / "tender"
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+    def ensure_storage(self) -> None:
+        for d in (self.storage_dir, self.uploads_dir, self.parsed_dir, self.cache_dir,
+                  self.exports_dir, self.replay_dir):
+            d.mkdir(parents=True, exist_ok=True)
+
+
+@lru_cache
+def get_settings() -> Settings:
+    s = Settings()
+    s.ensure_storage()
+    return s
+
+
+def load_demo_config(name: str) -> dict[str, Any] | None:
+    """Read a JSON file from demo_data/demo_config. Returns None if absent.
+
+    Never use this for `demo_scenarios.json` inside analysis agents — expected
+    results there are for the demo harness only.
+    """
+    path = get_settings().demo_config_dir / name
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))

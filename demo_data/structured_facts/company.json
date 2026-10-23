@@ -1,0 +1,172 @@
+{
+  "company_id": "NIMBUS-001",
+  "name": "Nimbus Digital Services Pvt. Ltd.",
+  "legal_name": "Nimbus Digital Services Private Limited",
+  "synthetic": true,
+  "synthetic_notice": "Fictional company created for the TenderBridge demo. Not CGI, not any real firm.",
+  "incorporation_date": "2011-06-14",
+  "incorporation_evidence": {
+    "doc_id": "KB-REG-001",
+    "file": "company_kb/09_registrations/incorporation_and_statutory_profile.pdf",
+    "page": 1,
+    "span": "Date of incorporation: 14 June 2011"
+  },
+  "company_type": "Private limited company (Companies Act, 1956 / 2013)",
+  "country": "India",
+  "identifiers": {
+    "cin": "SYN-CIN-NIMBUS-2011-0001 (synthetic placeholder, not a real CIN)",
+    "pan": "SYN-PAN-NIMBUS-01 (synthetic placeholder)",
+    "gstin": "SYN-GSTIN-29-NIMBUS-0001 (synthetic placeholder)",
+    "udyam": "UDYAM-SYN-0000-NIMBUS (synthetic placeholder)"
+  },
+  "msme": {
+    "udyam_classification": "Small",
+    "classification_year": "2025-26",
+    "investment_inr_cr": 6.85,
+    "turnover_inr_cr": 58.0,
+    "nic_codes": [
+      "62090",
+      "63111",
+      "62020"
+    ],
+    "nic_divisions": [
+      "62",
+      "63"
+    ],
+    "valid": true,
+    "valid_to": null,
+    "registered_on": "2020-08-03",
+    "evidence": {
+      "doc_id": "KB-REG-004",
+      "file": "company_kb/09_registrations/udyam_mse_registration_record.pdf",
+      "page": 1,
+      "span": "Type of enterprise: Small (classification year 2025-26)"
+    }
+  },
+  "headquarters": "Nimbus House, 3rd Floor, 27 Outer Ring Road, Bellandur, Bengaluru 560103, Karnataka (fictional address)",
+  "offices": [
+    {
+      "city": "Bengaluru",
+      "function": "Registered office, HQ and primary delivery centre",
+      "headcount": 268,
+      "state": "Karnataka"
+    },
+    {
+      "city": "Pune",
+      "function": "Delivery centre and 24x7 remote NOC",
+      "headcount": 104,
+      "state": "Maharashtra"
+    },
+    {
+      "city": "Hyderabad",
+      "function": "Sales and pre-sales office",
+      "headcount": 22,
+      "state": "Telangana"
+    },
+    {
+      "city": "Chennai",
+      "function": "Field services hub",
+      "headcount": 26,
+      "state": "Tamil Nadu"
+    }
+  ],
+  "office_in_deccan_state": false,
+  "office_evidence": {
+    "doc_id": "KB-CO-001",
+    "file": "company_kb/01_company/company_profile.pdf",
+    "page": 3,
+    "span": "Nimbus does not currently have an office in Deccan State."
+  },
+  "local_office_undertaking_policy": {
+    "doc_id": "KB-REG-007",
+    "file": "company_kb/09_registrations/local_office_undertaking_template.pdf",
+    "page": 1,
+    "span": "Nimbus may undertake to establish a project office within 60 days of award, with the approval of the VP - Public Sector Business and the CFO."
+  },
+  "employees_total": 420,
+  "tech_staff_on_payroll": 236,
+  "tech_staff_as_on": "2026-09-30",
+  "tech_staff_evidence": {
+    "doc_id": "KB-REG-006",
+    "file": "company_kb/09_registrations/hr_manpower_certificate.pdf",
+    "page": 1,
+    "span": "As on 30 September 2026, Nimbus Digital Services Private Limited had 420 employees on its payroll, of whom 236 are technically qualified IT professionals holding B.E., B.Tech, MCA or M.Sc (IT) degrees."
+  },
+  "consortium_bid": false,
+  "declarations": {
+    "non_blacklisted": {
+      "value": true,
+      "evidence": {
+        "doc_id": "KB-REG-003",
+        "file": "company_kb/09_registrations/non_blacklisting_declaration.pdf",
+        "page": 1,
+        "span": "Nimbus Digital Services Private Limited has not been blacklisted or debarred by any Ministry or Department of the Government of India, any State Government or any Public Sector Undertaking."
+      }
+    },
+    "land_border_compliant": {
+      "value": true,
+      "evidence": {
+        "doc_id": "KB-REG-005",
+        "file": "company_kb/09_registrations/land_border_declaration.pdf",
+        "page": 1,
+        "span": "Nimbus Digital Services Private Limited is not from a country sharing a land border with India and has no beneficial owner from such a country."
+      }
+    }
+  },
+  "authorised_signatory": {
+    "name": "Rohit Bhat",
+    "designation": "Vice President - Public Sector Business",
+    "valid_to": "2027-03-31",
+    "evidence": {
+      "doc_id": "KB-REG-002",
+      "file": "company_kb/09_registrations/board_resolution_authorised_signatory.pdf",
+      "page": 1,
+      "span": "Rohit Bhat, Vice President - Public Sector Business, is authorised to sign and submit bids"
+    }
+  },
+  "oem_partnerships": [
+    {
+      "oem": "OpsCentral Software Ltd (fictional)",
+      "products": [
+        "ITSM",
+        "EMS",
+        "NMS"
+      ],
+      "status": "authorised partner (general letter, 2026)",
+      "bid_specific_maf_held": false,
+      "evidence": {
+        "doc_id": "KB-REG-008",
+        "file": "company_kb/09_registrations/oem_partner_letter_opscentral.pdf",
+        "page": 1,
+        "span": "OpsCentral Software Ltd (fictional OEM) confirms that Nimbus Digital Services Private Limited is an authorised implementation and support partner for the OpsCentral ITSM, EMS and NMS suite for the calendar year 2026."
+      }
+    }
+  ],
+  "insurance": {
+    "professional_indemnity_inr_cr": 15,
+    "cyber_liability_inr_cr": 10,
+    "source_doc_id": "KB-LEG-001"
+  },
+  "key_people": {
+    "ceo": [
+      "Ananya Rao",
+      "Managing Director & CEO"
+    ],
+    "cfo": [
+      "Vikram Shenoy",
+      "Chief Financial Officer"
+    ],
+    "legal_head": [
+      "Farah Siddiqui",
+      "Head - Legal & Contracts"
+    ],
+    "bid_head": [
+      "Kiran Deshpande",
+      "Head - Bids & Proposals"
+    ],
+    "ciso": [
+      "Meera Nair",
+      "Chief Information Security Officer"
+    ]
+  }
+}

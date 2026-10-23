@@ -1,0 +1,263 @@
+{
+  "tender_id": "TDR-001",
+  "from_version": "v1",
+  "to_version": "v2",
+  "precedence": "Corrigendum No. 1 > RFP (Clause 2.6.2); Part A prevails over Part B",
+  "change_types": [
+    "added",
+    "changed",
+    "removed",
+    "superseded",
+    "clarified",
+    "no_change"
+  ],
+  "changes": [
+    {
+      "change_id": "C1-01",
+      "type": "changed",
+      "field": "bid_submission_end",
+      "old": "2026-11-06T15:00",
+      "new": "2026-11-20T15:00",
+      "old_ref": "REQ-KF-001",
+      "new_ref": "REQ-COR-001",
+      "affects": [
+        "KF-12",
+        "REQ-ELG-009 (certificate validity date)",
+        "REQ-PER-008 (personal certification validity)",
+        "REQ-ELG-001 (years in existence)",
+        "calendar .ics",
+        "REQ-TEC-019"
+      ],
+      "rerun": [
+        "REQ-ELG-009",
+        "REQ-PER-001..005",
+        "REQ-ELG-001"
+      ],
+      "eligibility_effect": "ISO/IEC 27001:2022 (valid to 2026-11-10) flips from meets (4-day margin) to gap",
+      "old_ref_page": 3,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-02",
+      "type": "changed",
+      "field": "tech_bid_opening",
+      "old": "2026-11-09T11:00",
+      "new": "2026-11-23T11:00",
+      "new_ref": "REQ-COR-002",
+      "affects": [
+        "KF-13",
+        "calendar .ics"
+      ],
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-03",
+      "type": "changed",
+      "field": "technical_presentation",
+      "old": "week of 2026-11-16",
+      "new": "week of 2026-11-30",
+      "affects": [
+        "KF-14",
+        "calendar .ics"
+      ]
+    },
+    {
+      "change_id": "C1-04",
+      "type": "changed",
+      "field": "pbg_pct",
+      "old": 5,
+      "new": 3,
+      "old_ref": "REQ-COM-004",
+      "new_ref": "REQ-COR-004",
+      "affects": [
+        "KF-18",
+        "risk: performance_guarantee"
+      ],
+      "eligibility_effect": "risk verdict review -> within_policy",
+      "old_ref_page": 17,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-05",
+      "type": "superseded",
+      "field": "consortium_experience_value_rule",
+      "old_ref": "REQ-ELG-008",
+      "new_ref": "REQ-COR-005",
+      "affects": [
+        "REQ-ELG-006 (PRJ-005)",
+        "T2 marks"
+      ],
+      "eligibility_effect": "PRJ-005 moves from needs_human to not counted; PQ-05 still met via branch (b)",
+      "old_ref_page": 8,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-06",
+      "type": "clarified",
+      "field": "certificate_versions",
+      "new_ref": "REQ-COR-006",
+      "affects": [
+        "REQ-ELG-009"
+      ],
+      "eligibility_effect": "ISO/IEC 27001:2013 rejected (Nimbus holds :2022, no effect); validity date reaffirmed as amended deadline",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-07",
+      "type": "changed",
+      "field": "sla_penalty_cap_pct",
+      "old": 15,
+      "new": 10,
+      "old_ref": "REQ-SLA-005",
+      "new_ref": "REQ-COR-007",
+      "affects": [
+        "KF-20",
+        "risk: sla_penalty_cap"
+      ],
+      "eligibility_effect": "risk verdict review -> within_policy",
+      "old_ref_page": 16,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-08",
+      "type": "removed",
+      "field": "physical_emd_submission",
+      "old_ref": "REQ-SUB-008",
+      "new_ref": "REQ-COR-008",
+      "affects": [
+        "submission checklist",
+        "KF-27"
+      ],
+      "old_ref_page": 5,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-09",
+      "type": "changed",
+      "field": "payment_days",
+      "old": 60,
+      "new": 45,
+      "old_ref": "REQ-COM-005",
+      "new_ref": "REQ-COR-009",
+      "affects": [
+        "KF-19",
+        "risk: payment_terms"
+      ],
+      "eligibility_effect": "risk verdict review -> within_policy",
+      "old_ref_page": 17,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-10",
+      "type": "no_change",
+      "field": "limitation_of_liability",
+      "old_ref": "REQ-LEG-001",
+      "affects": [
+        "risk: unlimited_liability stays escalate"
+      ],
+      "old_ref_page": 17,
+      "old_ref_file": "main_rfp.pdf"
+    },
+    {
+      "change_id": "C1-11",
+      "type": "changed",
+      "field": "min_l2_network_engineers",
+      "old": 6,
+      "new": 8,
+      "old_ref": "REQ-TEC-015",
+      "new_ref": "REQ-COR-011",
+      "affects": [
+        "KF-28",
+        "manpower plan",
+        "price"
+      ],
+      "old_ref_page": 14,
+      "old_ref_file": "main_rfp.pdf",
+      "new_ref_page": 1,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-12",
+      "type": "added",
+      "field": "certin_declaration",
+      "new_ref": "REQ-COR-012",
+      "affects": [
+        "submission checklist",
+        "eligibility (needs_action)"
+      ],
+      "new_ref_page": 2,
+      "new_ref_file": "corrigendum.pdf"
+    },
+    {
+      "change_id": "C1-13",
+      "type": "clarified",
+      "field": "emd_validity",
+      "affects": [
+        "EMD instrument validity recomputed from new deadline"
+      ]
+    },
+    {
+      "change_id": "C1-PB09",
+      "type": "clarified",
+      "field": "iso_renewal_in_progress",
+      "new_ref": "REQ-COR-013",
+      "affects": [
+        "REQ-ELG-009 mitigation"
+      ],
+      "eligibility_effect": "audit completion letters not accepted; closes the easy mitigation",
+      "new_ref_page": 2,
+      "new_ref_file": "corrigendum.pdf"
+    }
+  ],
+  "calendar_expected": {
+    "v1": {
+      "prebid_query_deadline": "2026-10-13T17:00",
+      "prebid_meeting": "2026-10-15T11:00",
+      "bid_submission_end": "2026-11-06T15:00",
+      "tech_bid_opening": "2026-11-09T11:00"
+    },
+    "v2": {
+      "prebid_query_deadline": "2026-10-13T17:00",
+      "prebid_meeting": "2026-10-15T11:00",
+      "bid_submission_end": "2026-11-20T15:00",
+      "tech_bid_opening": "2026-11-23T11:00"
+    },
+    "ics_note": "Update the existing events (same UID, higher SEQUENCE) rather than adding duplicates; keep both source references."
+  },
+  "c2_test_fixture_changes": [
+    {
+      "change_id": "C2-01",
+      "type": "changed",
+      "field": "bid_submission_end",
+      "old": "2026-11-20T15:00",
+      "new": "2026-12-04T15:00"
+    },
+    {
+      "change_id": "C2-02",
+      "type": "changed",
+      "field": "tech_bid_opening",
+      "old": "2026-11-23T11:00",
+      "new": "2026-12-07T11:00"
+    },
+    {
+      "change_id": "C2-03",
+      "type": "removed",
+      "field": "mse_turnover_relaxation",
+      "eligibility_effect": "PQ-02 turnover: meets -> gap (52.00 < 55.00)"
+    }
+  ]
+}

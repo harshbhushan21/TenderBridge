@@ -1,0 +1,804 @@
+{
+  "tender_id": "TDR-001",
+  "schema": {
+    "field": "fact path in structured_facts",
+    "operator": ">=, >, <=, ==, in, contains, intersects, any_valid, years_before",
+    "threshold": "number, date or list",
+    "window": "financial years or date range",
+    "aggregation": "mean | each | count",
+    "logic": "AND | OR across branches",
+    "valid_on": "date reference, e.g. effective.bid_submission_end (resolved after corrigenda)",
+    "supersedes/removes/adds": "corrigendum relationships"
+  },
+  "note": "Rules are what the LLM should extract; code executes them. 'effective.bid_submission_end' must resolve to the latest corrigendum date.",
+  "rules": [
+    {
+      "requirement_id": "REQ-COM-004",
+      "page": 17,
+      "text": "The MSP shall furnish a Performance Bank Guarantee of 5% of the total contract value from a scheduled commercial bank, valid for 60 days beyond the end of the contract period, within 15 days of the Letter of Award.",
+      "rule": {
+        "field": "pbg_pct",
+        "value": 5,
+        "compare_to_policy": "risk_positions.performance_guarantee (3%)"
+      },
+      "effective_in": [
+        "v1"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COM-005",
+      "page": 17,
+      "text": "Payment of the QGR shall be made quarterly in arrears, within 60 days of receipt of a correct invoice together with the SLA report verified by DSEDC or its TPA, after deduction of applicable penalties.",
+      "rule": {
+        "field": "payment_days",
+        "value": 60,
+        "compare_to_policy": "risk_positions.payment_terms (45 days)"
+      },
+      "effective_in": [
+        "v1"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-001",
+      "page": 1,
+      "text": "Last date and time for online bid submission: 20-11-2026 at 15:00 hrs",
+      "rule": {
+        "supersedes": "REQ-KF-001",
+        "field": "bid_submission_end",
+        "old": "2026-11-06T15:00",
+        "new": "2026-11-20T15:00"
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-002",
+      "page": 1,
+      "text": "Opening of PQ and technical bids: 23-11-2026 at 11:00 hrs",
+      "rule": {
+        "field": "tech_bid_opening",
+        "old": "2026-11-09T11:00",
+        "new": "2026-11-23T11:00"
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-004",
+      "page": 1,
+      "text": "The MSP shall furnish a Performance Bank Guarantee of 3% of the total contract value, valid for 60 days beyond the end of the contract period, within 15 days of the Letter of Award.",
+      "rule": {
+        "supersedes": "REQ-COM-004",
+        "field": "pbg_pct",
+        "old": 5,
+        "new": 3
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-005",
+      "page": 1,
+      "text": "Where the work was executed as a member of a consortium, only the Bidder's share of the work, as certified by the client in the completion certificate or a separate client certificate, shall be considered. A consortium agreement or a self-certificate of the Bidder shall not be accepted as proof of share.",
+      "rule": {
+        "supersedes": "REQ-ELG-008",
+        "evidence_required": "client-certified share",
+        "rejects": [
+          "consortium agreement",
+          "bidder self-certificate"
+        ]
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-006",
+      "page": 1,
+      "text": "Certificates issued under ISO/IEC 27001:2013 shall not be accepted. All certificates shall be valid as on the bid submission end date as amended by this corrigendum.",
+      "rule": {
+        "reaffirms": "REQ-ELG-009",
+        "valid_on": "2026-11-20T15:00",
+        "reject_versions": [
+          "ISO/IEC 27001:2013"
+        ]
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-007",
+      "page": 1,
+      "text": "The total SLA penalty in a quarter shall be capped at 10% of the QGR for that quarter. If the penalty reaches the cap in two consecutive quarters, DSEDC may terminate the contract for default.",
+      "rule": {
+        "supersedes": "REQ-SLA-005",
+        "field": "sla_penalty_cap_pct_of_qgr",
+        "old": 15,
+        "new": 10
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-008",
+      "page": 1,
+      "text": "Deleted. EMD shall be submitted only as an e-Bank Guarantee or by online transfer. Physical submission of any document is not required.",
+      "rule": {
+        "removes": "REQ-SUB-008"
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-009",
+      "page": 1,
+      "text": "Payment of the QGR shall be made quarterly in arrears, within 45 days of receipt of a correct invoice together with the SLA report verified by DSEDC or its TPA.",
+      "rule": {
+        "supersedes": "REQ-COM-005",
+        "field": "payment_days",
+        "old": 60,
+        "new": 45
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-011",
+      "page": 1,
+      "text": "L2 Network Engineer (DSDC / NOC): minimum 8, 24x7",
+      "rule": {
+        "supersedes": "REQ-TEC-015",
+        "field": "min_l2_network_engineers",
+        "old": 6,
+        "new": 8
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-COR-012",
+      "page": 2,
+      "text": "New clause 9.1A: The Bidder shall submit, with the technical bid, a self-declaration of compliance with the CERT-In Directions No. 20(3)/2022-CERT-In dated 28-04-2022, including reporting of cyber incidents to CERT-In within 6 hours of noticing them.",
+      "rule": {
+        "adds": true,
+        "field": "submission.certin_declaration",
+        "operator": "==",
+        "threshold": true
+      },
+      "effective_in": [
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-001",
+      "page": 7,
+      "text": "The Bidder shall be a company registered in India under the Companies Act, 1956 or the Companies Act, 2013, and shall have been in existence and operation in India for at least five (5) years as on the bid submission end date.",
+      "rule": {
+        "field": "company.incorporation_date",
+        "operator": "years_before",
+        "threshold": 5,
+        "reference_date": "effective.bid_submission_end"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-003",
+      "page": 7,
+      "text": "The Bidder shall have an average annual turnover of not less than Rs. 55 Crore from IT/ITeS services during the last three audited financial years, i.e. 2022-23, 2023-24 and 2024-25. For Micro and Small Enterprises (MSEs) holding a valid Udyam Registration for IT services (NIC division 62 or 63) as on the bid submission end date, the average annual turnover requirement shall be Rs. 45 Crore.",
+      "rule": {
+        "logic": "OR",
+        "branches": [
+          {
+            "id": "general",
+            "field": "financials.revenue_it_ites_inr_cr",
+            "aggregation": "mean",
+            "window": [
+              "2022-23",
+              "2023-24",
+              "2024-25"
+            ],
+            "operator": ">=",
+            "threshold": 55.0,
+            "unit": "INR crore"
+          },
+          {
+            "id": "mse_relaxation",
+            "condition": {
+              "field": "company.udyam_classification",
+              "operator": "in",
+              "threshold": [
+                "Micro",
+                "Small"
+              ],
+              "and_nic_division_in": [
+                "62",
+                "63"
+              ],
+              "valid_on": "effective.bid_submission_end"
+            },
+            "field": "financials.revenue_it_ites_inr_cr",
+            "aggregation": "mean",
+            "window": [
+              "2022-23",
+              "2023-24",
+              "2024-25"
+            ],
+            "operator": ">=",
+            "threshold": 45.0,
+            "unit": "INR crore"
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-004",
+      "page": 7,
+      "text": "Of the turnover in PQ-02, the average annual turnover from Data Centre, Network and managed IT infrastructure services during the same three financial years shall be not less than Rs. 20 Crore.",
+      "rule": {
+        "field": "financials.revenue_infra_services_inr_cr",
+        "aggregation": "mean",
+        "window": [
+          "2022-23",
+          "2023-24",
+          "2024-25"
+        ],
+        "operator": ">=",
+        "threshold": 20.0,
+        "unit": "INR crore"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-005",
+      "page": 7,
+      "text": "The Bidder shall have a positive net worth in each of the last three audited financial years (2022-23, 2023-24 and 2024-25).",
+      "rule": {
+        "field": "financials.net_worth_inr_cr",
+        "aggregation": "each",
+        "window": [
+          "2022-23",
+          "2023-24",
+          "2024-25"
+        ],
+        "operator": ">",
+        "threshold": 0
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-006",
+      "page": 7,
+      "text": "The Bidder shall have successfully completed similar works during the last seven (7) years ending on the last day of the month previous to the one in which bids are invited, i.e. between 01-10-2019 and 30-09-2026, as under: (a) three similar completed works, each costing not less than 40% of the estimated cost, i.e. Rs. 15.36 Crore each; OR (b) two similar completed works, each costing not less than 60% of the estimated cost, i.e. Rs. 23.04 Crore each; OR (c) one similar completed work costing not less than 80% of the estimated cost, i.e. Rs. 30.72 Crore.",
+      "rule": {
+        "logic": "OR",
+        "window": {
+          "from": "2019-10-01",
+          "to": "2026-09-30",
+          "date_field": "end_date"
+        },
+        "filters": [
+          "completion_status == completed",
+          "similar_work == true (see REQ-ELG-007)",
+          "value = bidder's executed value (see REQ-ELG-008)"
+        ],
+        "branches": [
+          {
+            "id": "a",
+            "count_gte": 3,
+            "value_each_gte_inr_cr": 15.36
+          },
+          {
+            "id": "b",
+            "count_gte": 2,
+            "value_each_gte_inr_cr": 23.04
+          },
+          {
+            "id": "c",
+            "count_gte": 1,
+            "value_each_gte_inr_cr": 30.72
+          }
+        ],
+        "base": "estimated_cost_inr_cr = 38.40"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-007",
+      "page": 8,
+      "text": "\"Similar work\" means Operation & Maintenance or Facility Management Services of a Data Centre or Disaster Recovery site of at least 20 racks, or of a 24x7 Network Operations Centre, executed for a Central or State Government Department, Public Sector Undertaking, Government autonomous body, Urban Local Body or Scheduled Commercial Bank in India.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "project.scope_type",
+            "operator": "in",
+            "threshold": [
+              "DC O&M/FMS (racks >= 20)",
+              "DR site O&M/FMS (racks >= 20)",
+              "24x7 NOC O&M"
+            ]
+          },
+          {
+            "field": "project.client_type",
+            "operator": "in",
+            "threshold": [
+              "Central/State Govt department",
+              "PSU",
+              "Govt autonomous body",
+              "Urban Local Body",
+              "Scheduled Commercial Bank"
+            ]
+          },
+          {
+            "field": "project.country",
+            "operator": "==",
+            "threshold": "India"
+          }
+        ],
+        "judgement": "semantic match of scope needs LLM (GPT-OSS 120B) with citations; client type and racks via SQL"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-009",
+      "page": 7,
+      "text": "The Bidder shall possess the following certifications, each valid as on the bid submission end date: (i) ISO 9001:2015; AND (ii) ISO/IEC 27001:2022 with scope covering data centre or IT infrastructure managed services; AND (iii) either CMMI Maturity Level 3 or above (DEV or SVC) OR ISO/IEC 20000-1:2018.",
+      "rule": {
+        "logic": "AND",
+        "valid_on": "effective.bid_submission_end",
+        "branches": [
+          {
+            "id": "i",
+            "cert": "ISO 9001:2015"
+          },
+          {
+            "id": "ii",
+            "cert": "ISO/IEC 27001:2022",
+            "scope_must_cover": [
+              "data centre",
+              "IT infrastructure managed services"
+            ]
+          },
+          {
+            "id": "iii",
+            "logic": "OR",
+            "options": [
+              {
+                "cert": "CMMI",
+                "level_gte": 3,
+                "model_in": [
+                  "DEV",
+                  "SVC"
+                ]
+              },
+              {
+                "cert": "ISO/IEC 20000-1:2018"
+              }
+            ]
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-010",
+      "page": 7,
+      "text": "The Bidder shall have at least 150 technically qualified IT professionals (B.E./B.Tech/MCA/M.Sc IT or equivalent) on its payroll as on 30-09-2026.",
+      "rule": {
+        "field": "company.tech_staff_on_payroll",
+        "as_on": "2026-09-30",
+        "operator": ">=",
+        "threshold": 150
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-011",
+      "page": 7,
+      "text": "The Bidder shall have an operational office in Deccan State. If the Bidder does not have such an office, it shall submit an undertaking to establish an office in Navapur within 60 days of issue of the Letter of Award, in Format PQ-9.",
+      "rule": {
+        "logic": "OR",
+        "branches": [
+          {
+            "field": "company.offices.state",
+            "operator": "contains",
+            "threshold": "Deccan State"
+          },
+          {
+            "field": "submission.format_PQ9_undertaking",
+            "operator": "==",
+            "threshold": true
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-ELG-013",
+      "page": 5,
+      "text": "Micro and Small Enterprises (MSEs) registered on the Udyam portal for the services being procured are exempted from payment of tender fee and EMD, subject to submission of a valid Udyam Registration Certificate along with the bid. Traders and medium enterprises are not eligible for this exemption.",
+      "rule": {
+        "field": "company.udyam_classification",
+        "operator": "in",
+        "threshold": [
+          "Micro",
+          "Small"
+        ],
+        "and": [
+          {
+            "field": "company.udyam_nic_codes",
+            "operator": "intersects",
+            "threshold": [
+              "62",
+              "63"
+            ]
+          },
+          {
+            "field": "company.udyam_valid_on",
+            "operator": ">=",
+            "threshold": "effective.bid_submission_end"
+          }
+        ],
+        "effect": "EMD and tender fee waived"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-LEG-001",
+      "page": 17,
+      "text": "Save for the exceptions below, the aggregate liability of the MSP under or in connection with this Contract shall not exceed the total contract value. The above limitation shall not apply to, and the liability of the MSP shall be unlimited for: (a) damages arising from gross negligence or wilful misconduct; (b) any breach of data protection or confidentiality obligations, including any data breach attributable to the MSP; and (c) indemnity for infringement of third-party intellectual property rights.",
+      "rule": {
+        "cap": "1x total contract value",
+        "uncapped_carve_outs": [
+          "gross negligence / wilful misconduct",
+          "data protection / confidentiality breach",
+          "IP infringement indemnity"
+        ],
+        "compare_to_policy": [
+          "risk_positions.limitation_of_liability",
+          "risk_positions.unlimited_liability"
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-LEG-002",
+      "page": 17,
+      "text": "All deliverables, configurations, scripts, runbooks, documentation and other work products created under this Contract shall be the exclusive property of DSEDC. The MSP shall grant DSEDC a perpetual, irrevocable, royalty-free licence to use any pre-existing tools or materials of the MSP embedded in the deliverables.",
+      "rule": {
+        "compare_to_policy": "risk_positions.ip_ownership"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-LEG-004",
+      "page": 18,
+      "text": "The MSP shall not subcontract any part of the services without the prior written approval of DSEDC. Key personnel roles and 24x7 operations staff shall not be subcontracted.",
+      "rule": {
+        "compare_to_policy": "risk_positions.subcontracting"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-LEG-005",
+      "page": 18,
+      "text": "DSEDC may terminate the contract, in whole or in part, for its convenience by giving the MSP 60 days' written notice. The MSP shall be paid for services rendered up to the date of termination.",
+      "rule": {
+        "field": "termination_convenience_notice_days",
+        "value": 60,
+        "compare_to_policy": "risk_positions.termination_for_convenience (>= 90 days)"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-LEG-007",
+      "page": 18,
+      "text": "The MSP shall maintain, for the contract period, professional indemnity insurance of not less than Rs. 10 Crore and cyber liability insurance of not less than Rs. 10 Crore, and shall submit copies of the policies within 30 days of the LoA.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "company.insurance.professional_indemnity_inr_cr",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "company.insurance.cyber_liability_inr_cr",
+            "operator": ">=",
+            "threshold": 10
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-PER-001",
+      "page": 9,
+      "text": "B.E./B.Tech/MCA; at least 15 years of total IT experience including at least 8 years in data centre or IT infrastructure O&M; valid PMP or PRINCE2 Practitioner certification.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "degree",
+            "operator": "in",
+            "threshold": [
+              "B.E.",
+              "B.Tech",
+              "MCA"
+            ]
+          },
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 15
+          },
+          {
+            "field": "dc_infra_years",
+            "operator": ">=",
+            "threshold": 8
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "PMP",
+              "PRINCE2 Practitioner"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-PER-002",
+      "page": 9,
+      "text": "B.E./B.Tech; at least 10 years of experience including at least 6 years in data centre operations; ITIL v4 Foundation or higher certification.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "dc_infra_years",
+            "operator": ">=",
+            "threshold": 6
+          },
+          {
+            "field": "certifications",
+            "operator": "any",
+            "threshold": [
+              "ITIL 4 Foundation",
+              "ITIL 4 Managing Professional",
+              "ITIL 4 Strategic Leader"
+            ]
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-PER-003",
+      "page": 9,
+      "text": "B.E./B.Tech; at least 10 years of experience in data centre and WAN networking; valid CCNP or equivalent certification.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "CCNP",
+              "JNCIP"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-PER-004",
+      "page": 9,
+      "text": "B.E./B.Tech; at least 10 years of experience including at least 5 years in security operations; valid CISSP or CISM certification.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 10
+          },
+          {
+            "field": "security_years",
+            "operator": ">=",
+            "threshold": 5
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "CISSP",
+              "CISM"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-PER-005",
+      "page": 10,
+      "text": "B.E./B.Tech; at least 8 years of experience including at least 4 years in cloud infrastructure; valid professional-level cloud architect certification (AWS Solutions Architect Professional, Microsoft Azure Solutions Architect Expert or Google Professional Cloud Architect).",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "years_experience",
+            "operator": ">=",
+            "threshold": 8
+          },
+          {
+            "field": "cloud_years",
+            "operator": ">=",
+            "threshold": 4
+          },
+          {
+            "field": "certifications",
+            "operator": "any_valid",
+            "threshold": [
+              "AWS Certified Solutions Architect - Professional",
+              "Microsoft Certified: Azure Solutions Architect Expert",
+              "Google Professional Cloud Architect"
+            ],
+            "valid_on": "effective.bid_submission_end"
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-PER-008",
+      "page": 9,
+      "text": "Professional certifications claimed for key personnel shall be valid as on the bid submission end date, and copies shall be enclosed with the CV in Format T-2.",
+      "rule": {
+        "field": "personnel.certifications.valid_to",
+        "operator": ">=",
+        "threshold": "effective.bid_submission_end"
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-SLA-001",
+      "page": 16,
+      "text": ">= 99.95%",
+      "rule": {
+        "field": "monthly_availability_pct",
+        "operator": ">=",
+        "threshold": 99.95
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    },
+    {
+      "requirement_id": "REQ-SLA-005",
+      "page": 16,
+      "text": "The total SLA penalty in a quarter shall be capped at 15% of the QGR for that quarter. If the penalty reaches the cap in two consecutive quarters, DSEDC may terminate the contract for default.",
+      "rule": {
+        "field": "sla_penalty_cap_pct_of_qgr",
+        "value": 15,
+        "compare_to_policy": "risk_positions.sla_penalty_cap (10%)"
+      },
+      "effective_in": [
+        "v1"
+      ]
+    },
+    {
+      "requirement_id": "REQ-TEC-006",
+      "page": 13,
+      "text": "The MSP shall maintain replication of all Category A applications to the DR Site with an RPO of not more than 15 minutes and an RTO of not more than 4 hours.",
+      "rule": {
+        "logic": "AND",
+        "branches": [
+          {
+            "field": "rpo_minutes",
+            "operator": "<=",
+            "threshold": 15
+          },
+          {
+            "field": "rto_hours",
+            "operator": "<=",
+            "threshold": 4
+          }
+        ]
+      },
+      "effective_in": [
+        "v1",
+        "v2"
+      ]
+    }
+  ]
+}
