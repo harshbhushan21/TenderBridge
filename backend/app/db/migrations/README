@@ -1,0 +1,11 @@
+Alembic migrations for TenderBridge.
+
+The SQLite demo can keep using `init_db()` (create_all). For Postgres + pgvector:
+
+    uv run alembic upgrade head
+
+After changing backend/app/db/models.py:
+
+    uv run alembic revision --autogenerate -m "describe change"
+
+Review the generated file before committing it.

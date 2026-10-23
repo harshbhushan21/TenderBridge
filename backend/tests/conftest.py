@@ -1,4 +1,9 @@
-"""Shared pytest fixtures: isolated SQLite DB + temp demo_data/storage per session."""
+"""Shared pytest fixtures: isolated DB + temp demo_data/storage per session.
+
+Tests never touch the dev database. They use a fresh SQLite file, or the
+dedicated Postgres database in TEST_DATABASE_URL (`make test-pg`), which is
+dropped and recreated at the start of the session.
+"""
 from __future__ import annotations
 
 import os
@@ -8,7 +13,8 @@ from pathlib import Path
 import pytest
 
 _TMP = Path(tempfile.mkdtemp(prefix="tenderbridge-tests-"))
-os.environ.setdefault("DATABASE_URL", f"sqlite:///{_TMP / 'test.db'}")
+_TEST_DB = os.environ.get("TEST_DATABASE_URL")
+os.environ["DATABASE_URL"] = _TEST_DB or f"sqlite:///{_TMP / 'test.db'}"
 os.environ.setdefault("DEMO_DATA_DIR", str(_TMP / "demo_data"))
 os.environ.setdefault("STORAGE_DIR", str(_TMP / "storage"))
 os.environ.setdefault("LLM_FAST", "fake:fast")
@@ -41,7 +47,7 @@ def _clear_caches() -> None:
 def _init_db():
     _clear_caches()
     from backend.app.db.engine import init_db
-    init_db()
+    init_db(drop=bool(_TEST_DB))
     yield
 
 

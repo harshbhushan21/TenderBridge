@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from backend.app.schemas.documents import GuardrailFlag
@@ -26,7 +26,7 @@ _SEV_ORDER = {"low": 0, "medium": 1, "high": 2, "critical": 3}
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def scan_text(text: str, *, doc_id: str | None = None, page: int | None = None) -> list[GuardrailFlag]:

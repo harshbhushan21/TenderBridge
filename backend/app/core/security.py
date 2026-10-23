@@ -13,13 +13,18 @@ from fastapi import Header
 
 from backend.app.core.errors import FileRejected, PermissionDenied
 
-ROLES = ("viewer", "bid_manager", "reviewer", "admin")
-# Which KB `allowed_roles` a caller role may read.
+ROLES = ("analyst", "writer", "bid_manager", "admin")
+DEFAULT_ROLE = "bid_manager"     # demo default when no X-Role header is sent
+FALLBACK_ROLE = "analyst"        # unknown X-Role values get the least privilege
+# Roles that may decide Gate 1, approve Gate 2 and confirm amendments (decision D3).
+APPROVER_ROLES = ("bid_manager", "admin")
+# Which KB `allowed_roles` tags a caller role may read. `hr`, `finance` and
+# `legal` are data scopes from the data pack, not login roles.
 ROLE_HIERARCHY: dict[str, set[str]] = {
-    "viewer": {"viewer", "all"},
-    "bid_manager": {"viewer", "bid_manager", "all"},
-    "reviewer": {"viewer", "bid_manager", "reviewer", "all"},
-    "admin": {"viewer", "bid_manager", "reviewer", "admin", "hr", "finance", "legal", "all"},
+    "analyst": {"analyst", "all"},
+    "writer": {"writer", "analyst", "all"},
+    "bid_manager": {"analyst", "writer", "bid_manager", "hr", "finance", "legal", "all"},
+    "admin": {"analyst", "writer", "bid_manager", "admin", "hr", "finance", "legal", "all"},
 }
 
 
@@ -35,20 +40,33 @@ class CurrentUser:
         if self.role not in roles and self.role != "admin":
             raise PermissionDenied(f"role '{self.role}' cannot perform this action")
 
+    @property
+    def can_approve(self) -> bool:
+        return self.role in APPROVER_ROLES
+
+    def require_approver(self) -> None:
+        self.require(*APPROVER_ROLES)
+
 
 def role_can_read(role: str, allowed_roles: list[str] | None) -> bool:
     if not allowed_roles:
         return True
-    visible = ROLE_HIERARCHY.get(role, {"viewer", "all"})
+    visible = ROLE_HIERARCHY.get(role, ROLE_HIERARCHY[FALLBACK_ROLE])
     return bool(visible.intersection(allowed_roles))
+
+
+def resolve_role(x_role: str | None) -> str:
+    if not x_role:
+        return DEFAULT_ROLE
+    role = x_role.strip().lower()
+    return role if role in ROLES else FALLBACK_ROLE
 
 
 async def get_current_user(
     x_user: str | None = Header(default=None),
     x_role: str | None = Header(default=None),
 ) -> CurrentUser:
-    role = x_role if x_role in ROLES else "bid_manager"
-    return CurrentUser(user_id=x_user or "bid.manager@nimbus.example", role=role)
+    return CurrentUser(user_id=x_user or "bid.manager@nimbus.example", role=resolve_role(x_role))
 
 
 _SAFE_NAME = re.compile(r"[^A-Za-z0-9._-]+")

@@ -55,7 +55,7 @@ class Requirement(BaseModel):
 
 class RequirementExtraction(BaseModel):
     """LLM structured output for the shredder (one section)."""
-    requirements: list["ExtractedRequirement"] = Field(default_factory=list)
+    requirements: list[ExtractedRequirement] = Field(default_factory=list)
 
 
 class ExtractedRequirement(BaseModel):

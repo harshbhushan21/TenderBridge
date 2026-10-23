@@ -1,7 +1,8 @@
 # TenderBridge — Internal Interface Contract
 
 > **Status (23 Oct).** This is the target contract. Only these modules exist today:
-> `core.*`, `db.engine`, `db.models`, `db.repositories.*` (audit is a stub), `schemas.*`,
+> `core.*`, `db.engine`, `db.models`, `db.repositories.*`, `db/migrations` (Alembic), `schemas.*`,
+> `knowledge.kb_seed` (`seed_company_facts`, `fact_counts`), `scripts.{init_db,seed_company_facts}`,
 > `ingestion.{hashes,file_validator,pdf_parser,docx_parser,xlsx_parser,ocr}`,
 > `guardrails.{file_security,injection,pii}`, `llm.{factory,routing,budget}`,
 > `retrieval.embeddings`, `tools.{date_normalization,facts,financial_rules,certificate_rules,tender_search,company_search}`

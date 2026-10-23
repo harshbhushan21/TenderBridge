@@ -1,0 +1,35 @@
+# Local services for TenderBridge. Phase 1: PostgreSQL 16 + pgvector.
+# The api and web services are added in Phases 5 and 7.
+#
+#   uv run python dev.py db-up     (or make db-up)    start Postgres on localhost:5433
+#   uv run python dev.py db-down   (or make db-down)  stop it; data stays in the volume
+#
+# 5433 avoids clashing with a locally installed Postgres. To change it, set
+# POSTGRES_PORT in .env and use the same port in DATABASE_URL.
+#
+# Credentials are for local development only; never reuse them anywhere else.
+# Fixed project name so containers, volume and network are named the same on every
+# laptop, whatever the clone folder is called.
+name: tenderbridge
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.0-pg16
+    container_name: tenderbridge-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tenderbridge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tenderbridge}
+      POSTGRES_DB: ${POSTGRES_DB:-tenderbridge}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - tenderbridge_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+volumes:
+  tenderbridge_pgdata:

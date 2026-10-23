@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date
 from enum import Enum
-from typing import Annotated, Any, Literal, Union
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -202,8 +202,7 @@ class DocumentPresenceRule(BaseModel):
 
 
 EligibilityRule = Annotated[
-    Union[TurnoverRule, NetWorthRule, SimilarWorkRule, CertificationRule, PersonnelRule,
-          DocumentPresenceRule],
+    TurnoverRule | NetWorthRule | SimilarWorkRule | CertificationRule | PersonnelRule | DocumentPresenceRule,
     Field(discriminator="kind"),
 ]
 

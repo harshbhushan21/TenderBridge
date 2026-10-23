@@ -6,11 +6,22 @@ Python) so the system runs with zero setup.
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from typing import Any
 
-from sqlalchemy import (JSON, Boolean, Date, DateTime, Float, ForeignKey, Index, Integer, String,
-                        Text, UniqueConstraint)
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import TypeDecorator
 
@@ -18,7 +29,7 @@ from backend.app.core.config import get_settings
 
 
 def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def new_id(prefix: str) -> str:
@@ -95,7 +106,7 @@ class KbDocument(Base, TimestampMixin):
     storage_path: Mapped[str | None] = mapped_column(String(1024))
     parsed_path: Mapped[str | None] = mapped_column(String(1024))
     meta: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
-    chunks: Mapped[list["KbChunk"]] = relationship(back_populates="document", cascade="all, delete-orphan")
+    chunks: Mapped[list[KbChunk]] = relationship(back_populates="document", cascade="all, delete-orphan")
 
 
 class KbChunk(Base):
@@ -223,7 +234,7 @@ class Tender(Base, TimestampMixin):
     title: Mapped[str] = mapped_column(String(512))
     buyer: Mapped[str | None] = mapped_column(String(255))
     reference_no: Mapped[str | None] = mapped_column(String(255))
-    company_id: Mapped[str] = mapped_column(String(64), default="NIMBUS")
+    company_id: Mapped[str] = mapped_column(String(64), default="NIMBUS-001")
     status: Mapped[str] = mapped_column(String(32), default="created")
     current_version: Mapped[int] = mapped_column(Integer, default=1)
     analysis_mode: Mapped[str] = mapped_column(String(16), default="focused")

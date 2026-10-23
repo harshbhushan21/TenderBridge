@@ -1,9 +1,15 @@
 """Turnover and net-worth eligibility checks (deterministic)."""
 from __future__ import annotations
 
-from backend.app.schemas.eligibility import (Calculation, CompanyProfile, EligibilityStatus,
-                                             FinancialRecord, NetWorthRule, RuleResult,
-                                             TurnoverRule)
+from backend.app.schemas.eligibility import (
+    Calculation,
+    CompanyProfile,
+    EligibilityStatus,
+    FinancialRecord,
+    NetWorthRule,
+    RuleResult,
+    TurnoverRule,
+)
 from backend.app.tools.date_normalization import fiscal_year_key, format_inr
 
 

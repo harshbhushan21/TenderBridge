@@ -7,7 +7,7 @@ and scoring remain reproducible and testable.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from backend.app.schemas.assessment import (
@@ -31,15 +31,12 @@ from backend.app.tools.facts import (
     get_certificates,
     get_company,
     get_financials,
-    get_people,
-    get_projects,
-    get_risk_positions,
 )
 from backend.app.tools.financial_rules import check_net_worth, check_turnover
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _source(section: dict[str, Any], text: str = "") -> dict[str, Any]:
@@ -288,7 +285,7 @@ def bid_score(state: TenderState) -> dict[str, Any]:
         top_risks=[i.summary for i in risk_items[:5]],
         narrative="Mandatory hard gates override the weighted score." if failures else "",
         policy_version=policy.version, analysis_mode=state.get("analysis_mode", "focused"),
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime.now(UTC),
         criteria=[
             CriterionScore(key="eligibility_strength", label="Eligibility strength", weight=.7,
                            raw_score=round(eligibility, 2), weighted=round(eligibility * .7, 2)),

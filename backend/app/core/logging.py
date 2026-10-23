@@ -5,14 +5,15 @@ import contextvars
 import json
 import logging
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import Any
 
 request_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar("request_id", default=None)
 tender_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar("tender_id", default=None)
 version_var: contextvars.ContextVar[int | None] = contextvars.ContextVar("tender_version", default=None)
 run_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar("run_id", default=None)
 
-_CONTEXT_VARS = {
+_CONTEXT_VARS: dict[str, contextvars.ContextVar[Any]] = {
     "request_id": request_id_var,
     "tender_id": tender_id_var,
     "tender_version": version_var,
@@ -30,7 +31,7 @@ class ContextFilter(logging.Filter):
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         payload = {
-            "ts": datetime.now(timezone.utc).isoformat(),
+            "ts": datetime.now(UTC).isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "msg": record.getMessage(),

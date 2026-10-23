@@ -8,7 +8,7 @@ from __future__ import annotations
 import asyncio
 import threading
 from collections.abc import AsyncIterator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy import select
@@ -66,7 +66,7 @@ def emit_event(*, run_id: str | None, tender_id: str | None, version: int | None
     data: dict[str, Any] = {
         "event": event, "tender_id": tender_id, "tender_version": version,
         "analysis_run_id": run_id, "node": node, "status": status, "message": message,
-        "payload": payload or {}, "ts": datetime.now(timezone.utc).isoformat(),
+        "payload": payload or {}, "ts": datetime.now(UTC).isoformat(),
     }
     data["id"] = _persist(data)
     _publish(run_id, data)
@@ -75,7 +75,7 @@ def emit_event(*, run_id: str | None, tender_id: str | None, version: int | None
     return data
 
 
-def open_subscription(key: str) -> tuple[asyncio.Queue, "callable"]:
+def open_subscription(key: str) -> tuple[asyncio.Queue, callable]:
     """Register a queue on the running loop. Returns (queue, close). Call from async code."""
     loop = asyncio.get_running_loop()
     queue: asyncio.Queue = asyncio.Queue()

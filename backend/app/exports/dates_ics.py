@@ -1,7 +1,7 @@
 """Key tender dates as an iCalendar file (effective version)."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from backend.app.schemas.requirements import KeyFacts
@@ -19,7 +19,7 @@ def _events(kf: KeyFacts) -> list[tuple[str, datetime, list[timedelta]]]:
 
 
 def _utc(dt: datetime) -> datetime:
-    return (dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
+    return (dt if dt.tzinfo else dt.replace(tzinfo=UTC)).astimezone(UTC)
 
 
 def _desc(kf: KeyFacts, name: str) -> str:
@@ -41,7 +41,7 @@ def _fallback_ics(kf: KeyFacts) -> str:
     def esc(s: str) -> str:
         return s.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
 
-    now = fmt(datetime.now(timezone.utc))
+    now = fmt(datetime.now(UTC))
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//TenderBridge//Key Dates//EN", "CALSCALE:GREGORIAN"]
     for i, (name, dt, alarms) in enumerate(_events(kf)):
         lines += ["BEGIN:VEVENT",

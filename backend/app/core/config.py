@@ -62,7 +62,7 @@ class Settings(BaseSettings):
     # --- Behaviour ---
     demo_mode: bool = Field(default=True, alias="DEMO_MODE")
     analysis_mode: Literal["focused", "full"] = Field(default="focused", alias="ANALYSIS_MODE")
-    default_company_id: str = Field(default="NIMBUS", alias="DEFAULT_COMPANY_ID")
+    default_company_id: str = Field(default="NIMBUS-001", alias="DEFAULT_COMPANY_ID")
     cors_origins: str = Field(default="http://localhost:3000", alias="CORS_ORIGINS")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     log_json: bool = Field(default=False, alias="LOG_JSON")
@@ -77,6 +77,18 @@ class Settings(BaseSettings):
     def _resolve_path(cls, v: Any) -> Path:
         p = Path(v).expanduser()
         return p if p.is_absolute() else (_DEFAULT_ROOT / p).resolve()
+
+    @field_validator("database_url", "checkpoint_url", mode="before")
+    @classmethod
+    def _resolve_sqlite_path(cls, v: Any) -> Any:
+        """Anchor relative SQLite paths at the project root, not the current
+        working directory, so every command uses the same file on any machine."""
+        if not isinstance(v, str) or not v.startswith("sqlite:///"):
+            return v
+        path = v.removeprefix("sqlite:///")
+        if not path or path == ":memory:" or Path(path).is_absolute():
+            return v
+        return f"sqlite:///{(_DEFAULT_ROOT / path).resolve().as_posix()}"
 
     # ---- Derived paths ----
     @property

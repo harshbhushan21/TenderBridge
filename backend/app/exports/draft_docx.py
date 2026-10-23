@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -80,7 +80,7 @@ def write_draft_docx(path: Path | str, *, tender_id: str, version: int, drafts: 
     doc.styles["Normal"].font.size = Pt(10.5)
     doc.add_heading(f"Technical Response — {tender_id}", level=0)
     doc.add_paragraph(f"Tender version: v{version}    Generated: "
-                      f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+                      f"{datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}")
     if assessment:
         doc.add_paragraph(f"Bid recommendation: {_val(assessment.recommendation)} "
                           f"(score {assessment.score})")
