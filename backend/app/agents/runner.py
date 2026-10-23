@@ -8,7 +8,7 @@ from typing import Any
 
 from backend.app.agents.checkpoint import get_checkpointer
 from backend.app.agents.graph import build_graph
-from backend.app.agents.persistence import persist_state, upsert_run
+from backend.app.agents.persistence import persist_state, thread_id_for, upsert_run
 from backend.app.core.config import get_settings
 from backend.app.db.engine import session_scope
 from backend.app.db.repositories.analysis import run_to_dict
@@ -24,7 +24,7 @@ _lock = threading.Lock()
 
 
 def _thread_id(run_id: str) -> str:
-    return f"tb-{run_id}"
+    return thread_id_for(run_id)
 
 
 def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None) -> None:

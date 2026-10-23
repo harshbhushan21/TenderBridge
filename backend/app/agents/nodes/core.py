@@ -8,9 +8,7 @@ from __future__ import annotations
 
 import re
 from datetime import UTC, datetime
-from typing import Any, cast
-
-from sqlalchemy.orm import Session
+from typing import Any
 
 from backend.app.schemas.assessment import (
     HardGateResult,
@@ -35,7 +33,6 @@ from backend.app.tools.bid_scoring import score_bid as score_bid_policy
 from backend.app.tools.certificate_rules import check_certification
 from backend.app.tools.facts import (
     get_certificates,
-    get_company,
     get_financials,
 )
 from backend.app.tools.financial_rules import check_net_worth, check_turnover
@@ -129,11 +126,19 @@ def shred_requirements(state: TenderState) -> dict[str, Any]:
     never invents a clause: callers may replace this node with a structured
     model node while retaining the same output contract.
     """
-    extracted: list[dict[str, Any]] = []
+    from backend.app.agents.prequalification import extract_pq_requirements
     from backend.app.llm.factory import load_prompt, structured_call
+
+    # Pre-qualification rows are the hard gates; they get a deterministic extractor.
+    pq = extract_pq_requirements(state.get("sections", []))
+    pq_sections = {r["section_id"] for r in pq if r["clause_ref"].startswith("PQ-")}
+    extracted: list[dict[str, Any]] = [{
+        **r, "section_path": r["source"]["section_path"], "llm_fallback": False,
+        "tender_id": state["tender_id"], "tender_version": state["tender_version"],
+    } for r in pq]
     for section in state.get("sections", []):
         text = str(section.get("text", "")).strip()
-        if not text:
+        if not text or section.get("section_id") in pq_sections:
             continue
         def fallback(current_section: dict[str, Any] = section) -> RequirementExtraction:
             return _heuristic_shred(current_section)
@@ -149,7 +154,7 @@ def shred_requirements(state: TenderState) -> dict[str, Any]:
                 **item.model_dump(mode="json"),
                 "source": _source(section, sentence), "llm_fallback": result.fallback,
                 "section_path": section.get("section_path"),
-                "hard_gate": item.category.value.startswith("eligibility_"),
+                "hard_gate": False,  # hard gates come only from the PQ table above
                 "tender_id": state["tender_id"],
                 "tender_version": state["tender_version"],
             })
@@ -184,108 +189,102 @@ def merge_and_dedupe(state: TenderState) -> dict[str, Any]:
             "confidence": raw.get("confidence", 0.65),
             "needs_review": raw.get("confidence", 0.65) < 0.7,
             "parsed_rule": raw.get("parsed_rule"),
+            "check": raw.get("check"),
         })
     return {"requirements": requirements}
 
 
 def extract_key_facts(state: TenderState) -> dict[str, Any]:
-    """Validate caller/parser facts and preserve missing values explicitly."""
-    facts = state.get("key_facts")
-    if facts:
-        validated = KeyFacts.model_validate(facts)
+    """Deterministic, sourced extraction first; the LLM (when configured) only fills gaps."""
+    from backend.app.agents.key_facts import extract_key_facts_deterministic, merge_key_facts
+
+    sections = state.get("sections", [])
+    found = extract_key_facts_deterministic(state["tender_id"], state["tender_version"], sections)
+    if state.get("key_facts"):
+        validated = merge_key_facts(KeyFacts.model_validate(state["key_facts"]), found)
+    elif not found.missing:
+        validated = found
     else:
         from backend.app.llm.factory import load_prompt, structured_call
-        sections = "\n\n".join(str(s.get("text", "")) for s in state.get("sections", []))
-        fallback = KeyFacts(tender_id=state["tender_id"], tender_version=state["tender_version"],
-                            missing=["submission_deadline", "company_facts"])
-        result = structured_call(
-            "extract_key_facts", KeyFacts, system=load_prompt("extract_key_facts"),
-            user=sections, heuristic=lambda: fallback,
-        )
-        validated = result.value.model_copy(update={
-            "tender_id": state["tender_id"], "tender_version": state["tender_version"],
-        })
+        text = "\n\n".join(str(s.get("text", "")) for s in sections)
+        result = structured_call("extract_key_facts", KeyFacts, system=load_prompt("extract_key_facts"),
+                                 user=text, heuristic=lambda: found)
+        model_facts = result.value.model_copy(update={
+            "tender_id": state["tender_id"], "tender_version": state["tender_version"]})
+        validated = merge_key_facts(model_facts, found)
     return {"key_facts": dump(validated)}
 
 
 def route_requirements(state: TenderState) -> dict[str, Any]:
-    routed = []
+    """Decide how each requirement is checked: a PQ rule, a Phase 2 tool, or RAG/human review."""
+    from backend.app.agents.subgraphs.requirement_router import route_requirement
+
+    routes = []
     for item in state.get("requirements", []):
-        routed.append({
-            "requirement_id": item["requirement_id"],
-            "category": item.get("category", "other"),
-            "rule_kind": (item.get("parsed_rule") or {}).get("kind"),
-        })
-    return {"derived_impacts": routed}
+        if item.get("check"):
+            routes.append({"requirement_id": item["requirement_id"], "category": item.get("category"),
+                           "tool": f"pq:{item['check']}"})
+        else:
+            routes.append(route_requirement(item))
+    return {"routes": routes}
 
 
 def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
-    """Evaluate rules using SQL-backed facts when a session is supplied."""
-    session = cast(Session | None, state.get("_session"))
-    owned_session = False
-    if session is None:
-        from backend.app.db.engine import get_session
-        session = get_session()
-        owned_session = True
+    """Run each routed check against SQL facts, then build the commercial risk register.
+
+    Hard gates (PQ) are evaluated deterministically. Other requirements are
+    either checked by a parsed rule or left `needs_human` for the bid team;
+    they are not risks. Risks come only from contract clauses compared with
+    the company's approved positions.
+    """
+    from backend.app.agents.commercial_terms import detect_commercial_risks
+    from backend.app.agents.prequalification import PQContext, evaluate_pq
+    from backend.app.db.engine import session_scope
+    from backend.app.tools.facts import get_risk_positions
+
     company_id = state.get("company_id")
     key_facts = KeyFacts.model_validate(state["key_facts"]) if state.get("key_facts") else None
     compliance: list[dict[str, Any]] = []
-    risks: list[dict[str, Any]] = []
-    if session is None or not company_id:
+    with session_scope() as session:
+        ctx = PQContext(session, company_id, key_facts) if company_id else None
+        financials = get_financials(session, company_id) if company_id else []
+        certificates = get_certificates(session, company_id) if company_id else []
+        positions = get_risk_positions(session, company_id) if company_id else []
         for req in state.get("requirements", []):
+            result = None
+            if req.get("check") and ctx is not None:
+                result = evaluate_pq(req["check"], req.get("text", ""), ctx)
+            elif req.get("parsed_rule") and ctx is not None:
+                try:
+                    from pydantic import TypeAdapter
+                    parsed = TypeAdapter(EligibilityRule).validate_python(req["parsed_rule"])
+                    if parsed.kind == "turnover":
+                        result = check_turnover(financials, parsed, ctx.company)
+                    elif parsed.kind == "net_worth":
+                        result = check_net_worth(financials, parsed)
+                    elif parsed.kind == "certification":
+                        result = check_certification(certificates, parsed, key_facts)
+                except (TypeError, ValueError):
+                    result = None
+            status = result.status if result else EligibilityStatus.needs_human
+            summary = result.summary if result else "Not machine-checkable: assign an owner to confirm."
             compliance.append(ComplianceItem(
                 requirement_id=req["requirement_id"], tender_id=state["tender_id"],
                 tender_version=state["tender_version"], category=req.get("category", "other"),
                 mandatory=req.get("mandatory", True), hard_gate=req.get("hard_gate", False),
-                status=EligibilityStatus.needs_human,
-                summary="Company facts/session are unavailable; manual verification is required.",
-                tender_source=req["source"], confidence=0.0, checked_by="human",
+                status=status, summary=summary, rule_result=result,
+                tender_source=req["source"], company_evidence=result.evidence if result else [],
+                actions=result.actions if result else [],
+                confidence=req.get("confidence", 0.65), checked_by="rule" if result else "human",
             ).model_dump(mode="json"))
-        if owned_session:
-            session.close()
-        return {"compliance": compliance, "risks": risks}
-
-    company = get_company(session, company_id)
-    financials = get_financials(session, company_id)
-    certificates = get_certificates(session, company_id)
-    for req in state.get("requirements", []):
-        result = None
-        raw_rule = req.get("parsed_rule")
-        if raw_rule:
-            try:
-                from pydantic import TypeAdapter
-                parsed = TypeAdapter(EligibilityRule).validate_python(raw_rule)
-                if parsed.kind == "turnover":
-                    result = check_turnover(financials, parsed, company)
-                elif parsed.kind == "net_worth":
-                    result = check_net_worth(financials, parsed)
-                elif parsed.kind == "certification":
-                    result = check_certification(certificates, parsed, key_facts)
-            except (TypeError, ValueError):
-                result = None
-        status = result.status if result else EligibilityStatus.needs_human
-        summary = result.summary if result else "No machine-checkable rule is available."
-        item = ComplianceItem(
-            requirement_id=req["requirement_id"], tender_id=state["tender_id"],
-            tender_version=state["tender_version"], category=req.get("category", "other"),
-            mandatory=req.get("mandatory", True), hard_gate=req.get("hard_gate", False),
-            status=status, summary=summary, rule_result=result,
-            tender_source=req["source"], company_evidence=result.evidence if result else [],
-            actions=result.actions if result else ["Assign an owner for manual verification"],
-            confidence=req.get("confidence", 0.65), checked_by="rule" if result else "human",
-        )
-        compliance.append(item.model_dump(mode="json"))
-        if status in (EligibilityStatus.gap, EligibilityStatus.needs_human):
-            risks.append(RiskItem(
-                risk_id=f"RISK-{req['requirement_id']}", requirement_id=req["requirement_id"],
-                tender_id=state["tender_id"], tender_version=state["tender_version"],
-                category=req.get("category", "other"), level=RiskLevel.escalate if req.get("hard_gate") else RiskLevel.review,
-                tender_value=summary, policy_value="Manual review required", summary=summary,
-                source=req["source"],
-            ).model_dump(mode="json"))
-    if owned_session:
-        session.close()
+        risks = detect_commercial_risks(state.get("sections", []), key_facts, positions,
+                                        tender_id=state["tender_id"], version=state["tender_version"])
     return {"compliance": compliance, "risks": risks}
+
+
+def _static_scores() -> dict[str, float]:
+    from backend.app.agents.prequalification import analysis_inputs
+    return {k: float(v) for k, v in analysis_inputs()["static_scores"].items()}
 
 
 def bid_score(state: TenderState) -> dict[str, Any]:
@@ -305,10 +304,11 @@ def bid_score(state: TenderState) -> dict[str, Any]:
     factors = state.get("scoring_factors") or factors_from_results(
         [item.status for item in hard_items],  # eligibility confidence is over hard gates only
         [item.level for item in risk_items],
-        static_scores=state.get("static_scores"),
+        static_scores=state.get("static_scores") or _static_scores(),
         policy=policy or None,
     )
-    conditions = [i.summary for i in compliance
+    # Conditions: hard gates that pass only with an action, undertaking or human check.
+    conditions = [f"{i.requirement_id}: {i.summary}" for i in hard_items
                   if i.status in (EligibilityStatus.needs_action, EligibilityStatus.partial,
                                   EligibilityStatus.meets_with_undertaking,
                                   EligibilityStatus.needs_human)]

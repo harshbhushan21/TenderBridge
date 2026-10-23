@@ -238,6 +238,17 @@ Built before this plan; listed so later phases know what to reuse.
 | 4.9 | mypy-clean `agents/nodes/core.py`, `ops/events.py`, `llm/factory.py`, `exports/service.py` (its `agents.persistence` import resolves with 4.6) | ✅ |
 
 **Result (23 Oct):** ✅ implementation complete. The graph now follows `extract_key_facts → reconcile_corrigenda`, uses configured per-node routing and prompts with deterministic fallbacks, persists run outputs, emits node/run events and audit entries, pauses at Gate 1 with `interrupt()`, and resumes with `Command(resume=...)`. Checkpoints prefer configured Postgres, then SQLite, then memory. `make demo-cli CASE-1` materializes the checked-in fixture when needed and runs to the Gate 1 pause; the runner was also verified through a resume to completion. Phase 4 does not auto-approve a recommendation. The exact 77.34 demo score remains owned by the Phase 2 gold-factor fixture and will be asserted when the Phase 3 retrieval-backed evidence is connected.
+**Review fixes (23 Oct, [S]):** running the "done when" check found that CASE-1 returned **10.0 `NO_BID`** with all 237 requirements `needs_human`. Root causes and fixes:
+- **No rule was ever applied:** nothing created `parsed_rule`. Added `agents/prequalification.py`: the PQ table (PQ-01..PQ-12) plus clause 2.1.2 become the 13 hard gates, each routed by content to a Phase 2 rule tool; thresholds, windows and dates come from the tender text and key facts.
+- **Key facts were empty offline.** Added `agents/key_facts.py`: deterministic, sourced extraction (deadline, pre-bid, opening, EMD, PBG, payment days, SLA cap, turnover thresholds, evaluation method); the LLM only fills gaps.
+- **Every unchecked requirement became an "escalate/review" risk** (237 risks → commercial score 0). Added `agents/commercial_terms.py`: the risk register is the 9 contract clauses compared with `risk_positions` (v1 = 50, v2 = 65, as in the gold set).
+- **Demo CLI used `extracted/tender_sections.json`** (the parser reference, including the corrigendum) as v1 input and labelled every file `main_rfp`. It now seeds facts, ingests the KB and uploads the four v1 files through the real pipeline.
+- **Graph forked** `extract_key_facts` into both `reconcile_corrigenda` and `route_requirements`; now sequential (D4).
+- **Task 4.1 was not implemented** (`routing.py` unchanged): the loader now reads the plan's `routing` section (Gemini 3 Flash for planning/drafting, GPT-OSS 120B for judging/verification), stays offline in `fake:` mode.
+- **Gate 1 could not survive a restart by default** (memory checkpointer): the default checkpointer is now the app database (Postgres) or `storage/checkpoints.sqlite`. Stored `thread_id` now matches the checkpoint thread.
+- Scoring inputs that are not in the tender (strategic fit 85, technical estimate 72.52, delivery 85) live in `agents/analysis_inputs.json`, labelled as demo estimates.
+
+**Result after fixes:** `dev.py demo-cli CASE-1` from an empty database → **77.34 `BID_WITH_CONDITIONS`** in ~15 s: all 5 factors, all 13 hard-gate verdicts and the 9-clause risk register match `eligibility_gold.json`; conditions are the CEO liability approval, the bid-specific MAF and the office undertaking. Gate 1 resumes in a new process from the durable checkpoint. `tests/integration/test_phase4_graph.py` (9 tests).
 **Meanwhile [S]:** scaffold the FastAPI router files against `docs/api_contract.md` with stubbed responses (no business logic).
 
 ### Phase 5 · [S] API for the v1 lifecycle

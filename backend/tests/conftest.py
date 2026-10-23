@@ -15,6 +15,7 @@ import pytest
 _TMP = Path(tempfile.mkdtemp(prefix="tenderbridge-tests-"))
 _TEST_DB = os.environ.get("TEST_DATABASE_URL")
 os.environ["DATABASE_URL"] = _TEST_DB or f"sqlite:///{_TMP / 'test.db'}"
+os.environ["CHECKPOINT_URL"] = ""  # never the dev .env checkpointer: derive from the test DB
 os.environ.setdefault("DEMO_DATA_DIR", str(_TMP / "demo_data"))
 os.environ.setdefault("STORAGE_DIR", str(_TMP / "storage"))
 os.environ.setdefault("LLM_FAST", "fake:fast")

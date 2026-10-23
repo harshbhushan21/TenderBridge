@@ -81,8 +81,8 @@ def build_graph(*, checkpointer: Any = None):
     graph.add_edge("load_tender", "shred_requirements")
     graph.add_edge("shred_requirements", "merge_and_dedupe")
     graph.add_edge("merge_and_dedupe", "extract_key_facts")
-    graph.add_edge("extract_key_facts", "reconcile_corrigenda")
-    graph.add_edge("extract_key_facts", "route_requirements")
+    graph.add_edge("extract_key_facts", "reconcile_corrigenda")  # amendments apply before routing
+    graph.add_edge("reconcile_corrigenda", "route_requirements")
     graph.add_edge("route_requirements", "eligibility_and_risk")
     graph.add_edge("eligibility_and_risk", "bid_score")
     graph.add_edge("bid_score", "gate1_review")

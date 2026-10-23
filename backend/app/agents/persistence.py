@@ -9,13 +9,18 @@ from sqlalchemy.orm import Session
 from backend.app.db import models as m
 
 
+def thread_id_for(run_id: str) -> str:
+    """LangGraph checkpoint thread for a run (one place, so stored and used ids match)."""
+    return f"tb-{run_id}"
+
+
 def upsert_run(session: Session, state: dict[str, Any], *, status: str,
                error: str | None = None) -> m.AnalysisRun:
     run = session.get(m.AnalysisRun, state["analysis_run_id"])
     if run is None:
         run = m.AnalysisRun(
             run_id=state["analysis_run_id"], tender_id=state["tender_id"],
-            version=state["tender_version"], thread_id=state["analysis_run_id"],
+            version=state["tender_version"], thread_id=thread_id_for(state["analysis_run_id"]),
             mode=state.get("mode", "full_analysis"),
             analysis_mode=state.get("analysis_mode", "focused"),
         )
