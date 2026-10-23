@@ -1,10 +1,11 @@
 [project]
 name = "testtbridge"
 version = "0.1.0"
-description = "Add your description here"
+description = "TenderBridge: agentic copilot that turns IT-infrastructure tenders into verified compliance checks, bid / no-bid recommendations and cited drafts"
 readme = "README.md"
 authors = [
-    { name = "Harsh Bhushan", email = "harshbhushan21072005@gmail.com" }
+    { name = "Harsh Bhushan", email = "harshbhushan21072005@gmail.com" },
+    { name = "Swarnim Rai", email = "verantesliving18@gmail.com" },
 ]
 requires-python = ">=3.13"
 dependencies = [

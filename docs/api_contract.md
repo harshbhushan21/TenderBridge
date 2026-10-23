@@ -1,7 +1,13 @@
 # TenderBridge API Contract (v1)
 
+> **Status (23 Oct):** contract only. No routes are implemented yet (README Phase 9).
+
 Base URL `http://localhost:8000`. JSON everywhere. Identity headers (demo): `X-User`, `X-Role`
-(`viewer|bid_manager|reviewer|admin`, default `bid_manager`). Errors:
+(`analyst|writer|bid_manager|admin`, default `bid_manager`; see `docs/decisions.md` D3).
+Permissions: `POST /tenders/{id}/decision`, `POST /drafts/{id}/review` (approve) and
+`POST /tenders/{id}/amendments/{aid}/confirm` require `bid_manager` or `admin` and return
+403 `permission_denied` (with an audit entry) otherwise. `POST /kb/ingest` requires `admin`.
+Retrieval-backed routes filter KB documents by the caller's role. Errors:
 `{"error": "<code>", "message": "...", "details": {...}}` with matching HTTP status.
 
 Shapes refer to Pydantic schemas in `backend/app/schemas/*` (`model_dump(mode="json")`).

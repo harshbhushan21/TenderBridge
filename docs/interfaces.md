@@ -1,6 +1,18 @@
 # TenderBridge — Internal Interface Contract
 
-All modules import as `backend.app.<pkg>.<module>`. Python ≥ 3.11. Schemas in
+> **Status (23 Oct).** This is the target contract. Only these modules exist today:
+> `core.*`, `db.engine`, `db.models`, `db.repositories.*` (audit is a stub), `schemas.*`,
+> `ingestion.{hashes,file_validator,pdf_parser,docx_parser,xlsx_parser,ocr}`,
+> `guardrails.{file_security,injection,pii}`, `llm.{factory,routing,budget}`,
+> `retrieval.embeddings`, `tools.{date_normalization,facts,financial_rules,certificate_rules,tender_search,company_search}`
+> (the two search tools import the not-yet-written `retrieval.hybrid` lazily),
+> `agents.graph` + `agents.nodes.core` (partial graph, no interrupts),
+> `exports.*`, `ops.*`. Everything else below is **planned**; the README build plan
+> gives each one a phase, task number and owner. Known deviations: graph order and
+> roles (`docs/decisions.md` D3, D4); `llm.routing` does not yet read the `routing`
+> section of `llm_routing_and_budget.json` (README task 4.1).
+
+All modules import as `backend.app.<pkg>.<module>`. Python ≥ 3.13 (per `pyproject.toml`). Schemas in
 `backend/app/schemas/*` and ORM models in `backend/app/db/models.py` are the
 shared source of truth — **do not redefine them**; extend only by adding fields
 with defaults.
