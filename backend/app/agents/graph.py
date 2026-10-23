@@ -8,6 +8,7 @@ from backend.app.agents.nodes.core import (
     eligibility_and_risk,
     extract_key_facts,
     finalize,
+    gate1_review,
     intake_guard,
     load_tender,
     merge_and_dedupe,
@@ -16,6 +17,7 @@ from backend.app.agents.nodes.core import (
     shred_requirements,
     write_no_bid_report,
 )
+from backend.app.ops.events import emit_event
 from backend.app.schemas.graph_state import TenderState
 
 
@@ -41,27 +43,50 @@ def build_graph(*, checkpointer: Any = None):
         raise RuntimeError("LangGraph is required to build the agent graph") from exc
 
     graph = StateGraph(TenderState)
-    graph.add_node("intake_guard", intake_guard)
-    graph.add_node("load_tender", load_tender)
-    graph.add_node("shred_requirements", shred_requirements)
-    graph.add_node("merge_and_dedupe", merge_and_dedupe)
-    graph.add_node("reconcile_corrigenda", reconcile_corrigenda)
-    graph.add_node("extract_key_facts", extract_key_facts)
-    graph.add_node("route_requirements", route_requirements)
-    graph.add_node("eligibility_and_risk", eligibility_and_risk)
-    graph.add_node("bid_score", bid_score)
-    graph.add_node("write_no_bid_report", write_no_bid_report)
-    graph.add_node("finalize", finalize)
+
+    def instrument(name: str, fn):
+        def wrapped(state):
+            emit_event(run_id=state.get("analysis_run_id"), tender_id=state.get("tender_id"),
+                       version=state.get("tender_version"), event="node_started", node=name,
+                       status="running")
+            try:
+                result = fn(state)
+            except Exception as exc:
+                if exc.__class__.__name__ in {"GraphInterrupt", "Interrupt"}:
+                    emit_event(run_id=state.get("analysis_run_id"), tender_id=state.get("tender_id"),
+                               version=state.get("tender_version"), event="human_review_required",
+                               node=name, status="awaiting_human")
+                    raise
+                emit_event(run_id=state.get("analysis_run_id"), tender_id=state.get("tender_id"),
+                           version=state.get("tender_version"), event="node_failed", node=name,
+                           status="failed", message=str(exc))
+                raise
+            emit_event(run_id=state.get("analysis_run_id"), tender_id=state.get("tender_id"),
+                       version=state.get("tender_version"), event="node_completed", node=name,
+                       status="completed")
+            return result
+        return wrapped
+
+    for name, fn in {
+        "intake_guard": intake_guard, "load_tender": load_tender,
+        "shred_requirements": shred_requirements, "merge_and_dedupe": merge_and_dedupe,
+        "extract_key_facts": extract_key_facts, "reconcile_corrigenda": reconcile_corrigenda,
+        "route_requirements": route_requirements, "eligibility_and_risk": eligibility_and_risk,
+        "bid_score": bid_score, "gate1_review": gate1_review,
+        "write_no_bid_report": write_no_bid_report, "finalize": finalize,
+    }.items():
+        graph.add_node(name, instrument(name, fn))
     graph.add_edge(START, "intake_guard")
     graph.add_conditional_edges("intake_guard", _after_intake)
     graph.add_edge("load_tender", "shred_requirements")
     graph.add_edge("shred_requirements", "merge_and_dedupe")
-    graph.add_edge("merge_and_dedupe", "reconcile_corrigenda")
-    graph.add_edge("reconcile_corrigenda", "extract_key_facts")
+    graph.add_edge("merge_and_dedupe", "extract_key_facts")
+    graph.add_edge("extract_key_facts", "reconcile_corrigenda")
     graph.add_edge("extract_key_facts", "route_requirements")
     graph.add_edge("route_requirements", "eligibility_and_risk")
     graph.add_edge("eligibility_and_risk", "bid_score")
-    graph.add_conditional_edges("bid_score", _after_score)
+    graph.add_edge("bid_score", "gate1_review")
+    graph.add_conditional_edges("gate1_review", _after_score)
     graph.add_edge("write_no_bid_report", "finalize")
     graph.add_edge("finalize", END)
     return graph.compile(checkpointer=checkpointer)

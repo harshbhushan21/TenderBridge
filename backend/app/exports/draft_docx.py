@@ -111,7 +111,7 @@ def write_draft_docx(path: Path | str, *, tender_id: str, version: int, drafts: 
             for i, s in enumerate(spans, start=1):
                 para = doc.add_paragraph(_citation_line(i, s))
                 para.runs[0].font.size = Pt(8.5)
-    doc.save(path)
+    doc.save(str(path))
     return path
 
 
@@ -148,10 +148,10 @@ def write_no_bid_docx(path: Path | str, *, assessment: BidAssessment, report: di
         t.style = "Light Grid Accent 1"
         for i, h in enumerate(["Criterion", "Weight", "Raw", "Weighted"]):
             t.rows[0].cells[i].text = h
-        for c in assessment.criteria:
+        for criterion in assessment.criteria:
             cells = t.add_row().cells
-            cells[0].text, cells[1].text = c.label or c.key, str(c.weight)
-            cells[2].text, cells[3].text = str(c.raw_score), str(c.weighted)
+            cells[0].text, cells[1].text = criterion.label or criterion.key, str(criterion.weight)
+            cells[2].text, cells[3].text = str(criterion.raw_score), str(criterion.weighted)
 
     risks = report.get("risks") or assessment.top_risks
     if risks:
@@ -160,8 +160,8 @@ def write_no_bid_docx(path: Path | str, *, assessment: BidAssessment, report: di
             doc.add_paragraph(rk if isinstance(rk, str) else rk.get("summary", str(rk)), style="List Bullet")
     if assessment.conditions:
         doc.add_heading("Conditions / open actions", level=1)
-        for c in assessment.conditions:
-            doc.add_paragraph(c, style="List Bullet")
+        for condition in assessment.conditions:
+            doc.add_paragraph(condition, style="List Bullet")
 
     doc.add_heading("Human decision", level=1)
     reviewer = report.get("reviewer") or "pending"
@@ -170,5 +170,5 @@ def write_no_bid_docx(path: Path | str, *, assessment: BidAssessment, report: di
         doc.add_paragraph(f"Decision: {report['decision']}")
     if report.get("comment"):
         doc.add_paragraph(f"Comment: {report['comment']}")
-    doc.save(path)
+    doc.save(str(path))
     return path

@@ -60,6 +60,7 @@ def _build_chat_model(model_spec: str, temperature: float, max_tokens: int | Non
         from langchain.chat_models import init_chat_model
     except ImportError as exc:  # pragma: no cover
         raise ConfigError("langchain is not installed") from exc
+    provider: str | None
     provider, _, model = model_spec.partition(":")
     if not model:
         provider, model = None, model_spec  # let langchain infer

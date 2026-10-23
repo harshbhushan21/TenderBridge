@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import re
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
+
+from sqlalchemy.orm import Session
 
 from backend.app.schemas.assessment import (
     HardGateResult,
@@ -22,7 +24,12 @@ from backend.app.schemas.eligibility import (
     RiskLevel,
 )
 from backend.app.schemas.graph_state import TenderState, dump
-from backend.app.schemas.requirements import ExtractedRequirement, KeyFacts, RequirementCategory
+from backend.app.schemas.requirements import (
+    ExtractedRequirement,
+    KeyFacts,
+    RequirementCategory,
+    RequirementExtraction,
+)
 from backend.app.tools.bid_scoring import factors_from_results
 from backend.app.tools.bid_scoring import score_bid as score_bid_policy
 from backend.app.tools.certificate_rules import check_certification
@@ -46,6 +53,40 @@ def _source(section: dict[str, Any], text: str = "") -> dict[str, Any]:
         "text_span": text[:400],
         "tender_version": section.get("tender_version"),
     }
+
+
+def _heuristic_shred(section: dict[str, Any]) -> RequirementExtraction:
+    from backend.app.schemas.requirements import RequirementExtraction
+    extracted: list[ExtractedRequirement] = []
+    text = str(section.get("text", "")).strip()
+    sentences = [s.strip() for s in re.split(r"(?<=[.;])\s+|\n+", text) if s.strip()]
+    for index, sentence in enumerate(sentences):
+        if not re.search(r"\b(shall|must|required|eligible|minimum|valid|submit)\b", sentence, re.I):
+            continue
+        category = RequirementCategory.other
+        lower = sentence.lower()
+        for token, candidate in (
+            ("turnover", RequirementCategory.eligibility_financial),
+            ("net worth", RequirementCategory.eligibility_financial),
+            ("experience", RequirementCategory.eligibility_experience),
+            ("similar work", RequirementCategory.eligibility_experience),
+            ("iso", RequirementCategory.eligibility_certification),
+            ("certificate", RequirementCategory.eligibility_certification),
+            ("personnel", RequirementCategory.personnel),
+            ("payment", RequirementCategory.commercial),
+            ("penalty", RequirementCategory.commercial),
+            ("submission", RequirementCategory.submission),
+        ):
+            if token in lower:
+                category = candidate
+                break
+        extracted.append(ExtractedRequirement(
+            clause_ref=str(section.get("clause_ref") or f"{section.get('section_id', 'section')}-{index + 1}"),
+            title=str(section.get("title", "")), text=sentence, category=category,
+            mandatory=bool(re.search(r"\b(shall|must|required)\b", sentence, re.I)),
+            page=section.get("page_start"), quote=sentence[:400], confidence=0.65,
+        ))
+    return RequirementExtraction(requirements=extracted)
 
 
 def intake_guard(state: TenderState) -> dict[str, Any]:
@@ -89,47 +130,26 @@ def shred_requirements(state: TenderState) -> dict[str, Any]:
     model node while retaining the same output contract.
     """
     extracted: list[dict[str, Any]] = []
+    from backend.app.llm.factory import load_prompt, structured_call
     for section in state.get("sections", []):
         text = str(section.get("text", "")).strip()
         if not text:
             continue
-        sentences = [s.strip() for s in re.split(r"(?<=[.;])\s+|\n+", text) if s.strip()]
-        for index, sentence in enumerate(sentences):
-            if not re.search(r"\b(shall|must|required|eligible|minimum|valid|submit)\b", sentence, re.I):
-                continue
-            clause = section.get("clause_ref") or f"{section.get('section_id', 'section')}-{index + 1}"
-            category = RequirementCategory.other
-            lower = sentence.lower()
-            for token, candidate in (
-                ("turnover", RequirementCategory.eligibility_financial),
-                ("net worth", RequirementCategory.eligibility_financial),
-                ("experience", RequirementCategory.eligibility_experience),
-                ("similar work", RequirementCategory.eligibility_experience),
-                ("iso", RequirementCategory.eligibility_certification),
-                ("certificate", RequirementCategory.eligibility_certification),
-                ("personnel", RequirementCategory.personnel),
-                ("payment", RequirementCategory.commercial),
-                ("penalty", RequirementCategory.commercial),
-                ("submission", RequirementCategory.submission),
-            ):
-                if token in lower:
-                    category = candidate
-                    break
-            item = ExtractedRequirement(
-                clause_ref=str(clause),
-                title=str(section.get("title", "")),
-                text=sentence,
-                category=category,
-                mandatory=bool(re.search(r"\b(shall|must|required)\b", sentence, re.I)),
-                page=section.get("page_start"),
-                quote=sentence[:400],
-                confidence=0.65,
-            )
+        def fallback(current_section: dict[str, Any] = section) -> RequirementExtraction:
+            return _heuristic_shred(current_section)
+
+        result = structured_call(
+            "shred_requirements", RequirementExtraction,
+            system=load_prompt("shred_requirements"), user=text,
+            heuristic=fallback,
+        )
+        for item in result.value.requirements:
+            sentence = item.text
             extracted.append({
                 **item.model_dump(mode="json"),
-                "source": _source(section, sentence),
+                "source": _source(section, sentence), "llm_fallback": result.fallback,
                 "section_path": section.get("section_path"),
-                "hard_gate": category.value.startswith("eligibility_"),
+                "hard_gate": item.category.value.startswith("eligibility_"),
                 "tender_id": state["tender_id"],
                 "tender_version": state["tender_version"],
             })
@@ -174,11 +194,17 @@ def extract_key_facts(state: TenderState) -> dict[str, Any]:
     if facts:
         validated = KeyFacts.model_validate(facts)
     else:
-        validated = KeyFacts(
-            tender_id=state["tender_id"],
-            tender_version=state["tender_version"],
-            missing=["submission_deadline", "company_facts"],
+        from backend.app.llm.factory import load_prompt, structured_call
+        sections = "\n\n".join(str(s.get("text", "")) for s in state.get("sections", []))
+        fallback = KeyFacts(tender_id=state["tender_id"], tender_version=state["tender_version"],
+                            missing=["submission_deadline", "company_facts"])
+        result = structured_call(
+            "extract_key_facts", KeyFacts, system=load_prompt("extract_key_facts"),
+            user=sections, heuristic=lambda: fallback,
         )
+        validated = result.value.model_copy(update={
+            "tender_id": state["tender_id"], "tender_version": state["tender_version"],
+        })
     return {"key_facts": dump(validated)}
 
 
@@ -195,7 +221,12 @@ def route_requirements(state: TenderState) -> dict[str, Any]:
 
 def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
     """Evaluate rules using SQL-backed facts when a session is supplied."""
-    session = state.get("_session")
+    session = cast(Session | None, state.get("_session"))
+    owned_session = False
+    if session is None:
+        from backend.app.db.engine import get_session
+        session = get_session()
+        owned_session = True
     company_id = state.get("company_id")
     key_facts = KeyFacts.model_validate(state["key_facts"]) if state.get("key_facts") else None
     compliance: list[dict[str, Any]] = []
@@ -210,6 +241,8 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
                 summary="Company facts/session are unavailable; manual verification is required.",
                 tender_source=req["source"], confidence=0.0, checked_by="human",
             ).model_dump(mode="json"))
+        if owned_session:
+            session.close()
         return {"compliance": compliance, "risks": risks}
 
     company = get_company(session, company_id)
@@ -250,6 +283,8 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
                 tender_value=summary, policy_value="Manual review required", summary=summary,
                 source=req["source"],
             ).model_dump(mode="json"))
+    if owned_session:
+        session.close()
     return {"compliance": compliance, "risks": risks}
 
 
@@ -292,6 +327,23 @@ def bid_score(state: TenderState) -> dict[str, Any]:
         rule_pack=policy or None,
     )
     return {"assessment": assessment.model_dump(mode="json")}
+
+
+def gate1_review(state: TenderState) -> dict[str, Any]:
+    """Pause after deterministic scoring until an approver makes Gate 1 explicit."""
+    if state.get("gate1_decision"):
+        return {}
+    assessment = state.get("assessment") or {}
+    try:
+        from langgraph.types import interrupt
+    except ImportError as exc:  # pragma: no cover
+        raise RuntimeError("LangGraph is required for Gate 1") from exc
+    decision = interrupt({
+        "gate": "gate1", "tender_id": state["tender_id"],
+        "tender_version": state["tender_version"], "assessment": assessment,
+        "message": "Approve, reject, or defer the bid/no-bid recommendation.",
+    })
+    return {"gate1_decision": decision}
 
 
 def write_no_bid_report(state: TenderState) -> dict[str, Any]:

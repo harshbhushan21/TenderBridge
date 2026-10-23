@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import threading
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from datetime import UTC, datetime
 from typing import Any
 
@@ -75,7 +75,7 @@ def emit_event(*, run_id: str | None, tender_id: str | None, version: int | None
     return data
 
 
-def open_subscription(key: str) -> tuple[asyncio.Queue, callable]:
+def open_subscription(key: str) -> tuple[asyncio.Queue, Callable[[], None]]:
     """Register a queue on the running loop. Returns (queue, close). Call from async code."""
     loop = asyncio.get_running_loop()
     queue: asyncio.Queue = asyncio.Queue()
