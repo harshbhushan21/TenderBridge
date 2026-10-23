@@ -122,17 +122,17 @@ def cmd_reset_db() -> None:
 
 
 def cmd_test() -> None:
-    """backend tests on a throwaway SQLite database"""
-    _py("-m", "pytest")
+    """backend tests on a throwaway SQLite database (extra args go to pytest, e.g. -rs -k name)"""
+    _py("-m", "pytest", *sys.argv[2:])
 
 
 def cmd_test_pg() -> None:
-    """backend tests on the Postgres test database (starts Docker Postgres)"""
+    """backend tests on the Postgres test database (starts Docker Postgres; extra args go to pytest)"""
     cmd_db_up(quiet=True)
     exists = _psql(f"SELECT 1 FROM pg_database WHERE datname='{PG_TEST_DB}'", capture=True)
     if "1" not in (exists.stdout or ""):
         _psql(f"CREATE DATABASE {PG_TEST_DB}")
-    _py("-m", "pytest", env={"TEST_DATABASE_URL": _pg_test_url()})
+    _py("-m", "pytest", *sys.argv[2:], env={"TEST_DATABASE_URL": _pg_test_url()})
 
 
 def cmd_lint() -> None:
@@ -229,6 +229,17 @@ def cmd_doctor() -> None:
             "git checkout -- demo_data (check that .gitattributes is present)")
     else:
         ok(f"demo data intact ({checked} files match their manifest SHA-256)")
+
+    try:
+        from backend.app.ingestion.ocr import ocr_available
+        if ocr_available():
+            ok("Tesseract OCR found (scanned tender pages are read)")
+        else:
+            warn("Tesseract OCR not found: scanned pages (annexures p.12) index as empty and 1 test skips. "
+                 "Install: macOS `brew install tesseract`, Ubuntu `sudo apt install tesseract-ocr`, "
+                 "Windows: UB-Mannheim installer + add it to PATH")
+    except ImportError:
+        pass
 
     if (ROOT / ".env").exists():
         ok(".env present")
