@@ -11,9 +11,6 @@ from datetime import UTC, datetime
 from typing import Any
 
 from backend.app.schemas.assessment import (
-    BidAssessment,
-    BidScoringPolicy,
-    CriterionScore,
     HardGateResult,
     Recommendation,
 )
@@ -26,6 +23,8 @@ from backend.app.schemas.eligibility import (
 )
 from backend.app.schemas.graph_state import TenderState, dump
 from backend.app.schemas.requirements import ExtractedRequirement, KeyFacts, RequirementCategory
+from backend.app.tools.bid_scoring import factors_from_results
+from backend.app.tools.bid_scoring import score_bid as score_bid_policy
 from backend.app.tools.certificate_rules import check_certification
 from backend.app.tools.facts import (
     get_certificates,
@@ -255,7 +254,6 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
 
 
 def bid_score(state: TenderState) -> dict[str, Any]:
-    policy = BidScoringPolicy.model_validate(state.get("scoring_policy") or {})
     compliance = [ComplianceItem.model_validate(i) for i in state.get("compliance", [])]
     hard = [
         HardGateResult(requirement_id=i.requirement_id, label=i.requirement_id,
@@ -263,35 +261,27 @@ def bid_score(state: TenderState) -> dict[str, Any]:
                        summary=i.summary, evidence=i.company_evidence)
         for i in compliance if i.hard_gate
     ]
-    failures = [h.requirement_id for h in hard if not h.passed]
-    statuses = [i.status.value for i in compliance]
-    eligibility = sum(policy.status_points.get(s, 50.0) for s in statuses) / len(statuses) if statuses else 0.0
     risk_items = [RiskItem.model_validate(i) for i in state.get("risks", [])]
-    risk_score = sum(policy.risk_level_points.get(i.level.value, 20.0) for i in risk_items) / len(risk_items) if risk_items else 100.0
-    score = round((eligibility * 0.7) + (risk_score * 0.3), policy.rounding)
-    if failures:
-        recommendation = Recommendation.NO_BID
-    elif score >= policy.bid_threshold:
-        recommendation = Recommendation.BID
-    elif score >= policy.conditional_threshold:
-        recommendation = Recommendation.BID_WITH_CONDITIONS
-    else:
-        recommendation = Recommendation.NO_BID
-    assessment = BidAssessment(
-        tender_id=state["tender_id"], tender_version=state["tender_version"],
-        analysis_run_id=state["analysis_run_id"], score=score,
-        recommendation=recommendation, hard_gates=hard, hard_gate_failures=failures,
-        conditions=[i.summary for i in compliance if i.status.value in policy.conditional_statuses],
+    policy = state.get("scoring_policy") or {}
+    factors = state.get("scoring_factors") or factors_from_results(
+        [item.status for item in compliance],
+        [item.level for item in risk_items],
+        static_scores=state.get("static_scores"),
+        policy=policy or None,
+    )
+    assessment = score_bid_policy(
+        tender_id=state["tender_id"],
+        tender_version=state["tender_version"],
+        analysis_run_id=state["analysis_run_id"],
+        factors=factors,
+        hard_gates=hard,
+        conditions=[i.summary for i in compliance
+                    if i.status in (EligibilityStatus.needs_action, EligibilityStatus.partial,
+                                    EligibilityStatus.meets_with_undertaking,
+                                    EligibilityStatus.needs_human)],
         top_risks=[i.summary for i in risk_items[:5]],
-        narrative="Mandatory hard gates override the weighted score." if failures else "",
-        policy_version=policy.version, analysis_mode=state.get("analysis_mode", "focused"),
-        created_at=datetime.now(UTC),
-        criteria=[
-            CriterionScore(key="eligibility_strength", label="Eligibility strength", weight=.7,
-                           raw_score=round(eligibility, 2), weighted=round(eligibility * .7, 2)),
-            CriterionScore(key="commercial_risk", label="Risk posture", weight=.3,
-                           raw_score=round(risk_score, 2), weighted=round(risk_score * .3, 2)),
-        ],
+        analysis_mode=state.get("analysis_mode", "focused"),
+        rule_pack=policy or None,
     )
     return {"assessment": assessment.model_dump(mode="json")}
 

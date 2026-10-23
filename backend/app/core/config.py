@@ -35,6 +35,7 @@ class Settings(BaseSettings):
         alias="DATABASE_URL",
     )
     checkpoint_url: str | None = Field(default=None, alias="CHECKPOINT_URL")
+    rule_pack_path: str | None = Field(default=None, alias="RULE_PACK_PATH")
 
     # --- LLMs ---
     llm_fast: str = Field(default="fake:fast", alias="LLM_FAST")

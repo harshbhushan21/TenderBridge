@@ -69,6 +69,9 @@ class TenderState(TypedDict, total=False):
     compliance: Annotated[list[dict], merge_by_key("requirement_id")]
     risks: Annotated[list[dict], merge_by_key("risk_id")]
     assessment: dict                              # BidAssessment dump
+    scoring_policy: dict                          # active deterministic rule/scoring pack
+    scoring_factors: dict[str, float]             # optional precomputed factor inputs
+    static_scores: dict[str, float]               # policy-owned non-tender factor inputs
 
     # --- gate 1 ---
     gate1_decision: dict | None                   # GateDecision dump
