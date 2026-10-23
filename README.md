@@ -416,8 +416,9 @@ macOS/Linux.
 | Git | cloning | |
 | Docker Desktop | only for Postgres (SQLite needs nothing) | docker.com |
 | Node.js 20+ (`frontend/.nvmrc`) | only for the frontend (Phase 7) | nodejs.org |
+| Tesseract OCR | reading scanned tender pages (e.g. annexures p.12); without it they index as empty and one test skips | macOS: `brew install tesseract` · Ubuntu: `sudo apt install tesseract-ocr` · Windows: [UB-Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki), add its folder to PATH |
 
-Optional: Tesseract for OCR of scanned pages; provider API keys for real LLM runs.
+Optional: provider API keys for real LLM runs.
 
 ### First run on a new laptop
 
@@ -545,7 +546,7 @@ mandatory). Mandatory recall ≥ 95% is a **target** until we measure it.
 ## Testing and evaluation
 
 ```bash
-uv run python dev.py test        # SQLite            (make test)
+uv run python dev.py test        # SQLite            (make test); extra args go to pytest, e.g. -rs -k name
 uv run python dev.py test-pg     # Postgres + pgvector (make test-pg)
 uv run python dev.py lint        # (make lint)
 uv run python dev.py typecheck   # (make typecheck)
