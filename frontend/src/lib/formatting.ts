@@ -64,12 +64,12 @@ export function spanLabel(s: SourceSpan | null | undefined): string {
 export type Tone = "green" | "amber" | "red" | "blue" | "slate" | "violet";
 
 export const toneClasses: Record<Tone, string> = {
-  green: "bg-emerald-50 text-emerald-800 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/30",
-  amber: "bg-amber-50 text-amber-800 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/30",
-  red: "bg-red-50 text-red-800 ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-400/30",
-  blue: "bg-sky-50 text-sky-800 ring-sky-600/20 dark:bg-sky-500/10 dark:text-sky-300 dark:ring-sky-400/30",
-  slate: "bg-slate-100 text-slate-700 ring-slate-500/20 dark:bg-slate-500/10 dark:text-slate-300 dark:ring-slate-400/30",
-  violet: "bg-violet-50 text-violet-800 ring-violet-600/20 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-400/30",
+  green: "bg-emerald-50 text-emerald-800 ring-emerald-600/20",
+  amber: "bg-amber-50 text-amber-800 ring-amber-600/20",
+  red: "bg-red-50 text-red-800 ring-red-600/20",
+  blue: "bg-sky-50 text-sky-800 ring-sky-600/20",
+  slate: "bg-slate-100 text-slate-700 ring-slate-500/20",
+  violet: "bg-violet-50 text-violet-800 ring-violet-600/20",
 };
 
 const STATUS_TONES: Record<string, Tone> = {

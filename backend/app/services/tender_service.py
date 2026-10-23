@@ -81,7 +81,8 @@ def tender_view(session: Session, tender: m.Tender) -> dict:
 
 # --------------------------------------------------------------------------- analysis
 def start_analysis(session: Session, tender_id: str, *, version: int | None = None,
-                   analysis_mode: str | None = None, actor: str = "system") -> dict:
+                   analysis_mode: str | None = None, actor: str = "system",
+                   mode: str = "full_analysis") -> dict:
     """Start the graph for a tender version. Upload != analyze: only when ingestion is ready."""
     from backend.app.agents.runner import start_run
     from backend.app.core.errors import ConflictError, InvalidStateError
@@ -105,9 +106,9 @@ def start_analysis(session: Session, tender_id: str, *, version: int | None = No
                             details={"run_id": active.run_id})
     tender.status = TenderStatus.analyzing.value
     session.commit()  # the runner writes from its own thread/session
-    result = start_run(tender_id, version=version, analysis_mode=analysis_mode or tender.analysis_mode)
+    result = start_run(tender_id, version=version, analysis_mode=analysis_mode or tender.analysis_mode, mode=mode)
     audit(actor, "analysis.requested", tender_id=tender_id, version=version,
-          run_id=result["analysis_run_id"])
+          run_id=result["analysis_run_id"], mode=mode)
     return result
 
 

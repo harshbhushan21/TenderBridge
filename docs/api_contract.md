@@ -1,6 +1,6 @@
 # TenderBridge API Contract (v1)
 
-> **Status (23 Oct):** implemented in Phase 5: health, settings, KB, tenders (create, files, ingestion, pages, download, run, runs, events, requirements, key-facts, compliance, risks, assessment, decision, audit, guardrails), exports and ops. Not yet: amendments, reanalyse, versions, compare (Phase 7), drafts and review (Phase 11), ask (no phase yet). Extras: `GET /tenders/{id}/events?follow=false` replays and closes; `POST /tenders/{id}/files` also returns `rejected: [...]`; `GET /tenders/{id}/requirements?hard_gate=`.
+> **Status (23 Oct):** implemented in Phase 5: health, settings, KB, tenders (create, files, ingestion, pages, download, run, runs, events, requirements, key-facts, compliance, risks, assessment, decision, audit, guardrails), exports and ops; Phase 7: amendments (upload, list, diff, confirm), reanalyse (`mode: impact|full_analysis`), versions (+ `run_status`), compare (`changed_items` carry `hard_gate` and `{status, summary}` before/after; plus `risk_changes`). Not yet: drafts and review (Phase 11), ask (no phase yet). Extras: `GET /tenders/{id}/events?follow=false` replays and closes; `POST /tenders/{id}/files` also returns `rejected: [...]`; `GET /tenders/{id}/requirements?hard_gate=`.
 
 Base URL `http://localhost:8000`. JSON everywhere. Identity headers (demo): `X-User`, `X-Role`
 (`analyst|writer|bid_manager|admin`, default `bid_manager`; see `docs/decisions.md` D3).
@@ -44,7 +44,7 @@ Shapes refer to Pydantic schemas in `backend/app/schemas/*` (`model_dump(mode="j
 | GET | `/tenders/{id}/assessment?version=` | `BidAssessment & {approval_status}` |
 | POST | `/tenders/{id}/decision` body `GateDecision` | `{status, approval_status}` — resumes Gate 1; 409 if version != current |
 | GET | `/tenders/{id}/versions` | `{current_version, versions:[{version, status, amendment_id, confirmed_by, confirmed_at, assessment?:{score,recommendation,approval_status}, run_id}]}` |
-| GET | `/tenders/{id}/compare?a=1&b=2` | `{a:{version,score,recommendation,hard_gate_failures}, b:{...}, changed_items:[{requirement_id, before, after}], amendments:[AmendmentChange], derived_impacts:[DerivedImpact]}` |
+| GET | `/tenders/{id}/compare?a=1&b=2` | `{a:{version,score,recommendation,hard_gate_failures}, b:{...}, changed_items:[{requirement_id, hard_gate, before:{status,summary}, after:{...}}], risk_changes:[{category, before, after, tender_value}], amendments:[AmendmentChange], derived_impacts:[DerivedImpact]}` |
 | GET | `/tenders/{id}/audit` | `{items:[{ts, actor, action, version, target, detail}]}` |
 | POST | `/tenders/{id}/ask` body `{question, version?}` | `{answer, citations:[SourceSpan]}` |
 
@@ -53,7 +53,7 @@ Shapes refer to Pydantic schemas in `backend/app/schemas/*` (`model_dump(mode="j
 | GET | `/tenders/{id}/amendments` | `{items:[{amendment_id, status, base_version, target_version, doc_id, created_at}]}` |
 | GET | `/tenders/{id}/amendments/{aid}/diff` | `AmendmentDiff & {status}` (409 while parsing) |
 | POST | `/tenders/{id}/amendments/{aid}/confirm` body `AmendmentConfirmation` | `{tender_version, status:"reanalysis_required", superseded_reviews:int, stale_drafts:int}` |
-| POST | `/tenders/{id}/reanalyse` body `{version?, mode:"impact"}` | `{analysis_run_id, thread_id, tender_version}` |
+| POST | `/tenders/{id}/reanalyse` body `{version?, mode:"impact"|"full_analysis"}` | `{analysis_run_id, thread_id, tender_version}` |
 
 ## Drafts & exports
 | GET | `/tenders/{id}/drafts?version=` | `{items:[SectionDraft & {verifier?:VerifierReport}]}` |
