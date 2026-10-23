@@ -255,14 +255,15 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 5.1 | `backend/app/main.py`: app factory, CORS, error handlers, `/health`, `/ready`, `/settings` | ⬜ |
-| 5.2 | KB routes: status, documents, facts, search, ingest (admin) | ⬜ |
-| 5.3 | Tender routes: create, files, ingestion, run, runs, SSE events (reconnect via `after_id`), requirements, key facts, compliance, risks, assessment | ⬜ |
-| 5.4 | `POST /tenders/{id}/decision`: Gate 1, `bid_manager` only, version-checked, audited | ⬜ |
-| 5.5 | Export routes (compliance/eligibility XLSX, ICS, audit JSON) and ops routes (metrics, guardrails, runs, cancel) | ⬜ |
-| 5.6 | Integration test: v1 upload → analyze → Gate 1 through the API with fake LLMs; `Makefile`: `api` | ⬜ |
+| 5.1 | `backend/app/main.py`: app factory, lifespan (logging, tracing, tables), CORS, contract-shaped errors (`api/errors.py`), `/health`, `/ready`, `/settings`, docs at `/docs` | ✅ |
+| 5.2 | KB routes (`api/kb.py`): status, documents (role-filtered), facts (risk positions approver-only), search (role-filtered), ingest (admin, background) | ✅ |
+| 5.3 | Tender routes (`api/tenders.py`): create/list/get (`TenderView`), files (corrigendum refused), ingestion, page text + download (evidence viewer), run (409 unless ingestion ready), runs, SSE events (replay after `after_id`, then live; `follow=false`; `format=json` fallback), requirements (filters), key facts, compliance, risks, assessment, audit, guardrails | ✅ |
+| 5.4 | `POST /tenders/{id}/decision`: Gate 1 via `services/tender_service.decide_gate1`: approver role only (refusal audited even though the request rolls back), bound to the current version (409 otherwise), resumes the paused run; `defer` keeps it paused | ✅ |
+| 5.5 | Export routes (`api/exports.py`: list, generate, download on demand) and ops routes (`api/ops.py`: metrics, guardrails, runs, cancel) | ✅ |
+| 5.6 | `tests/integration/test_phase5_api.py` (14 tests) drives upload → ingestion → analyze → Gate 1 → exports over HTTP with fake LLMs; `dev.py api` (`make api`) | ✅ |
 
 **Done when:** a script drives the full v1 flow over HTTP, and an analyst gets 403 plus an audit entry at Gate 1.
+**Result (23 Oct):** ✅ done. Over HTTP: the v1 upload becomes `ready_for_analysis`, `POST /run` reaches Gate 1 with **77.34 `BID_WITH_CONDITIONS`** (13 hard gates, 9 risks), an analyst's decision gets **403 + a `gate1.denied` audit entry**, a decision for the wrong version gets 409, the bid manager's approval resumes the run to `completed` and the tender to `bid_approved`, and the compliance XLSX and ICS download. Verified on SQLite and Postgres, and with the real server (`dev.py api`) against the Postgres dev DB. Notes for Phase 6/7: amendment routes (`/amendments`, `/reanalyse`, `/versions`, `/compare`) are not built yet; `tender_view()` already exposes `amendmentPending` from tender status; `decide_gate1` rejects decisions for non-current versions, so a confirmed amendment that bumps `current_version` supersedes any pending v1 decision.
 **Meanwhile [H]:** design the amendment dependency map (which check keys each change type invalidates) against `corrigendum_diff_gold.json`.
 
 ### Phase 6 · [H] Corrigendum, versioning and incremental re-analysis

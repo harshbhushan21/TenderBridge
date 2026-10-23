@@ -12,6 +12,10 @@
 > Phase 3: `ingestion.{sectionizer,document_classifier,kb_ingest,upload_service,tender_ingest}`,
 > `knowledge.freshness`, `retrieval.{chunker,indexer,filters,keyword,vector,hybrid,reranker,context_pack,query_rewrite}`,
 > `services.tender_service.create_tender`, `scripts.ingest_company_kb`.
+> Phase 4 (+ review): `agents.{runner,persistence,checkpoint,key_facts,prequalification,commercial_terms}`,
+> `agents.subgraphs.requirement_router`, `scripts.run_demo_case` (`prepare_v1`, `wait_for_gate`).
+> Phase 5: `main` (`create_app`), `api.{errors,health,kb,tenders,exports,ops}`,
+> `services.tender_service.{tender_view,start_analysis,decide_gate1}`.
 > `exports.*`, `ops.*`. Everything else below is **planned**; the README build plan
 > gives each one a phase, task number and owner. Known deviations: graph order and
 > roles (`docs/decisions.md` D3, D4); `llm.routing` does not yet read the `routing`
