@@ -25,6 +25,12 @@ from backend.app.ingestion.upload_service import (
     tender_ingestion_status,
 )
 from backend.app.knowledge.kb_seed import seed_company_facts
+from backend.app.schemas.amendments import AmendmentConfirmation, AmendmentStatus
+from backend.app.services.amendment_service import (
+    confirm_amendment,
+    preview_amendment,
+    upload_amendment,
+)
 from backend.app.services.tender_service import create_tender
 
 DEMO_TENDER = "TDR-001"
@@ -56,6 +62,41 @@ def prepare_v1(tender_id: str = DEMO_TENDER, *, data_dir: Path | None = None) ->
         raise SystemExit(f"tender {tender_id} is not ready for analysis: {json.dumps(state['files'], indent=2)}")
 
 
+def prepare_v2(tender_id: str = DEMO_TENDER, *, data_dir: Path | None = None) -> str:
+    """Upload and confirm the checked-in corrigendum without touching the company KB."""
+    from sqlalchemy import select
+
+    prepare_v1(tender_id, data_dir=data_dir)
+    data = Path(data_dir or get_settings().demo_data_dir)
+    with session_scope() as session:
+        existing = session.scalar(select(m.AmendmentRow).where(
+            m.AmendmentRow.tender_id == tender_id,
+            m.AmendmentRow.target_version == 2,
+        ))
+        if existing is None:
+            uploaded = upload_amendment(
+                session, tender_id, "corrigendum.pdf",
+                (data / "tender" / tender_id / "original" / "corrigendum.pdf").read_bytes(),
+                actor="demo-cli",
+            )
+            amendment_id = uploaded["amendment_id"]
+        else:
+            amendment_id = existing.amendment_id
+    with session_scope() as session:
+        amendment = session.get(m.AmendmentRow, amendment_id)
+        if amendment is None:
+            raise RuntimeError(f"amendment {amendment_id} disappeared")
+        if amendment.status == AmendmentStatus.uploaded.value:
+            preview_amendment(session, tender_id, amendment_id, actor="demo-cli")
+        if amendment.status == AmendmentStatus.diff_ready.value:
+            confirm_amendment(
+                session, tender_id, amendment_id,
+                AmendmentConfirmation(reviewer="bid.manager@nimbus.example",
+                                      comment="Demo corrigendum confirmed"),
+            )
+    return amendment_id
+
+
 def wait_for_gate(run_id: str, timeout_s: float = 180.0) -> dict:
     deadline = time.monotonic() + timeout_s
     while time.monotonic() < deadline:
@@ -85,11 +126,15 @@ def summary(run: dict) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("case", choices=("CASE-1",))
+    parser.add_argument("case", choices=("CASE-1", "CASE-2"))
     args = parser.parse_args()
     if args.case == "CASE-1":
         prepare_v1()
         started = start_run(DEMO_TENDER, version=1, analysis_mode="focused")
+        print(json.dumps(summary(wait_for_gate(started["analysis_run_id"])), indent=2))
+    else:
+        prepare_v2()
+        started = start_run(DEMO_TENDER, version=2, mode="impact", analysis_mode="focused")
         print(json.dumps(summary(wait_for_gate(started["analysis_run_id"])), indent=2))
 
 
