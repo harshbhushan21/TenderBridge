@@ -1,6 +1,6 @@
 # TenderBridge API Contract (v1)
 
-> **Status (23 Oct):** contract only. No routes are implemented yet (README Phase 9).
+> **Status (23 Oct):** implemented in Phase 5: health, settings, KB, tenders (create, files, ingestion, pages, download, run, runs, events, requirements, key-facts, compliance, risks, assessment, decision, audit, guardrails), exports and ops. Not yet: amendments, reanalyse, versions, compare (Phase 7), drafts and review (Phase 11), ask (no phase yet). Extras: `GET /tenders/{id}/events?follow=false` replays and closes; `POST /tenders/{id}/files` also returns `rejected: [...]`; `GET /tenders/{id}/requirements?hard_gate=`.
 
 Base URL `http://localhost:8000`. JSON everywhere. Identity headers (demo): `X-User`, `X-Role`
 (`analyst|writer|bid_manager|admin`, default `bid_manager`; see `docs/decisions.md` D3).

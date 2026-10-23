@@ -82,6 +82,8 @@ testpaths = ["backend/tests"]
 filterwarnings = [
     # PyMuPDF's SWIG bindings warn on import under Python 3.13; harmless.
     "ignore:builtin type (SwigPy|swigvarlink).*:DeprecationWarning",
+    # Raised inside the ics library itself; our code already calls Calendar.serialize().
+    "ignore:Behaviour of str\\(Component\\):FutureWarning",
 ]
 
 [tool.mypy]

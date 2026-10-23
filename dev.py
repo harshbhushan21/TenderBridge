@@ -121,6 +121,11 @@ def cmd_demo_cli() -> None:
     _py("-m", "backend.scripts.run_demo_case", case)
 
 
+def cmd_api() -> None:
+    """start the FastAPI server on http://localhost:8000 (docs at /docs)"""
+    _py("-m", "uvicorn", "backend.app.main:app", "--reload", "--port", "8000", *sys.argv[2:])
+
+
 def cmd_reset_db() -> None:
     """drop and recreate tables, then seed (destroys local data)"""
     _py("-m", "backend.scripts.init_db", "--drop")
@@ -286,7 +291,7 @@ COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
     "demo-cli": cmd_demo_cli,
-    "reset-db": cmd_reset_db,
+    "reset-db": cmd_reset_db, "api": cmd_api,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,
 }
