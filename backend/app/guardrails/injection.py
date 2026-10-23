@@ -4,11 +4,13 @@ from __future__ import annotations
 import re
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, Literal
 
 from backend.app.schemas.documents import GuardrailFlag
 
 # (pattern, severity)
-_PATTERNS: list[tuple[re.Pattern, str]] = [
+Severity = Literal["low", "medium", "high", "critical"]
+_PATTERNS: list[tuple[re.Pattern, Severity]] = [
     (re.compile(r"ignore\s+(all\s+|any\s+)?(previous|prior|above|earlier)\s+(instructions|prompts|rules)", re.I), "critical"),
     (re.compile(r"disregard\s+(all\s+|the\s+)?(previous|prior|above|system)\s+\w+", re.I), "critical"),
     (re.compile(r"(you\s+are\s+now|act\s+as)\s+(an?\s+)?(ai|assistant|evaluator|system|agent)\b", re.I), "high"),
@@ -76,7 +78,7 @@ def scan_pdf_hidden_text(path: str | Path, *, doc_id: str | None = None) -> list
             return []
     flags: list[GuardrailFlag] = []
     try:
-        doc = fitz.open(str(path))
+        doc: Any = fitz.open(str(path))
     except Exception:
         return []
     with doc:
@@ -109,7 +111,7 @@ def scan_pdf_hidden_text(path: str | Path, *, doc_id: str | None = None) -> list
             if hidden:
                 joined = " ".join(hidden)
                 inj = scan_text(joined, doc_id=doc_id, page=pno)
-                sev = "critical" if inj else "high"
+                sev: Severity = "critical" if inj else "high"
                 flags.append(GuardrailFlag(
                     kind="hidden_text", severity=sev, doc_id=doc_id, page=pno,
                     excerpt=joined[:500], detail=",".join(sorted(reasons)),
