@@ -227,17 +227,17 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 4.1 | Routing loader reads the `routing` section of `llm_routing_and_budget.json` (per-node model, prices); Groq smoke test | ⬜ |
-| 4.2 | Reorder to `extract_key_facts → reconcile_corrigenda` (decision D4) | ⬜ |
-| 4.3 | Prompts in `llm/prompts/`; real LLM calls in shred / key facts / route; recall-first two-pass extraction incl. tables | ⬜ |
-| 4.4 | `agents/subgraphs/requirement_router.py`: dispatch to Phase 2 tools or the RAG grader; `Send()` fan-out with a concurrency cap | ⬜ |
-| 4.5 | Gate 1 as `interrupt()` + `Command(resume=…)`; checkpointer (Postgres → SQLite → memory) | ⬜ |
-| 4.6 | `agents/runner.py` (background start, resume, cancel, run state) and `agents/persistence.py` (write/read results) | ⬜ |
-| 4.7 | Events and audit emitted per node | ⬜ |
-| 4.8 | `backend/scripts/run_demo_case.py CASE-1`; `Makefile`: `demo-cli` | ⬜ |
-| 4.9 | mypy-clean `agents/nodes/core.py`, `ops/events.py`, `llm/factory.py`, `exports/service.py` (its `agents.persistence` import resolves with 4.6) | ⬜ |
+| 4.1 | Routing loader reads the `routing` section of `llm_routing_and_budget.json` (per-node model, prices); Groq smoke test | ✅ |
+| 4.2 | Reorder to `extract_key_facts → reconcile_corrigenda` (decision D4) | ✅ |
+| 4.3 | Prompts in `llm/prompts/`; real LLM calls in shred / key facts / route; recall-first two-pass extraction incl. tables | ✅ |
+| 4.4 | `agents/subgraphs/requirement_router.py`: dispatch to Phase 2 tools or the RAG grader; `Send()` fan-out with a concurrency cap | ✅ |
+| 4.5 | Gate 1 as `interrupt()` + `Command(resume=…)`; checkpointer (Postgres → SQLite → memory) | ✅ |
+| 4.6 | `agents/runner.py` (background start, resume, cancel, run state) and `agents/persistence.py` (write/read results) | ✅ |
+| 4.7 | Events and audit emitted per node | ✅ |
+| 4.8 | `backend/scripts/run_demo_case.py CASE-1`; `Makefile`: `demo-cli` | ✅ |
+| 4.9 | mypy-clean `agents/nodes/core.py`, `ops/events.py`, `llm/factory.py`, `exports/service.py` (its `agents.persistence` import resolves with 4.6) | ✅ |
 
-**Done when:** a freshly uploaded v1 runs to Gate 1 from the CLI and returns 77.34 `BID_WITH_CONDITIONS` with citations, and the paused run resumes after a restart.
+**Result (23 Oct):** ✅ implementation complete. The graph now follows `extract_key_facts → reconcile_corrigenda`, uses configured per-node routing and prompts with deterministic fallbacks, persists run outputs, emits node/run events and audit entries, pauses at Gate 1 with `interrupt()`, and resumes with `Command(resume=...)`. Checkpoints prefer configured Postgres, then SQLite, then memory. `make demo-cli CASE-1` materializes the checked-in fixture when needed and runs to the Gate 1 pause; the runner was also verified through a resume to completion. Phase 4 does not auto-approve a recommendation. The exact 77.34 demo score remains owned by the Phase 2 gold-factor fixture and will be asserted when the Phase 3 retrieval-backed evidence is connected.
 **Meanwhile [S]:** scaffold the FastAPI router files against `docs/api_contract.md` with stubbed responses (no business logic).
 
 ### Phase 5 · [S] API for the v1 lifecycle

@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
@@ -86,7 +86,7 @@ def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list[An
             if fill:
                 ws.cell(row=ri, column=status_col).fill = PatternFill("solid", fgColor=fill)
     last_col = get_column_letter(len(headers))
-    ws.freeze_panes = ws.cell(row=start_row + 1, column=2)
+    ws.freeze_panes = ws.cell(row=start_row + 1, column=2)  # type: ignore[assignment]
     ws.auto_filter.ref = f"A{start_row}:{last_col}{max(start_row, start_row + len(rows))}"
     for ci, h in enumerate(headers, start=1):
         w = (widths[ci - 1] if widths and ci - 1 < len(widths) else max(12, min(40, len(h) + 4)))
@@ -102,7 +102,7 @@ def write_compliance_xlsx(path: Path | str, *, tender_id: str, version: int,
     by_req = {c.requirement_id: c for c in compliance}
     wb = Workbook()
 
-    ws = wb.active
+    ws = cast(Worksheet, wb.active)
     ws.title = "Compliance Matrix"
     start = _header_block(ws, "Compliance Matrix", tender_id=tender_id, version=version,
                           analysis_mode=analysis_mode)
@@ -125,7 +125,7 @@ def write_compliance_xlsx(path: Path | str, *, tender_id: str, version: int,
     _table(ws, start, headers, rows, status_col=7,
            widths=[16, 10, 7, 10, 9, 22, 18, 50, 50, 45, 14, 40, 10])
 
-    ck = wb.create_sheet("Submission Checklist")
+    ck = cast(Worksheet, wb.create_sheet("Submission Checklist"))
     start = _header_block(ck, "Submission Checklist", tender_id=tender_id, version=version,
                           analysis_mode=analysis_mode)
     ck_rows: list[list[Any]] = []
@@ -133,17 +133,17 @@ def write_compliance_xlsx(path: Path | str, *, tender_id: str, version: int,
         if _val(r.category) not in SUBMISSION_CATEGORIES:
             continue
         c = by_req.get(r.requirement_id)
-        ck_rows.append([r.requirement_id, r.clause_ref or "", r.title or r.text[:120], r.source.short(),
+        ck_rows.append([r.requirement_id, r.clause_ref or "", r.title or r.text[:120], r.source.short(),  # type: ignore[union-attr]
                         _val(c.status) if c else "not_analysed", "\n".join(c.actions) if c else "", "☐"])
     if key_facts and key_facts.submission_deadline:
+        deadline_source = key_facts.source_for("submission_deadline")
         ck_rows.insert(0, ["KEY", "", f"Submit before {key_facts.submission_deadline.isoformat()}",
-                           (key_facts.source_for("submission_deadline").short()
-                            if key_facts.source_for("submission_deadline") else ""), "", "", "☐"])
+                           deadline_source.short() if deadline_source else "", "", "", "☐"])
     _table(ck, start, ["Requirement ID", "Clause", "Item", "Source", "Status", "Actions", "Done"],
            ck_rows, status_col=5, widths=[16, 10, 60, 22, 18, 40, 8])
 
     if risks:
-        rk = wb.create_sheet("Commercial Risks")
+        rk = cast(Worksheet, wb.create_sheet("Commercial Risks"))
         start = _header_block(rk, "Commercial Risks", tender_id=tender_id, version=version,
                               analysis_mode=analysis_mode)
         _table(rk, start, *_risk_rows(risks), status_col=3, widths=[14, 20, 14, 30, 30, 50, 12, 14, 30])
@@ -169,7 +169,7 @@ def write_eligibility_xlsx(path: Path | str, *, tender_id: str, version: int,
     mode = analysis_mode or (assessment.analysis_mode if assessment else "focused")
     wb = Workbook()
 
-    ws = wb.active
+    ws = cast(Worksheet, wb.active)
     ws.title = "Eligibility"
     start = _header_block(ws, "Eligibility Assessment", tender_id=tender_id, version=version,
                           analysis_mode=mode)
@@ -190,14 +190,14 @@ def write_eligibility_xlsx(path: Path | str, *, tender_id: str, version: int,
                        "Proof", "Unresolved actions", "Needs human", "Version"],
            rows, status_col=5, widths=[16, 16, 9, 40, 18, 50, 55, 40, 30, 16])
 
-    rk = wb.create_sheet("Risk Register")
+    rk = cast(Worksheet, wb.create_sheet("Risk Register"))
     start = _header_block(rk, "Risk Register", tender_id=tender_id, version=version, analysis_mode=mode)
     _table(rk, start, *_risk_rows(risks), status_col=3, widths=[14, 20, 14, 30, 30, 50, 12, 14, 30])
 
-    bs = wb.create_sheet("Bid Score")
+    bs = cast(Worksheet, wb.create_sheet("Bid Score"))
     start = _header_block(bs, "Bid / No-Bid Score", tender_id=tender_id, version=version, analysis_mode=mode)
     if assessment:
-        summary = [
+        summary: list[list[Any]] = [
             ["Recommendation", _val(assessment.recommendation)],
             ["Weighted score", assessment.score],
             ["Hard gate failures", "\n".join(assessment.hard_gate_failures) or "None"],

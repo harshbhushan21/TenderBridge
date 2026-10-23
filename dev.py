@@ -115,6 +115,12 @@ def cmd_ingest_kb() -> None:
     _py("-m", "backend.scripts.ingest_company_kb", *sys.argv[2:])
 
 
+def cmd_demo_cli() -> None:
+    """run a named Phase 4 demo case through Gate 1"""
+    case = sys.argv[2] if len(sys.argv) > 2 else "CASE-1"
+    _py("-m", "backend.scripts.run_demo_case", case)
+
+
 def cmd_reset_db() -> None:
     """drop and recreate tables, then seed (destroys local data)"""
     _py("-m", "backend.scripts.init_db", "--drop")
@@ -279,6 +285,7 @@ def cmd_doctor() -> None:
 COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
+    "demo-cli": cmd_demo_cli,
     "reset-db": cmd_reset_db,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,
