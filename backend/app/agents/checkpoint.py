@@ -12,10 +12,21 @@ log = get_logger(__name__)
 _stack = ExitStack()
 
 
+def _checkpoint_url() -> str:
+    """CHECKPOINT_URL, or by default the app database (Postgres) or a SQLite file in
+    storage/, so a run paused at Gate 1 survives an API restart without extra setup."""
+    settings = get_settings()
+    if settings.checkpoint_url:
+        return settings.checkpoint_url
+    if settings.is_postgres:
+        return settings.database_url
+    return f"sqlite:///{(settings.storage_dir / 'checkpoints.sqlite').as_posix()}"
+
+
 @lru_cache(maxsize=1)
 def get_checkpointer() -> Any:
-    settings = get_settings()
-    url = settings.checkpoint_url
+    url = _checkpoint_url()
+    saver: Any
     if url:
         try:
             if url.startswith("postgresql"):
@@ -26,7 +37,9 @@ def get_checkpointer() -> Any:
             if url.startswith("sqlite"):
                 from langgraph.checkpoint.sqlite import SqliteSaver
                 path = url.removeprefix("sqlite:///")
-                return _stack.enter_context(SqliteSaver.from_conn_string(path))
+                saver = _stack.enter_context(SqliteSaver.from_conn_string(path))
+                saver.setup()
+                return saver
         except (ImportError, OSError, RuntimeError) as exc:
             log.warning("configured checkpointer unavailable; using memory: %s", exc)
     from langgraph.checkpoint.memory import MemorySaver

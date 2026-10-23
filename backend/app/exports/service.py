@@ -87,7 +87,7 @@ def _load(session: Session, tender_id: str, version: int, run_id: str | None) ->
     data: dict[str, Any] = {"requirements": [], "compliance": [], "risks": [], "assessment": None,
                             "drafts": [], "key_facts": None}
     try:
-        from backend.app.agents import persistence as p
+        import backend.app.agents.persistence as p
         data["requirements"] = _coerce(p.load_requirements(session, tender_id, version, run_id), Requirement)
         data["compliance"] = _coerce(p.load_compliance(session, tender_id, version, run_id), ComplianceItem)
         data["risks"] = _coerce(p.load_risks(session, tender_id, version, run_id), RiskItem)

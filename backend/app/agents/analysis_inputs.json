@@ -1,0 +1,9 @@
+{
+  "_note": "Scoring inputs that do not come from the tender. They are DEMO ESTIMATES, not measurements, and are shown as such in the assessment. strategic_fit and delivery_capacity are bid-team judgements (0-100). technical_capability is the bid team's estimate of the technical score: objective marks T1-T5 = 39.92 (computed by the bid team from facts) plus assumed subjective marks T6-T8 = 36.6. Replace them per tender; TenderBridge does not compute them yet.",
+  "static_scores": {
+    "strategic_fit": 85,
+    "technical_capability": 72.52,
+    "delivery_capacity": 85
+  },
+  "similar_work_scope_tags": ["data_centre", "noc_24x7"]
+}

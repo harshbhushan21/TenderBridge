@@ -50,6 +50,8 @@ class NodeRoute(BaseModel):
 class RoutingConfig(BaseModel):
     models: dict[str, str] = Field(default_factory=dict)
     nodes: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    # Plan-style section in llm_routing_and_budget.json: node -> {"primary": "groq/openai/gpt-oss-20b", ...}
+    routing: dict[str, Any] = Field(default_factory=dict)
     prices_per_million: dict[str, dict[str, float]] = Field(default_factory=dict)
     budget: dict[str, Any] = Field(default_factory=dict)
 
@@ -77,11 +79,47 @@ def model_for_tier(tier: Tier) -> str:
     return env_val
 
 
+# Graph node name -> name used in the routing file.
+_ROUTING_ALIASES = {"similarity_judge": "similar_work_judge", "technical_grader": "technical_grading",
+                    "requirement_router": "route_requirements", "rewrite_failed": "write_sections"}
+
+
+def spec_from_plan(name: str | None) -> str | None:
+    """'groq/openai/gpt-oss-20b' -> 'groq:openai/gpt-oss-20b'; 'gemini-3-flash' ->
+    'google_genai:gemini-3-flash'; non-model entries ('keyword rules', 'code') -> None."""
+    if not name or not isinstance(name, str) or not name.strip():
+        return None
+    name = name.split()[0]  # drop annotations like "(10-15 items per call)"
+    if ":" in name:
+        return name
+    if name.startswith("groq/"):
+        return "groq:" + name.removeprefix("groq/")
+    if name.startswith("gemini"):
+        return "google_genai:" + name
+    if name.startswith(("gpt-", "o1", "o3", "o4")):
+        return "openai:" + name
+    return None
+
+
+def planned_model(node: str) -> str | None:
+    entry = get_routing_config().routing.get(_ROUTING_ALIASES.get(node, node))
+    if isinstance(entry, dict):
+        return spec_from_plan(entry.get("primary")) or spec_from_plan(entry.get("fallback"))
+    return None
+
+
 def resolve(node: str, tier: Tier | None = None) -> NodeRoute:
+    """Model for a node. Offline (`fake:*` tier) stays offline; otherwise an explicit
+    `nodes` entry wins, then the plan's per-node primary (e.g. Gemini for drafting),
+    then the tier model from LLM_FAST / LLM_STRONG."""
     cfg = get_routing_config()
     node_cfg = cfg.nodes.get(node, {})
     t: Tier = node_cfg.get("tier") or tier or DEFAULT_NODE_TIERS.get(node, "fast")
-    model = node_cfg.get("model") or model_for_tier(t)
+    tier_model = model_for_tier(t)
+    if tier_model.startswith("fake:"):
+        model = tier_model
+    else:
+        model = node_cfg.get("model") or planned_model(node) or tier_model
     return NodeRoute(
         node=node, tier=t, model=model,
         temperature=float(node_cfg.get("temperature", 0.0)),
