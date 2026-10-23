@@ -255,30 +255,38 @@ def eligibility_and_risk(state: TenderState) -> dict[str, Any]:
 
 def bid_score(state: TenderState) -> dict[str, Any]:
     compliance = [ComplianceItem.model_validate(i) for i in state.get("compliance", [])]
+    hard_items = [i for i in compliance if i.hard_gate]
+    # Policy: only a hard-gate `gap` forces NO_BID. A hard gate that needs an
+    # action or a human (e.g. bid-specific OEM MAF) passes with a condition, so
+    # the recommendation can be at most BID_WITH_CONDITIONS.
     hard = [
         HardGateResult(requirement_id=i.requirement_id, label=i.requirement_id,
-                       status=i.status.value, passed=i.status.passing,
+                       status=i.status.value, passed=i.status is not EligibilityStatus.gap,
                        summary=i.summary, evidence=i.company_evidence)
-        for i in compliance if i.hard_gate
+        for i in hard_items
     ]
     risk_items = [RiskItem.model_validate(i) for i in state.get("risks", [])]
     policy = state.get("scoring_policy") or {}
     factors = state.get("scoring_factors") or factors_from_results(
-        [item.status for item in compliance],
+        [item.status for item in hard_items],  # eligibility confidence is over hard gates only
         [item.level for item in risk_items],
         static_scores=state.get("static_scores"),
         policy=policy or None,
     )
+    conditions = [i.summary for i in compliance
+                  if i.status in (EligibilityStatus.needs_action, EligibilityStatus.partial,
+                                  EligibilityStatus.meets_with_undertaking,
+                                  EligibilityStatus.needs_human)]
+    # Deal-breaker clauses that need an approver (e.g. CEO for uncapped liability).
+    conditions += [f"Approval needed: {i.summary}" for i in risk_items
+                   if i.level is RiskLevel.escalate]
     assessment = score_bid_policy(
         tender_id=state["tender_id"],
         tender_version=state["tender_version"],
         analysis_run_id=state["analysis_run_id"],
         factors=factors,
         hard_gates=hard,
-        conditions=[i.summary for i in compliance
-                    if i.status in (EligibilityStatus.needs_action, EligibilityStatus.partial,
-                                    EligibilityStatus.meets_with_undertaking,
-                                    EligibilityStatus.needs_human)],
+        conditions=conditions,
         top_risks=[i.summary for i in risk_items[:5]],
         analysis_mode=state.get("analysis_mode", "focused"),
         rule_pack=policy or None,

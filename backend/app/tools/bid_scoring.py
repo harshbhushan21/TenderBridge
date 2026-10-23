@@ -112,8 +112,9 @@ def factors_from_results(
     risk_deductions = loaded.get("risk_deductions") or {}
     eligibility = (sum(float(status_points.get(s.value, 0.0)) for s in statuses) /
                    len(statuses) * 100) if statuses else 0.0
-    commercial = (100.0 - sum(float(risk_deductions.get(r.value, 25.0)) for r in risk_levels) /
-                  len(risk_levels)) if risk_levels else 100.0
+    # Policy: "100 minus risk_deductions per clause verdict" -> deductions add up
+    # across clauses (v1: 25 + 5x5 = 50 -> 50; v2: 25 + 2x5 = 35 -> 65), floored at 0.
+    commercial = max(0.0, 100.0 - sum(float(risk_deductions.get(r.value, 25.0)) for r in risk_levels))
     values = dict(static_scores or {})
     values.setdefault("eligibility_confidence", eligibility)
     values.setdefault("commercial_risk", commercial)

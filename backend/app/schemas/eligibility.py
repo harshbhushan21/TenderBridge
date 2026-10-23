@@ -193,7 +193,8 @@ class PersonnelRule(BaseModel):
     required_certifications: list[str] = Field(default_factory=list)  # all-of standards
     any_of_certifications: list[str] = Field(default_factory=list)
     required_qualifications: list[str] = Field(default_factory=list)
-    as_of: date | None = None
+    as_of: date | None = None              # certifications must be valid on this date (bid deadline)
+    available_by: date | None = None       # person must be available by this date (e.g. takeover); None = not checked
 
 
 class DocumentPresenceRule(BaseModel):

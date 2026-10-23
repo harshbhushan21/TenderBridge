@@ -119,7 +119,8 @@ def test_personnel_and_registration_rules(seeded) -> None:
     result = check_personnel(people, PersonnelRule(role="Security Lead", min_years=8,
                                                    any_of_certifications=["CISM", "CISSP"],
                                                    as_of=date(2026, 11, 6)))
-    assert result.status is EligibilityStatus.meets
+    # Gold REQ-PER-004: NDS-E105's CISM lapsed, NDS-E110 (alternate) substitutes.
+    assert result.status is EligibilityStatus.meets_with_substitution
     assert any(c["person_id"] == "NDS-E110" and c["qualified"] for c in result.candidates)
     company = get_company(seeded, COMPANY)
     assert check_registration(company).status is EligibilityStatus.meets

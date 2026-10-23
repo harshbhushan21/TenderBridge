@@ -27,6 +27,16 @@ def _similar(project: ProjectRecord, rule: SimilarWorkRule) -> bool:
     return True
 
 
+def _pending_value(project: ProjectRecord) -> float | None:
+    """Value a project could count for once the client certifies it: the bidder's
+    own share, never the consortium total (PRJ-005: 45% of Rs 38 Cr = Rs 17.10 Cr)."""
+    if project.contract_value_inr is None:
+        return None
+    if project.consortium_share_pct is not None:
+        return project.contract_value_inr * project.consortium_share_pct / 100
+    return project.contract_value_inr
+
+
 def check_similar_work(projects: list[ProjectRecord], rule: SimilarWorkRule) -> RuleResult:
     """Evaluate every OR branch using client-certified eligible value only."""
     reference = rule.reference_date or date.today()
@@ -40,12 +50,13 @@ def check_similar_work(projects: list[ProjectRecord], rule: SimilarWorkRule) -> 
         usable = project.eligible_value_inr is not None
         if in_window and similar and usable:
             definite.append(project)
-        elif in_window and similar and project.eligible_value_inr is None and project.contract_value_inr is not None:
+        elif in_window and similar and project.eligible_value_inr is None and _pending_value(project):
             pending.append(project)
         candidates.append({
             "project_id": project.project_id,
             "eligible_value_inr": project.eligible_value_inr,
             "contract_value_inr": project.contract_value_inr,
+            "pending_value_inr": _pending_value(project) if project in pending else None,
             "in_window": in_window,
             "similar": similar,
             "pending_client_certificate": project in pending,
@@ -55,13 +66,14 @@ def check_similar_work(projects: list[ProjectRecord], rule: SimilarWorkRule) -> 
     passing_branch: dict | None = None
     for index, branch in enumerate(rule.branches):
         qualifying = [p for p in definite if (p.eligible_value_inr or 0) >= branch.min_value_inr]
-        pending_count = sum(1 for p in pending if (p.contract_value_inr or 0) >= branch.min_value_inr)
+        pending_ok = [p for p in pending if (_pending_value(p) or 0) >= branch.min_value_inr]
+        pending_count = len(pending_ok)
         result = {
             "branch": chr(ord("a") + index),
             "required_count": branch.count,
             "threshold_inr": branch.min_value_inr,
             "definite": [p.project_id for p in qualifying],
-            "pending_human": [p.project_id for p in pending if (p.contract_value_inr or 0) >= branch.min_value_inr],
+            "pending_human": [p.project_id for p in pending_ok],
             "verdict": "meets" if len(qualifying) >= branch.count else (
                 "needs_human" if len(qualifying) + pending_count >= branch.count else "gap"
             ),

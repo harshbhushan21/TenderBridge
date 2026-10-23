@@ -58,25 +58,28 @@ def parse_requirement(text: str) -> dict[str, Any]:
             money = parse_all_money(branch_text)
             if count and money:
                 branches.append({"count": count, "min_value_inr": money[0].amount_inr})
-        duration_match = re.search(r"(\d+)\s*years?", lower)
+        duration_match = re.search(r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:\(\d+\)\s*)?years?",
+                                   lower)
         return {
             "field": "projects.eligible_value_inr",
             "operator": ">=",
             "threshold": branches,
             "branches": branches,
-            "window": {"years": int(duration_match.group(1)) if duration_match else 7},
+            "window": {"years": (_number(duration_match.group(1)) or 7) if duration_match else 7},
             "aggregation": "count",
             "logic": "OR",
             "needs_review": not bool(branches),
         }
 
     if "certificate" in lower or "iso/" in lower or "iso " in lower:
-        standards = re.findall(r"(?:ISO(?:/IEC)?\s*[\w-]+|CMMI(?:\s+Level)?\s*\d+)", source, re.I)
-        standard = normalize_standard(standards[0]) if standards else ""
+        found = re.findall(r"(?:ISO(?:/IEC)?\s*[\w-]+|CMMI(?:\s+Level)?\s*\d+)", source, re.I)
+        standards = list(dict.fromkeys(normalize_standard(s) for s in found if normalize_standard(s)))
+        standard = standards[0] if standards else ""
         return {
             "field": "certificates.standard",
             "operator": "any_valid",
             "threshold": standard,
+            "standards": standards,  # "ISO 9001 AND ISO/IEC 27001" -> every one must be valid
             "valid_on": "submission_deadline",
             "logic": "AND",
             "needs_review": not bool(standard),
