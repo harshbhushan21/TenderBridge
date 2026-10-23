@@ -48,6 +48,11 @@ class CurrentUser:
         self.require(*APPROVER_ROLES)
 
 
+def readable_tags(role: str) -> set[str]:
+    """`allowed_roles` tags a role may read (used to filter retrieval in SQL)."""
+    return set(ROLE_HIERARCHY.get(role, ROLE_HIERARCHY[FALLBACK_ROLE]))
+
+
 def role_can_read(role: str, allowed_roles: list[str] | None) -> bool:
     if not allowed_roles:
         return True

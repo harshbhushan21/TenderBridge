@@ -79,6 +79,10 @@ package = false
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["backend/tests"]
+filterwarnings = [
+    # PyMuPDF's SWIG bindings warn on import under Python 3.13; harmless.
+    "ignore:builtin type (SwigPy|swigvarlink).*:DeprecationWarning",
+]
 
 [tool.mypy]
 python_version = "3.13"

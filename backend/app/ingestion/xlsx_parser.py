@@ -13,11 +13,13 @@ from backend.app.ingestion.hashes import sha256_file
 from backend.app.schemas.documents import BoqItem, ParsedDocument, ParsedPage, TableBlock
 
 _HEADER_ALIASES = {
-    "item_no": ("item no", "item", "s.no", "s. no", "sl no", "sl. no", "sr no", "sr. no", "item code", "#", "no"),
-    "description": ("description", "item description", "particulars", "service", "details", "scope"),
+    "item_no": ("item no", "s.no", "s. no", "sl no", "sl. no", "sl.", "sl", "sr no", "sr. no", "item code",
+                "#", "no"),
+    "description": ("description", "item description", "particulars", "service", "details", "scope", "item",
+                    "optional item", "role", "position"),
     "unit": ("unit", "uom", "units"),
-    "quantity": ("qty", "quantity", "qnty", "nos"),
-    "rate": ("rate", "unit rate", "unit price", "price", "rate (inr)", "unit cost"),
+    "quantity": ("qty", "quantity", "qnty", "nos", "indicative qty", "minimum number", "number"),
+    "rate": ("rate", "unit rate", "unit price", "price", "rate (inr)", "unit cost", "monthly rate"),
     "amount": ("amount", "total", "total amount", "value", "amount (inr)", "total price"),
 }
 

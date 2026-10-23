@@ -8,6 +8,7 @@ Hidden (white/tiny/off-page) spans are removed from page text and recorded.
 from __future__ import annotations
 
 import os
+from collections import Counter
 from pathlib import Path
 
 from backend.app.core.logging import get_logger
@@ -17,6 +18,9 @@ from backend.app.schemas.documents import ParsedDocument, ParsedPage, TableBlock
 
 log = get_logger(__name__)
 MIN_TEXT_CHARS = 25
+# Running headers/footers use small fonts; a page whose only text is below this
+# size (e.g. a scanned page with a printed header) still needs OCR.
+MIN_BODY_FONT = 8.0
 
 
 def _fitz():
@@ -38,7 +42,10 @@ def _is_hidden_span(span: dict, rect) -> bool:
     return x1 < rect.x0 or x0 > rect.x1 or y1 < rect.y0 or y0 > rect.y1
 
 
-def _page_text_and_hidden(page) -> tuple[str, list[str]]:
+def _page_text_and_hidden(page, sizes: Counter | None = None,
+                          headings: list[dict] | None = None) -> tuple[str, list[str]]:
+    """Visible text and hidden spans of a page. Optionally tallies visible
+    characters per font size (`sizes`) and collects bold lines (`headings`)."""
     rect = page.rect
     lines_out: list[str] = []
     hidden: list[str] = []
@@ -48,6 +55,7 @@ def _page_text_and_hidden(page) -> tuple[str, list[str]]:
             continue
         for line in block.get("lines", []):
             visible = []
+            line_size, line_bold = 0.0, True
             for span in line.get("spans", []):
                 t = span.get("text") or ""
                 if not t.strip():
@@ -57,9 +65,17 @@ def _page_text_and_hidden(page) -> tuple[str, list[str]]:
                     hidden.append(t.strip())
                 else:
                     visible.append(t)
+                    size = round(float(span.get("size", 0)), 1)
+                    line_size = max(line_size, size)
+                    bold = bool(int(span.get("flags", 0)) & 16) or "bold" in str(span.get("font", "")).lower()
+                    line_bold = line_bold and bold
+                    if sizes is not None:
+                        sizes[size] += len(t.strip())
             s = "".join(visible).rstrip()
             if s.strip():
                 lines_out.append(s)
+                if headings is not None and line_bold and len(s.strip()) <= 160:
+                    headings.append({"text": " ".join(s.split()), "size": line_size})
         lines_out.append("")
     text = "\n".join(lines_out)
     while "\n\n\n" in text:
@@ -89,22 +105,30 @@ def _parse_pymupdf(path: Path, doc_id: str, sha: str) -> ParsedDocument:
     pages: list[ParsedPage] = []
     warnings: list[str] = []
     tables_meta: list[dict] = []
+    sizes: Counter = Counter()
     with fitz.open(str(path)) as doc:
         meta = dict(doc.metadata or {})
         for i, page in enumerate(doc, start=1):
-            text, hidden = _page_text_and_hidden(page)
+            headings: list[dict] = []
+            page_sizes: Counter = Counter()
+            text, hidden = _page_text_and_hidden(page, page_sizes, headings)
+            sizes.update(page_sizes)
+            body_chars = sum(n for size, n in page_sizes.items() if size >= MIN_BODY_FONT)
             ocr = False
-            if len(text.strip()) < MIN_TEXT_CHARS:
+            if len(text.strip()) < MIN_TEXT_CHARS or body_chars < MIN_TEXT_CHARS:
                 ocr_text = ocr_page(path, i)
                 if ocr_text.strip():
                     text, ocr = ocr_text.strip(), True
                 else:
                     warnings.append(f"page {i}: no extractable text (OCR unavailable or empty)")
-            pages.append(ParsedPage(page=i, text=text, ocr=ocr, hidden_spans=hidden))
+            pages.append(ParsedPage(page=i, text=text, ocr=ocr, hidden_spans=hidden,
+                                    heading_candidates=[] if ocr else headings))
             for tb in _page_tables(page, i):
                 tables_meta.append(tb.model_dump())
+    body_size = sizes.most_common(1)[0][0] if sizes else None
     return ParsedDocument(doc_id=doc_id, filename=path.name, file_sha256=sha, parser="pymupdf",
-                          pages=pages, metadata={"pdf": meta, "tables": tables_meta},
+                          pages=pages, metadata={"pdf": meta, "tables": tables_meta,
+                                                 "body_font_size": body_size},
                           warnings=warnings)
 
 

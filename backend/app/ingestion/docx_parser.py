@@ -80,7 +80,7 @@ def parse_docx(path: str | Path, doc_id: str) -> ParsedDocument:
 def parse_text_file(path: str | Path, doc_id: str) -> ParsedDocument:
     path = Path(path)
     text = path.read_text(encoding="utf-8", errors="replace")
-    pages = []
+    pages: list[ParsedPage] = []
     for i in range(0, max(len(text), 1), PAGE_CHARS * 2):
         pages.append(ParsedPage(page=len(pages) + 1, text=text[i:i + PAGE_CHARS * 2]))
     return ParsedDocument(doc_id=doc_id, filename=path.name, file_sha256=sha256_file(path),

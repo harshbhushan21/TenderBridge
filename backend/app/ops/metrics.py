@@ -31,16 +31,23 @@ def record_model_usage(run_id: str | None, node: str | None, model: str, tier: s
 
 
 def record_guardrail(flag: GuardrailFlag, *, tender_id: str | None = None,
-                     run_id: str | None = None) -> None:
+                     run_id: str | None = None, session: Session | None = None) -> None:
+    """Persist a guardrail event. Pass `session` when called inside an open
+    transaction (avoids a second writer, which SQLite would block)."""
     from backend.app.db.engine import session_scope
     from backend.app.db.models import GuardrailEvent
     from backend.app.ops.langsmith import redact_text
+
+    row = GuardrailEvent(tender_id=tender_id, run_id=run_id, kind=flag.kind,
+                         severity=flag.severity, doc_id=flag.doc_id, page=flag.page,
+                         excerpt=redact_text(flag.excerpt or "")[:2000],
+                         detail=flag.detail, quarantined=flag.quarantined)
     try:
+        if session is not None:
+            session.add(row)
+            return
         with session_scope() as s:
-            s.add(GuardrailEvent(tender_id=tender_id, run_id=run_id, kind=flag.kind,
-                                 severity=flag.severity, doc_id=flag.doc_id, page=flag.page,
-                                 excerpt=redact_text(flag.excerpt or "")[:2000],
-                                 detail=flag.detail, quarantined=flag.quarantined))
+            s.add(row)
     except Exception as exc:
         log.warning("guardrail event write failed: %s", exc)
 

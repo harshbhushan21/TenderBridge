@@ -8,6 +8,10 @@
 > `retrieval.embeddings`, `tools.{date_normalization,facts,financial_rules,certificate_rules,tender_search,company_search}`
 > (the two search tools import the not-yet-written `retrieval.hybrid` lazily),
 > `agents.graph` + `agents.nodes.core` (partial graph, no interrupts),
+> Phase 2: `tools.{rule_parser,project_rules,personnel_rules,registration_rules,commercial_rules,bid_scoring,rule_pack}`,
+> Phase 3: `ingestion.{sectionizer,document_classifier,kb_ingest,upload_service,tender_ingest}`,
+> `knowledge.freshness`, `retrieval.{chunker,indexer,filters,keyword,vector,hybrid,reranker,context_pack,query_rewrite}`,
+> `services.tender_service.create_tender`, `scripts.ingest_company_kb`.
 > `exports.*`, `ops.*`. Everything else below is **planned**; the README build plan
 > gives each one a phase, task number and owner. Known deviations: graph order and
 > roles (`docs/decisions.md` D3, D4); `llm.routing` does not yet read the `routing`
@@ -67,13 +71,13 @@ MUST be imported lazily inside functions with graceful fallback.
 - `ingestion.tender_ingest`: `ingest_tender_file(session, tf: TenderFile) -> ParsedDocument`;
   `load_effective_sections(session, tender_id, version, *, include_quarantined=False) -> list[ParsedSection]`
   (sections from files with `version <= version`); `load_sections_for_doc(session, doc_id)`.
-- `ingestion.kb_ingest.ingest_company_kb(session, company_id=None, *, kb_dir=None, force=False) -> dict` (hash-idempotent, reads `demo_config/company_manifest.json` if present).
+- `ingestion.kb_ingest.ingest_company_kb(session, company_id=None, *, kb_dir=None, manifest_path=None, facts_dir=None, force=False) -> dict` (hash-idempotent, manifest-driven; poisoned docs quarantined, not indexed).
 - `knowledge.kb_seed.seed_company_facts(session, company_id=None, *, facts_dir=None) -> dict` (idempotent upsert from `structured_facts/*`).
 - `knowledge.fact_provenance.attach_evidence(...)`, `knowledge.fact_validation.validate_facts_against_sources(session, company_id) -> dict`,
   `knowledge.freshness.expiring_credentials(session, company_id, within_days=90, as_of=None) -> list[dict]`, `kb_status(session, company_id) -> dict`.
 - `retrieval.chunker.chunk_sections(sections, *, child_tokens=250, overlap=40) -> list[ChunkRecord]` (parents `is_parent` + children with `parent_id`).
 - `retrieval.indexer.index_tender_chunks(session, tender_id, version, doc_id, chunks)`, `index_kb_chunks(session, company_id, kb_doc, chunks)`, `delete_doc_chunks(...)`.
-- `retrieval.keyword.bm25_search(...)`, `retrieval.vector.vector_search(...)` (pgvector SQL or in-Python cosine).
+- `retrieval.keyword.bm25_search(...)` (BM25 over SQL-filtered candidates, both DBs), `retrieval.vector.vector_search(...)` (pgvector SQL or in-Python cosine), `retrieval.query_rewrite.expand_query(q)`.
 - `retrieval.hybrid.hybrid_search(session, scope: Scope, query, *, k=6, tender_id=None, version=None, company_id=None, role="bid_manager", doc_types=None, approved_only=False) -> list[RetrievedChunk]` (filters BEFORE ranking; RRF; optional rerank; parent text attached).
 - `retrieval.reranker.rerank(query, chunks) -> chunks` (no-op unless RERANKER set).
 - `retrieval.context_pack.build_context(chunks, *, max_chars=12000) -> str` (each chunk prefixed `[doc_id p.N | section]`).
@@ -124,7 +128,7 @@ Node names (SSE `node` values, in order):
   `async subscribe(run_id|tender_id) -> AsyncIterator[dict]`; `list_events(session, run_id, after_id=0)`.
 - `ops.audit.audit(actor, action, *, tender_id=None, version=None, run_id=None, target=None, **detail)`.
 - `ops.metrics.record_model_usage(run_id, node, model, tier, input_tokens, output_tokens, cost_usd, latency_ms, ok, error=None)`;
-  `record_guardrail(flag: GuardrailFlag, *, tender_id=None, run_id=None)`; `run_metrics(session, run_id) -> dict`.
+  `record_guardrail(flag: GuardrailFlag, *, tender_id=None, run_id=None, session=None)` (pass `session` inside an open transaction); `run_metrics(session, run_id) -> dict`.
 - `ops.langsmith.configure_tracing()`, `traceable(name)` (no-op if langsmith absent), `redact(obj)`.
 - `services.tender_service`, `services.amendment_service` (upload corrigendum → diff → confirm → new version → supersede approvals, stale drafts).
 - API routes per Phase 9 table; `backend/app/main.py` app factory.

@@ -15,7 +15,7 @@ import hashlib
 import math
 import re
 from functools import lru_cache
-from typing import Protocol
+from typing import Any, Protocol
 
 from backend.app.core.config import get_settings
 from backend.app.core.logging import get_logger
@@ -95,6 +95,7 @@ def get_embedder() -> Embedder:
     if spec in ("", "hash", "fake"):
         return HashEmbedder(dim)
     provider, _, model = spec.partition(":")
+    inner: Any
     try:
         if provider == "huggingface":
             from langchain_huggingface import HuggingFaceEmbeddings
