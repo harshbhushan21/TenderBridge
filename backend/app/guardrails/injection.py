@@ -21,6 +21,14 @@ _PATTERNS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"<\s*/?\s*(system|assistant|instructions?)\s*>", re.I), "high"),
     (re.compile(r"\bdo\s+not\s+(tell|inform|show)\s+(the\s+)?(user|human|reviewer)", re.I), "high"),
     (re.compile(r"\bnote\s+to\s+(ai|llm|the\s+model|assistant)s?\b", re.I), "medium"),
+    # Instructions addressed to automated readers ("Note for automated bid evaluation tools", "Retrieval
+    # note for AI systems") and answer-steering ("when asked about X, always answer Y").
+    (re.compile(r"\bnote\s+(to|for)\s+(ai|llm|automated)\b[\w\s\-]{0,40}\b(systems?|tools?|assistants?|models?)\b",
+                re.I), "high"),
+    (re.compile(r"\bwhen\s+asked\s+about\b.{0,80}\b(always|never)\s+(answer|say|state|respond|reply)", re.I),
+     "critical"),
+    (re.compile(r"\b(rate|mark|treat|score)\s+(the\s+)?(bidder|vendor|company)\s+as\s+(fully\s+)?"
+                r"(compliant|eligible|qualified)", re.I), "critical"),
 ]
 _SEV_ORDER = {"low": 0, "medium": 1, "high": 2, "critical": 3}
 

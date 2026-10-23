@@ -114,6 +114,18 @@ class ParsedSection(BaseModel):
     tables: list[TableBlock] = Field(default_factory=list)
     parent_id: str | None = None
     flags: list[str] = Field(default_factory=list)  # e.g. "ocr", "suspicious_hidden_text"
+    # [[char_offset, page], ...]: where each page starts inside `text`, so chunks
+    # cut from the section keep exact page citations. Not persisted.
+    page_offsets: list[list[int]] = Field(default_factory=list)
+
+    def page_at(self, offset: int) -> int | None:
+        page = self.page_start
+        for start, pno in self.page_offsets:
+            if start <= offset:
+                page = pno
+            else:
+                break
+        return page
 
 
 class ParsedPage(BaseModel):
@@ -121,6 +133,9 @@ class ParsedPage(BaseModel):
     text: str
     ocr: bool = False
     hidden_spans: list[str] = Field(default_factory=list)
+    # Bold lines with their font size ({"text", "size"}); the sectionizer keeps
+    # those clearly larger than the document's body text as headings.
+    heading_candidates: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class ParsedDocument(BaseModel):

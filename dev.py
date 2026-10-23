@@ -110,6 +110,11 @@ def cmd_seed() -> None:
     _py("-m", "backend.scripts.seed_company_facts")
 
 
+def cmd_ingest_kb() -> None:
+    """seed facts and ingest the company KB (skips unchanged files)"""
+    _py("-m", "backend.scripts.ingest_company_kb", *sys.argv[2:])
+
+
 def cmd_reset_db() -> None:
     """drop and recreate tables, then seed (destroys local data)"""
     _py("-m", "backend.scripts.init_db", "--drop")
@@ -262,7 +267,8 @@ def cmd_doctor() -> None:
 
 COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
-    "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "reset-db": cmd_reset_db,
+    "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
+    "reset-db": cmd_reset_db,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,
 }

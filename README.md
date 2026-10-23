@@ -209,17 +209,18 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 3.1 | `ingestion/sectionizer.py` (numbered headings, PQ-xx clauses, tables kept whole) and `document_classifier.py` | ⬜ |
-| 3.2 | `ingestion/kb_ingest.py`: one-time, hash-idempotent KB ingest driven by `company_manifest.json`; index narrative docs only | ⬜ |
-| 3.3 | `retrieval/`: chunker (200–300 token children, ~1,200 parents), indexer, keyword, vector, hybrid (role filter before ranking, RRF k=60), context_pack; reranker optional | ⬜ |
-| 3.4 | `knowledge/freshness.py` + `kb_status()`: counts and expiring credentials (ISO 27001 → 10 Nov 2026) | ⬜ |
-| 3.5 | `ingestion/upload_service.py`: save → validate → parse → scan → section → index, per-file status, `file_status` events; reject the `corrigendum` role on the v1 path | ⬜ |
-| 3.6 | `ingestion/tender_ingest.py`: `load_effective_sections(tender_id, version)`; BoQ rows | ⬜ |
-| 3.7 | Tests: parser fidelity vs `extracted/tender_sections.json` and scanned page 12; 5 `retrieval_qa.json` questions; analyst cannot retrieve `bid_risk_policy.pdf`; second ingest re-embeds nothing | ⬜ |
-| 3.8 | `Makefile`: `ingest-kb` | ⬜ |
-| 3.9 | mypy-clean `retrieval/embeddings.py`, `ingestion/docx_parser.py` | ⬜ |
+| 3.1 | `ingestion/sectionizer.py` (headings from font size/weight, DOCX/XLSX `#` headings, text-pattern fallback; running headers removed; wrapped headings merged; page offsets kept) and `document_classifier.py` (first-page text, then filename) | ✅ |
+| 3.2 | `ingestion/kb_ingest.py`: manifest-driven, hash-idempotent; names masked from HR facts + regex PII; per-section reuse approval for past proposals; a KB document with hidden/injected text is quarantined and not indexed | ✅ |
+| 3.3 | `retrieval/`: chunker (~250-token children, ≤1,200-token parents), indexer, filters (role/scope/version/quarantine before ranking), BM25 keyword, pgvector/in-Python vector, RRF k=60, one result per parent with parent text, `query_rewrite` (acronyms + phrasing), context_pack (`[S1]` labels); reranker optional | ✅ |
+| 3.4 | `knowledge/freshness.py`: `kb_status()` and `expiring_credentials()` (ISO 27001 → 10 Nov 2026 warning) | ✅ |
+| 3.5 | `ingestion/upload_service.py`: save → validate → parse → hidden-text + injection scan → section → index; per-file status and `file_status` events; corrigendum rejected on the v1 path by name and, if renamed, by content; `services/tender_service.create_tender` | ✅ |
+| 3.6 | `ingestion/tender_ingest.py`: `load_effective_sections`, `load_sections_for_doc`, `load_boq_items` (29 rows from the price schedule, with cell refs) | ✅ |
+| 3.7 | `tests/integration/test_phase3_ingestion.py` (18 tests): all 93 reference headings found with matching start pages; scanned page OCR'd; KB idempotent (second run skips 52); no real names in the index; reuse flags; poisoned KB doc quarantined; injection trap stripped from tender chunks with guardrail events; role filter; tender isolation; gold retrieval recall | ✅ |
+| 3.8 | `dev.py ingest-kb` (`make ingest-kb`) seeds facts and ingests the KB | ✅ |
+| 3.9 | mypy-clean `retrieval/embeddings.py`, `ingestion/docx_parser.py` (and every new Phase 3 module) | ✅ |
 
 **Done when:** the four v1 files ingest to `ready_for_analysis` with page-citable sections and BoQ rows, with no recommendation yet, and KB queries return the right doc and page.
+**Result (23 Oct):** ✅ done. Measured on `retrieval_qa.json` with the offline hash embedder: **company recall@6 20/20 (MRR 0.90)** and **tender recall@6 12/12 (MRR 0.73)** on the questions answerable from v1 (the 7 corrigendum questions are measured in Phase 6). Same results on SQLite and Postgres. KB ingest: 52 documents, 782 chunks, ~8 s; re-run skips all. v1 upload: notice (4 sections), RFP (67), annexures (26, page 12 OCR'd), price schedule (4 sheets, 29 BoQ rows). Notes for Phase 4: read sections with `load_effective_sections(session, tender_id, version)` (quarantined sections excluded); search with `tools.tender_search.search_tender` / `tools.company_search.search_company_kb`; wrap any document text in `guardrails.injection.wrap_untrusted` before it reaches a prompt; `PersonnelRule.available_by` is the takeover date, `as_of` the bid deadline.
 **Meanwhile [H]:** write the shredder / router / similarity-judge prompts for Phase 4 and test them by hand on two sections.
 
 ### Phase 4 · [H] Agent graph to Gate 1, runner and persistence
