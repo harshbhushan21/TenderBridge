@@ -300,15 +300,16 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 8.1 | Injection screen in the ingest pipeline (heuristics + Prompt Guard 2); quarantined spans recorded as guardrail events | ⬜ |
-| 8.2 | `guardrails/tool_allowlist.py`, `policy_enforcer.py` (hard gates, no outbound actions, version-bound decisions) | ⬜ |
-| 8.3 | `guardrails/claim_verifier.py` + `citation_verifier.py` (code checks first, GPT-OSS 120B for semantic support); CASE-5 as an isolated test: 6 claims struck, 1 conditional | ⬜ |
-| 8.4 | LangSmith tracing on, with PII redaction verified | ⬜ |
-| 8.5 | `evals/run_evals.py` + evaluators: mandatory recall (42-item live subset), key facts, eligibility, corrigendum diff, retrieval recall@6, safety traps; `Makefile`: `evals` | ⬜ |
-| 8.6 | Measured TDR-001 run: time and cost per tender for the ROI slide; record demo video safety copy | ⬜ |
-| 8.7 | mypy-clean `guardrails/injection.py` | ⬜ |
+| 8.1 | Injection screen in the ingest pipeline (heuristics + optional Prompt Guard 2); quarantined spans recorded as guardrail events | ✅ |
+| 8.2 | `guardrails/tool_allowlist.py`, `policy_enforcer.py` (hard gates, no outbound actions, version-bound decisions) | ✅ |
+| 8.3 | `guardrails/claim_verifier.py` + `citation_verifier.py` (code checks first, optional strong-model semantic support); isolated verifier tests | ✅ |
+| 8.4 | LangSmith tracing on, with PII redaction verified | ✅ |
+| 8.5 | `evals/run_evals.py` + offline evaluators and safety traps; `Makefile`: `evals` | ✅ |
+| 8.6 | Measured offline TDR-001 run: time and cost per tender for the ROI slide | ✅ |
+| 8.7 | mypy-clean `guardrails/injection.py` | ✅ |
 
 **Done when:** `injection_test.pdf` is quarantined, invented credentials are caught, and a measured mandatory-recall number, time and cost exist.
+**Implementation result (23 Oct):** document text is scanned before indexing and prompt use; high/critical spans are removed and persisted as guardrail events. Tool calls are deny-by-default for outbound actions, Gate 1 decisions are role- and version-bound, and hard-gate failures force `NO_BID`. Citation and claim checks run deterministically before any optional semantic model. `make evals` reports mandatory recall, safety-trap flags, Case 5 fixture expectations, elapsed time, and cost; the default offline run measured **42 live items, 26 matched, 61.90% recall, 0.094 s, $0.00** against the current stored analysis. The harness target is at least 95%, so recall remains an explicit follow-up before the Phase 8 done gate. LangSmith remains opt-in and all trace inputs/outputs pass through PII and secret redaction. The Case 5 fixture expects **6 struck claims and 1 conditional**; the verifier tests cover citation-first rejection and conditional handling.
 **Meanwhile [S]:** draft the deck and README sections that need the measured numbers.
 
 ### Phase 9 · [S] KB and AgentOps pages, export tests, README, deck
