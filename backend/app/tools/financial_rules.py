@@ -43,6 +43,8 @@ def check_turnover(financials: list[FinancialRecord], rule: TurnoverRule,
     is_mse = bool(company and company.is_mse)
     mse_applies = bool(rule.mse_relaxation_allowed and is_mse and rule.mse_threshold_inr)
     threshold = rule.mse_threshold_inr if mse_applies else rule.general_threshold_inr
+    if threshold is None:
+        raise ValueError("turnover rule must define a general threshold")
     calcs.append(Calculation(label="general threshold", value=format_inr(rule.general_threshold_inr)))
     if rule.mse_threshold_inr:
         calcs.append(Calculation(label="MSE relaxed threshold",

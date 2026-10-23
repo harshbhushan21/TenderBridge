@@ -5,14 +5,14 @@ parameterised via the ORM; `query_facts` only exposes allow-listed views.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal, cast
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from backend.app.core.errors import ToolError
 from backend.app.db import models as m
-from backend.app.schemas.documents import SourceSpan
+from backend.app.schemas.documents import Scope, SourceSpan
 from backend.app.schemas.eligibility import (
     CertificateRecord,
     CertificateStatus,
@@ -34,7 +34,7 @@ def _span(src: dict | None) -> SourceSpan | None:
         return SourceSpan.model_validate(src)
     except Exception:
         doc = src.get("doc_id") if isinstance(src, dict) else None
-        return SourceSpan(doc_id=str(doc or "unknown"), scope="kb")
+        return SourceSpan(doc_id=str(doc or "unknown"), scope=Scope.kb)
 
 
 def get_company(session: Session, company_id: str) -> CompanyProfile | None:
@@ -58,7 +58,8 @@ def get_financials(session: Session, company_id: str,
     out = [FinancialRecord(company_id=r.company_id, fiscal_year=r.fiscal_year,
                            revenue_inr=r.revenue_inr, net_worth_inr=r.net_worth_inr,
                            profit_after_tax_inr=r.profit_after_tax_inr, audited=r.audited,
-                           ca_certified=r.ca_certified, source=_span(r.source)) for r in rows]
+                           ca_certified=r.ca_certified, source=_span(r.source),
+                           extra=dict(r.raw or {})) for r in rows]
     if fiscal_years:
         wanted = {fiscal_year_key(f) for f in fiscal_years}
         out = [f for f in out if fiscal_year_key(f.fiscal_year) in wanted]
@@ -89,7 +90,8 @@ def get_projects(session: Session, company_id: str) -> list[ProjectRecord]:
         description=r.description or "", contract_value_inr=r.contract_value_inr,
         eligible_value_inr=r.eligible_value_inr, start_date=r.start_date,
         completion_date=r.completion_date,
-        status=r.status if r.status in ("completed", "ongoing", "terminated") else "completed",
+        status=cast(Literal["completed", "ongoing", "terminated"], r.status)
+        if r.status in ("completed", "ongoing", "terminated") else "completed",
         completion_certificate=r.completion_certificate,
         consortium_share_pct=r.consortium_share_pct, source=_span(r.source)) for r in rows]
 
@@ -108,7 +110,7 @@ def get_people(session: Session, company_id: str) -> list[PersonRecord]:
             company_id=r.company_id, person_id=r.person_id, name=r.name, role=r.role,
             years_experience=r.years_experience or 0, qualifications=list(r.qualifications or []),
             certifications=certs, available=r.available, available_from=r.available_from,
-            source=_span(r.source)))
+            source=_span(r.source), extra=dict(r.raw or {})))
     return out
 
 
@@ -173,7 +175,7 @@ def query_facts(session: Session, view: str, company_id: str, **filters: Any) ->
     if view == "company":
         c = get_company(session, company_id)
         return [c.model_dump(mode="json")] if c else []
-    loader = {"financials": get_financials, "certificates": get_certificates,
+    loader: Any = {"financials": get_financials, "certificates": get_certificates,
               "projects": get_projects, "people": get_people,
               "risk_positions": get_risk_positions}[view]
     records = loader(session, company_id)

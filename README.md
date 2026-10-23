@@ -192,16 +192,16 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 2.1 | Unit tests for the existing tools: lakh↔crore, dates, fiscal years, turnover (MSE), certificate validity | ⬜ |
-| 2.2 | `tools/rule_parser.py`: requirement text → structured rule (`field, operator, threshold, window, aggregation, logic`), incl. MSE relaxation and "three … OR two … OR one …" | ⬜ |
-| 2.3 | `tools/project_rules.py`: PQ-05 OR branches on certified eligible value, 7-year window, scope tags; PRJ-005 `needs_human`, PRJ-004 out of window, PRJ-009 not similar | ⬜ |
-| 2.4 | `tools/personnel_rules.py` (HR tracker beats CV; NDS-E105 → suggest NDS-E110) and `registration_rules.py` (Udyam, OEM letter, declarations) | ⬜ |
-| 2.5 | `tools/commercial_rules.py`: clause category vs `risk_positions.json` → `within_policy / review / escalate` | ⬜ |
-| 2.6 | `tools/bid_scoring.py`: hard gates + weights from `bid_scoring_policy.json`; any hard-gate gap ⇒ `NO_BID` | ⬜ |
-| 2.7 | Rules as a config **rule pack** (GeM/CPPP) so a second pack loads without code changes | ⬜ |
-| 2.8 | mypy-clean `tools/financial_rules.py`, `tools/facts.py` (typing only; no runtime bugs found) | ⬜ |
+| 2.1 | Unit tests for the existing tools: lakh↔crore, dates, fiscal years, turnover (MSE), certificate validity | ✅ |
+| 2.2 | `tools/rule_parser.py`: requirement text → structured rule (`field, operator, threshold, window, aggregation, logic`), incl. MSE relaxation and "three … OR two … OR one …" | ✅ |
+| 2.3 | `tools/project_rules.py`: PQ-05 OR branches on certified eligible value, 7-year window, scope tags; PRJ-005 `needs_human`, PRJ-004 out of window, PRJ-009 not similar | ✅ |
+| 2.4 | `tools/personnel_rules.py` (HR tracker beats CV; NDS-E105 → suggest NDS-E110) and `registration_rules.py` (Udyam, OEM letter, declarations) | ✅ |
+| 2.5 | `tools/commercial_rules.py`: clause category vs `risk_positions.json` → `within_policy / review / escalate` | ✅ |
+| 2.6 | `tools/bid_scoring.py`: hard gates + weights from `bid_scoring_policy.json`; any hard-gate gap ⇒ `NO_BID` | ✅ |
+| 2.7 | Rules as a config **rule pack** (GeM/CPPP) so a second pack loads without code changes | ✅ |
+| 2.8 | mypy-clean `tools/financial_rules.py`, `tools/facts.py` (typing only; no runtime bugs found) | ✅ |
 
-**Done when:** every case in `eligibility_gold.json` passes with the LLM off: ₹52 Cr passes ₹45 Cr and fails ₹55 Cr, PQ-05 branch (b) passes, ISO valid on 6 Nov and expired on 20 Nov, and the scorer returns 77.34 `BID_WITH_CONDITIONS` (v1) and 78.80 `NO_BID` (v2).
+**Result (23 Oct):** ✅ done. Added deterministic parsing and evaluation for financial, project, certificate, personnel, registration, and commercial requirements, plus policy-driven weighted scoring with hard-gate precedence. The six Phase 2 acceptance tests pass with the LLM off: ₹52 Cr passes ₹45 Cr and fails ₹55 Cr, PQ-05 branch (b) passes, ISO is valid on 6 Nov and expired on 20 Nov, and scoring returns 77.34 `BID_WITH_CONDITIONS` (v1) and 78.80 `NO_BID` (v2). Alternate rule packs can be selected with `RULE_PACK_PATH`.
 **Meanwhile [S]:** read the Phase 2 code, list which tools Phase 3 retrieval must feed; sketch the UI screens on paper.
 
 ### Phase 3 · [S] KB ingestion, hybrid retrieval and tender upload

@@ -61,6 +61,7 @@ class FinancialRecord(BaseModel):
     audited: bool = True
     ca_certified: bool = False
     source: SourceSpan | None = None
+    extra: dict[str, Any] = Field(default_factory=dict)
 
 
 class CertificateStatus(str, Enum):
@@ -121,6 +122,7 @@ class PersonRecord(BaseModel):
     available: bool = True
     available_from: date | None = None
     source: SourceSpan | None = None
+    extra: dict[str, Any] = Field(default_factory=dict)
 
 
 class RiskPositionRecord(BaseModel):
