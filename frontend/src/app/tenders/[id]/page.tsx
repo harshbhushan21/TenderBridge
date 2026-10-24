@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Badge, Card, ErrorBanner, Spinner, Tabs } from "@/components/ui";
 import { ActivityTab } from "@/components/workspace/activity";
 import { AmendmentPanel } from "@/components/workspace/amendments";
+import { DraftsTab } from "@/components/workspace/drafts";
 import { EvidencePanel } from "@/components/workspace/evidence-panel";
 import { NodeStrip } from "@/components/workspace/node-strip";
 import { Overview } from "@/components/workspace/overview";
@@ -18,7 +19,7 @@ import { api } from "@/lib/api";
 import { formatDateTime, humanize } from "@/lib/formatting";
 import type { ComplianceItem } from "@/lib/types";
 
-type Tab = "overview" | "requirements" | "risks" | "documents" | "versions" | "activity";
+type Tab = "overview" | "requirements" | "risks" | "draft" | "documents" | "versions" | "activity";
 
 /** Results for the current version; a missing result (not analysed yet) is null, not an error. */
 async function loadResults(id: string, version: number) {
@@ -71,6 +72,7 @@ export default function TenderWorkspace() {
         { id: "overview", label: "Overview" },
         { id: "requirements", label: `Requirements${r ? ` (${r.compliance.length})` : ""}` },
         { id: "risks", label: "Risks" },
+        { id: "draft", label: t.draftStatus === "awaiting_review" ? "Response draft · review" : "Response draft" },
         { id: "documents", label: "Documents & corrigenda" },
         { id: "versions", label: "Versions" },
         { id: "activity", label: "Activity" },
@@ -105,6 +107,7 @@ export default function TenderWorkspace() {
           <AmendmentPanel tender={t} onChanged={refresh} onReanalysed={refresh} />
         </div>
       )}
+      {tab === "draft" && <DraftsTab tender={t} onChanged={refresh} />}
       {tab === "versions" && <VersionsTab tender={t} />}
       {tab === "activity" && <ActivityTab tenderId={id} />}
 

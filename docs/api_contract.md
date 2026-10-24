@@ -1,6 +1,6 @@
 # TenderBridge API Contract (v1)
 
-> **Status (23 Oct):** implemented in Phase 5: health, settings, KB, tenders (create, files, ingestion, pages, download, run, runs, events, requirements, key-facts, compliance, risks, assessment, decision, audit, guardrails), exports and ops; Phase 7: amendments (upload, list, diff, confirm), reanalyse (`mode: impact|full_analysis`), versions (+ `run_status`), compare (`changed_items` carry `hard_gate` and `{status, summary}` before/after; plus `risk_changes`). Not yet: drafts and review (Phase 11), ask (no phase yet). Extras: `GET /tenders/{id}/events?follow=false` replays and closes; `POST /tenders/{id}/files` also returns `rejected: [...]`; `GET /tenders/{id}/requirements?hard_gate=`.
+> **Status (23 Oct):** implemented in Phase 5: health, settings, KB, tenders (create, files, ingestion, pages, download, run, runs, events, requirements, key-facts, compliance, risks, assessment, decision, audit, guardrails), exports and ops; Phase 7: amendments (upload, list, diff, confirm), reanalyse (`mode: impact|full_analysis`), versions (+ `run_status`), compare (`changed_items` carry `hard_gate` and `{status, summary}` before/after; plus `risk_changes`). Phases 10-11: drafts (start, list, get) and Gate 2 review. Not yet: ask (no phase yet). Extras: `GET /tenders/{id}/events?follow=false` replays and closes; `POST /tenders/{id}/files` also returns `rejected: [...]`; `GET /tenders/{id}/requirements?hard_gate=`.
 
 Base URL `http://localhost:8000`. JSON everywhere. Identity headers (demo): `X-User`, `X-Role`
 (`analyst|writer|bid_manager|admin`, default `bid_manager`; see `docs/decisions.md` D3).
@@ -56,8 +56,10 @@ Shapes refer to Pydantic schemas in `backend/app/schemas/*` (`model_dump(mode="j
 | POST | `/tenders/{id}/reanalyse` body `{version?, mode:"impact"|"full_analysis"}` | `{analysis_run_id, thread_id, tender_version}` |
 
 ## Drafts & exports
-| GET | `/tenders/{id}/drafts?version=` | `{items:[SectionDraft & {verifier?:VerifierReport}]}` |
-| POST | `/drafts/{draft_id}/review` body `DraftReview` | `{status}` — resumes Gate 2 |
+| POST | `/tenders/{id}/drafts` | `{analysis_run_id, thread_id, tender_version}` (202) — after a Gate 1 bid approval; approver only (403 audited); 409 while a draft is in progress |
+| GET | `/tenders/{id}/drafts?version=` | `{version, run, items:[SectionDraft & {verifier, run_id, generated_by, evidence_count, removed_claims, human_edited?, review?}]}` (latest drafting run) |
+| GET | `/drafts/{draft_id}` | one draft, same shape |
+| POST | `/drafts/{draft_id}/review` body `{action: approve\|edit\|reject\|request_changes, comment?, edited_markdown?}` | `{status:"resuming", review_status, run_id}` — resumes Gate 2; approver only (403 audited); 409 for a superseded version or a run not waiting |
 | GET | `/tenders/{id}/exports?version=` | `{items:[{export_id, kind, version, created_at}]}` |
 | POST | `/tenders/{id}/exports` body `{version?, kinds?}` | `{items:[...]}` (generate on demand) |
 | GET | `/tenders/{id}/exports/{kind}?version=` | file download; kinds `compliance_xlsx, eligibility_xlsx, draft_docx, dates_ics, audit_json, no_bid_docx` |

@@ -346,10 +346,11 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 11.1 | Routes: `GET /tenders/{id}/drafts`, `POST /drafts/{id}/review` (approve: `bid_manager` only), DOCX export | ⬜ |
-| 11.2 | Draft review split view: draft left, cited source right; approve / edit / reject | ⬜ |
+| 11.1 | Routes: `POST/GET /tenders/{id}/drafts`, `GET /drafts/{id}`, `POST /drafts/{id}/review` (approver only, audited refusals, version-bound), DOCX export | ✅ |
+| 11.2 | Workspace "Response draft" tab: start drafting after Gate 1, live drafting progress, split view (draft with clickable `[n]` markers left, cited KB passages right), verifier verdict per claim, removed statements shown, approve / edit / request changes / reject, DOCX download | ✅ |
 
 **Done when:** a section is approved at Gate 2 in the UI and downloads as DOCX.
+**Result (24 Oct):** verified in a browser: draft started from the tab, five cited and verified claims shown beside their sources, an analyst's approve refused with the audit note, the bid manager's approval recorded and the section downloaded as DOCX (tender version, recommendation, numbered sources).
 
 ### Phase 12 · [H] Demo script, fallback, final evals and video
 

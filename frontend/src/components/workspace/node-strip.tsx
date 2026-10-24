@@ -10,8 +10,9 @@ import { NODE_LABELS, NODE_ORDER, type RunEvent } from "@/lib/types";
 type NodeState = "pending" | "running" | "done" | "failed" | "waiting";
 
 /** Live graph progress from real run events (SSE with polling fallback). */
-export function NodeStrip({ tenderId, runId, onFinished }: {
+export function NodeStrip({ tenderId, runId, onFinished, nodes = NODE_ORDER, labels = NODE_LABELS }: {
   tenderId: string; runId: string; onFinished?: (event: RunEvent) => void;
+  nodes?: readonly string[]; labels?: Record<string, string>;
 }) {
   const [states, setStates] = useState<Record<string, NodeState>>({});
   const [conn, setConn] = useState<ConnectionState>("connecting");
@@ -42,7 +43,7 @@ export function NodeStrip({ tenderId, runId, onFinished }: {
         <span>{conn === "open" ? "live" : conn}</span>
       </div>
       <ol className="flex flex-wrap gap-2">
-        {NODE_ORDER.map((node) => {
+        {nodes.map((node) => {
           const s = states[node] ?? "pending";
           const Icon = { pending: CircleDashed, running: Loader2, done: Check, failed: XCircle, waiting: PauseCircle }[s];
           return (
@@ -52,7 +53,7 @@ export function NodeStrip({ tenderId, runId, onFinished }: {
               s === "waiting" && "bg-violet-50 text-violet-800 ring-violet-200",
               s === "failed" && "bg-red-50 text-red-800 ring-red-200",
               s === "pending" && "bg-slate-50 text-slate-500 ring-slate-200")}>
-              <Icon className={cn("size-3.5", s === "running" && "animate-spin")} /> {NODE_LABELS[node]}
+              <Icon className={cn("size-3.5", s === "running" && "animate-spin")} /> {labels[node] ?? node}
             </li>
           );
         })}

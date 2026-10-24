@@ -93,6 +93,8 @@ const STATUS_TONES: Record<string, Tone> = {
   pending: "amber",
   approved: "green",
   rejected: "red",
+  changes_requested: "amber",
+  resuming: "blue",
   superseded: "slate",
   review_required: "violet",
   not_required: "slate",

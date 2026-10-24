@@ -50,6 +50,8 @@ export interface TenderView {
   } | null;
   approvalStatus: ApprovalStatus;
   amendmentPending: boolean;
+  draftStatus?: "drafting" | "awaiting_review" | "completed" | "failed" | null;
+  draftRunId?: string | null;
   submissionDeadline?: string | null;
   createdAt?: string | null;
 }
@@ -314,14 +316,26 @@ export interface SectionDraft {
   claims: Claim[];
   placeholders: string[];
   revision: number;
-  status: ApprovalStatus;
+  status: ApprovalStatus | "changes_requested";
   stale: boolean;
   verifier?: VerifierReport | null;
+  run_id?: string;
+  generated_by?: string;
+  evidence_count?: number;
+  removed_claims?: { text: string; reason: string }[];
+  human_edited?: boolean;
+  review?: { action?: string; reviewer?: string; comment?: string | null } | null;
+}
+
+export interface DraftsResponse {
+  version: number;
+  run: RunInfo | null;
+  items: SectionDraft[];
 }
 
 export interface DraftReview {
   action: "approve" | "edit" | "reject" | "request_changes";
-  reviewer: string;
+  reviewer?: string;
   comment?: string | null;
   edited_markdown?: string | null;
 }
@@ -576,6 +590,13 @@ export const NODE_LABELS: Record<(typeof NODE_ORDER)[number], string> = {
 };
 
 export type NodeName = (typeof NODE_ORDER)[number];
+
+/** Nodes of the drafting graph (after a Gate 1 bid approval). */
+export const DRAFT_NODE_ORDER = ["plan_response", "write_sections", "verify_claims", "rewrite_failed", "gate2_review"] as const;
+export const DRAFT_NODE_LABELS: Record<string, string> = {
+  plan_response: "Plan section", write_sections: "Write with citations", verify_claims: "Verify claims",
+  rewrite_failed: "Rewrite / remove unsupported", gate2_review: "Gate 2",
+};
 
 export const EXPORT_KINDS = [
   "compliance_xlsx",
