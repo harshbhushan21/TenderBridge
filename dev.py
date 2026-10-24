@@ -169,6 +169,37 @@ def cmd_web_check() -> None:
     _run(_npm(), "run", "build", "--prefix", str(frontend))
 
 
+def cmd_demo() -> None:
+    """one command for a demo: tables, facts and KB (skips what exists), then API + web UI; Ctrl+C stops both"""
+    _py("-m", "backend.scripts.init_db")
+    _py("-m", "backend.scripts.ingest_company_kb")
+    frontend = ROOT / "frontend"
+    npm = _npm()
+    if not (frontend / "node_modules").exists():
+        _run(npm, "ci", "--prefix", str(frontend))
+    procs = [subprocess.Popen([sys.executable, "-m", "uvicorn", "backend.app.main:app", "--port", "8000"], cwd=ROOT),
+             subprocess.Popen([npm, "run", "dev", "--prefix", str(frontend)], cwd=ROOT)]
+    print("\nTenderBridge: UI http://localhost:3000 · API http://localhost:8000/docs · Ctrl+C stops both\n",
+          flush=True)
+    try:
+        while all(p.poll() is None for p in procs):
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        for proc in procs:
+            if proc.poll() is None:
+                proc.terminate()
+        for proc in procs:
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+    failed = [p.returncode for p in procs if p.returncode not in (0, None, -2, -15, 1, 130, 143)]
+    if failed:
+        sys.exit(failed[0])
+
+
 def cmd_reset_db() -> None:
     """drop and recreate tables, then seed (destroys local data)"""
     _py("-m", "backend.scripts.init_db", "--drop")
@@ -347,7 +378,7 @@ COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
     "demo-cli": cmd_demo_cli, "evals": cmd_evals, "reembed": cmd_reembed,
-    "reset-db": cmd_reset_db, "api": cmd_api, "web": cmd_web, "web-check": cmd_web_check,
+    "reset-db": cmd_reset_db, "api": cmd_api, "web": cmd_web, "web-check": cmd_web_check, "demo": cmd_demo,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,
 }

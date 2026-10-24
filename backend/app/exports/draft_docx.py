@@ -10,6 +10,7 @@ from docx import Document
 from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, RGBColor
 
+from backend.app.exports.citations import cite
 from backend.app.schemas.assessment import BidAssessment, SectionDraft
 from backend.app.schemas.documents import SourceSpan
 
@@ -69,7 +70,7 @@ def _citation_line(n: int, span: SourceSpan) -> str:
     if len(quote) > 160:
         quote = quote[:159] + "…"
     sec = f", {span.section_path}" if span.section_path else ""
-    return f"[{n}] {span.short()}{sec}" + (f" — \"{quote}\"" if quote else "")
+    return f"[{n}] {cite(span)}{sec}" + (f" — \"{quote}\"" if quote else "")
 
 
 def write_draft_docx(path: Path | str, *, tender_id: str, version: int, drafts: list[SectionDraft],

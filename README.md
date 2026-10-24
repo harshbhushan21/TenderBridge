@@ -19,10 +19,12 @@ recommendation moved.
 > Nothing here is CGI data, and TenderBridge never submits anything to GeM,
 > CPPP or any other portal.
 
-> **Status (23 Oct 2026):** backend foundation and demo data exist; the API,
-> most of the agent graph, retrieval, amendments and the frontend are still to
-> be built. The [build plan](#build-plan) below is the source of truth for
-> what is done and what is next.
+> **Status (24 Oct 2026):** Phases 1-9 are built and tested (the Phase 9 deck is
+> deferred): upload, hybrid retrieval, the agent graph to Gate 1, the corrigendum
+> workflow, the web UI with Knowledge Base and AgentOps pages, guardrails, evals
+> and optional LangSmith tracing. Real LLM keys are not configured yet (the app
+> runs offline with deterministic fallbacks). Phases 10-12 remain. The
+> [build plan](#build-plan) below is the source of truth.
 
 ## Contents
 
@@ -317,14 +319,15 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 9.1 | Knowledge Base page: doc counts, facts, expiring-certificate warning, masked PII view | ⬜ |
-| 9.2 | AgentOps page: cost, latency, eval scores, guardrail events, LangSmith link | ⬜ |
-| 9.3 | Export tests: every file opens and shows version and citations | ⬜ |
-| 9.4 | README final pass; `make demo`; fresh-clone setup test | ⬜ |
-| 9.5 | ~6-slide PPTX (cream/brown): problem → use case/pipeline → agent graph → Responsible AI (security, privacy, explainability, audit, role-based access, human approval) → measured ROI → reuse ("what stays vs what you configure") + differentiation | ⬜ |
-| 9.6 | mypy-clean `exports/compliance_xlsx.py`, `exports/draft_docx.py` | ⬜ |
+| 9.1 | Knowledge Base page (`/kb`): document and fact counts, expired/expiring credentials, documents filtered by role, facts tables (financials, certificates, projects, people with masked names, risk positions for bid managers only), hybrid search | ✅ |
+| 9.2 | AgentOps page (`/ops`): runs, analysis time, LLM calls/tokens/cost (unpriced calls flagged), per-model usage, per-node latency, eval scorecard, guardrail events, LangSmith link; API `/ops/summary`, `/ops/evals` | ✅ |
+| 9.3 | `tests/integration/test_phase9_exports.py`: every export opens in its reader (openpyxl, python-docx, ics, json) and shows the tender version and readable citations (filenames, not internal ids) | ✅ |
+| 9.4 | README pass; `make demo` (`dev.py demo`: tables, facts, KB, then API + UI); fresh-clone setup test | ✅ |
+| 9.5 | ~6-slide deck | ⏸ deferred (code first) |
+| 9.6 | mypy-clean exports (no `type: ignore` left in `compliance_xlsx.py`) | ✅ |
 
 **Done when:** a fresh clone runs with the README alone, and the deck is ready before the 15:00 review.
+**Result (24 Oct):** KB and AgentOps pages verified in a browser (role switching hides 20 restricted documents and the risk positions from analysts). Export review fix: citations named tender documents by internal id (`DOC-581F96DAA0 p.4`); they now read `main_rfp.pdf p.4`. AgentOps fix: `/ops/metrics` looked for eval results in `evals/results/`, where nothing is written, so eval scores never appeared.
 **Meanwhile [H]:** rehearse the 5-minute demo on the real app; note rough edges.
 
 ### Phase 10 · [H] *Stretch:* cited drafting and Gate 2 backend
@@ -383,40 +386,37 @@ optional tasks first and keep the critical path intact. If selected,
 
 ## Repository layout
 
-`✅` exists today, `⬜` planned. Planned files are listed so each phase
-knows where its code goes.
-
 ```text
 TenderBridge/
 ├── README.md · .env.example · pyproject.toml · uv.lock · alembic.ini · .python-version · .gitattributes
-├── dev.py ✅ (cross-platform commands) · Makefile ✅ (wrapper) · docker-compose.yml ✅ (Postgres + pgvector; api/web added in Phases 5, 7)
-├── docs/
-│   ├── api_contract.md ✅       # REST + SSE contract (single source for routes)
-│   ├── interfaces.md ✅         # internal module contracts with status
-│   └── decisions.md ✅          # design decisions log
-├── demo_data/ ✅                # read-only fixtures (see demo_data/README.md)
+├── dev.py (cross-platform commands) · Makefile (wrapper) · docker-compose.yml (local Postgres + pgvector)
+├── docs/                        # api_contract.md (routes) · interfaces.md · decisions.md (D1-D28)
+├── demo_data/                   # read-only fixtures and gold files (see demo_data/README.md)
 ├── backend/
 │   ├── app/
-│   │   ├── main.py ⬜
-│   │   ├── core/ ✅             # config, errors, logging, security
-│   │   ├── db/ ✅               # engine, models, repositories, migrations (Alembic)
-│   │   ├── schemas/ ✅          # Pydantic contracts
-│   │   ├── ingestion/ 🟡        # parsers ✅; sectionizer, classifier, upload_service, tender_ingest, kb_ingest ⬜
-│   │   ├── knowledge/ 🟡        # kb_seed ✅; fact_provenance, fact_validation, freshness ⬜
-│   │   ├── retrieval/ 🟡        # embeddings ✅; chunker, indexer, keyword, vector, hybrid, reranker, context_pack ⬜
-│   │   ├── tools/ 🟡            # dates, facts, financial, certificate, searches ✅; rule_parser, project, personnel, registration, commercial, amendment_diff, citation_lookup, boq, bid_scoring, registry ⬜
-│   │   ├── llm/ 🟡              # factory, routing, budget ✅; prompts/ ⬜
-│   │   ├── agents/ 🟡           # graph.py, nodes/core.py 🟡; runner, persistence, subgraphs/, ask_tender ⬜
-│   │   ├── guardrails/ 🟡       # file_security, injection, pii ✅; claim/citation verifier, tool_allowlist, policy_enforcer ⬜
-│   │   ├── services/ ⬜         # tender_service, amendment_service
-│   │   ├── exports/ ✅          # xlsx, docx, ics, audit json, service (untested)
-│   │   ├── ops/ ✅              # events, audit, metrics, langsmith
-│   │   └── api/ ⬜              # routers
-│   ├── scripts/ 🟡              # init_db, seed_company_facts ✅; ingest_company_kb, run_demo_case ⬜
-│   └── tests/ 🟡                # conftest, unit (seed, roles) ✅; integration / e2e ⬜
-├── evals/ 🟡                    # package skeleton; run_evals.py, evaluators ⬜
-├── frontend/ 🟡                 # Next.js package + src/lib ✅; app pages and components ⬜
-└── storage/                     # generated at runtime, git-ignored
+│   │   ├── main.py              # FastAPI app; startup recovers runs interrupted by a restart
+│   │   ├── core/                # config (+ .env secrets export), errors, logging, security (roles)
+│   │   ├── db/                  # engine, models, repositories, Alembic migrations
+│   │   ├── schemas/             # Pydantic contracts
+│   │   ├── ingestion/           # pdf/docx/xlsx parsers, OCR, sectionizer, upload_service, kb_ingest, corrigendum_parser
+│   │   ├── knowledge/           # kb_seed (structured facts), freshness (expiring credentials)
+│   │   ├── retrieval/           # chunker, embeddings (hash | bge-m3), indexer, BM25 + vector, hybrid (RRF), reranker
+│   │   ├── tools/               # deterministic rules (financial, certificate, project, personnel, registration,
+│   │   │                        #   commercial), bid_scoring, amendment_diff, tender/company search
+│   │   ├── llm/                 # factory (structured calls + heuristic fallback), routing, budget, prompts/
+│   │   ├── agents/              # graph, nodes/, prequalification (hard gates), key_facts, commercial_terms,
+│   │   │                        #   runner (background runs, Gate 1 resume), checkpoint, persistence, subgraphs/
+│   │   ├── guardrails/          # file_security, injection, pii, claim/citation verifiers, policy, tool allowlist
+│   │   ├── services/            # tender_service (Gate 1), amendment_service (corrigenda, versions, compare)
+│   │   ├── exports/             # compliance/eligibility XLSX, draft/no-bid DOCX, ICS, audit JSON, citations
+│   │   ├── evals/               # run_evals (dev.py evals), evaluators (gold matching rules)
+│   │   ├── ops/                 # events (SSE), audit, metrics (AgentOps), langsmith (tracing + redaction)
+│   │   └── api/                 # tenders, amendments, kb, exports, ops, health routers
+│   ├── scripts/                 # init_db, seed_company_facts, ingest_company_kb, run_demo_case, reembed
+│   └── tests/                   # unit/ and integration/ (one file per phase)
+├── evals/                       # early package skeleton (the harness lives in backend/app/evals)
+├── frontend/                    # Next.js 15: dashboard, new tender, tender workspace, knowledge base, AgentOps
+└── storage/                     # generated at runtime, git-ignored (uploads, parsed text, exports, eval report)
 ```
 
 ## Setup
@@ -432,10 +432,10 @@ macOS/Linux.
 | [uv](https://docs.astral.sh/uv/getting-started/installation/) | everything (installs Python 3.13 itself, pinned in `.python-version`) | macOS/Linux: `curl -LsSf https://astral.sh/uv/install.sh \| sh` · Windows: `powershell -c "irm https://astral.sh/uv/install.ps1 \| iex"` |
 | Git | cloning | |
 | Docker Desktop | only for Postgres (SQLite needs nothing) | docker.com |
-| Node.js 20+ (`frontend/.nvmrc`) | only for the frontend (Phase 7) | nodejs.org |
+| Node.js 20+ (`frontend/.nvmrc`) | only for the web UI | nodejs.org |
 | Tesseract OCR | reading scanned tender pages (e.g. annexures p.12); without it they index as empty and one test skips | macOS: `brew install tesseract` · Ubuntu: `sudo apt install tesseract-ocr` · Windows: [UB-Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki), add its folder to PATH |
 
-Optional: provider API keys for real LLM runs.
+Optional: provider API keys for real LLM runs, a LangSmith key for tracing, a hosted Postgres.
 
 ### First run on a new laptop
 
@@ -443,12 +443,13 @@ Optional: provider API keys for real LLM runs.
 git clone https://github.com/harshbhushan21/TenderBridge.git
 cd TenderBridge
 uv run python dev.py setup     # installs deps into .venv, creates .env (SQLite + fake LLMs, no keys)
-uv run python dev.py doctor    # checks Python, deps, demo-data hashes, .env, database
-uv run python dev.py seed      # creates tables and seeds company facts (idempotent)
-uv run python dev.py test
+uv run python dev.py doctor    # checks Python, deps, Node, Tesseract, demo-data hashes, .env, database
+uv run python dev.py ingest-kb # creates tables, seeds company facts, indexes the 52 KB documents (idempotent)
+uv run python dev.py test      # 130 tests on a throwaway SQLite database
+uv run python dev.py demo      # API + web UI together: open http://localhost:3000 (Ctrl+C stops both)
 ```
 
-On macOS/Linux the same is `make setup && make doctor && make seed && make test`.
+On macOS/Linux the same is `make setup doctor ingest-kb test demo`.
 `uv run python dev.py help` lists every command.
 
 ### Optional: Postgres 16 + pgvector (Docker)
@@ -467,14 +468,51 @@ Data lives in the Docker volume `tenderbridge_tenderbridge_pgdata` (kept by
 text and exports go to `storage/` (git-ignored). If port 5433 is taken, set
 `POSTGRES_PORT` in `.env` and use the same port in `DATABASE_URL`.
 
+### Optional: local embeddings with BGE-M3
+
+The default `EMBEDDING_PROVIDER=hash` needs no download. For semantic search, BAAI/bge-m3 runs
+**locally** through sentence-transformers (no API key; Apple GPU/CUDA used when available); the first
+use downloads about 2.3 GB from Hugging Face.
+
+```bash
+# .env: EMBEDDING_PROVIDER=huggingface:BAAI/bge-m3   (EMBEDDING_DIM stays 1024)
+uv run python dev.py reembed --dry-run   # how many stored vectors came from another embedder
+uv run python dev.py reembed             # regenerate them in place (text, ids and permissions untouched)
+```
+
+Search ignores vectors from a different embedder until they are regenerated, so switching back
+(`hash` + `reembed`) is safe. Measured on the 40 gold questions: tender recall@6 1.00 (hash 0.95),
+company recall@6 0.85 (hash 0.95); hard gates and scores are unchanged.
+
+### Optional: shared cloud database (Supabase)
+
+Both laptops can share one Postgres (Supabase free plan: 500 MB, pauses after 7 idle days; this
+project uses about 20 MB). In the Supabase dashboard: create a project with the Data API **off**
+and automatic RLS **on**, run `create extension if not exists vector with schema public;`, and copy
+the **Session pooler** URI (IPv4; the transaction pooler breaks prepared statements). Then in `.env`:
+
+```bash
+DATABASE_URL=postgresql+psycopg://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+CHECKPOINT_URL=postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+```
+
+Copy existing local data with `pg_dump -Fc --no-owner --no-privileges -n public` and `pg_restore
+--no-owner --no-privileges` (a single "schema public already exists" error is expected), or start
+empty with `dev.py migrate` and `dev.py ingest-kb`. Share the URL privately (never commit `.env`);
+both laptops need the same `EMBEDDING_PROVIDER`; never run `reset-db` against the shared database.
+Uploaded files stay on the laptop that uploaded them, so the page viewer and downloads of another
+laptop's uploads are not available.
+
 ### Running the app
 
 ```bash
-uv run python dev.py api      # API on :8000 (make api)
+uv run python dev.py demo     # both servers (make demo)
+uv run python dev.py api      # or separately: API on :8000 (make api)
 uv run python dev.py web      # UI on :3000, installs frontend packages on first run (make web)
 ```
 
-UI at <http://localhost:3000>, API at <http://localhost:8000>.
+UI at <http://localhost:3000> (dashboard, new tender, tender workspace, Knowledge base, AgentOps),
+API at <http://localhost:8000> (interactive docs at `/docs`).
 
 ### Why it is portable
 
@@ -496,10 +534,11 @@ Copy `.env.example` to `.env`. Environment variables override the JSON demo conf
 | `TEST_DATABASE_URL` | empty | Postgres database for tests (`make test-pg` sets it); tests never touch `DATABASE_URL` |
 | `CHECKPOINT_URL` | empty | LangGraph checkpoint store (empty → SQLite/memory) |
 | `LLM_FAST` / `LLM_STRONG` | `fake:fast` / `fake:strong` | `provider:model`; see below |
-| `GROQ_API_KEY` / `GOOGLE_API_KEY` | empty | Provider keys (never commit) |
-| `EMBEDDING_PROVIDER` / `EMBEDDING_DIM` | `hash` / `1024` | Offline hash embedder, or e.g. `huggingface:BAAI/bge-m3` |
+| `GROQ_API_KEY` / `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) | empty | Provider keys (never commit); a node planned for a provider without a key uses `LLM_FAST`/`LLM_STRONG` |
+| `EMBEDDING_PROVIDER` / `EMBEDDING_DIM` | `hash` / `1024` | Offline hash embedder, or `huggingface:BAAI/bge-m3` (local; run `dev.py reembed` after switching) |
+| `HF_TOKEN` | empty | Optional: faster Hugging Face model downloads |
 | `RERANKER` | `none` | Optional `bge-reranker-v2-m3` |
-| `LANGSMITH_TRACING` / `LANGSMITH_PROJECT` / `LANGSMITH_API_KEY` | `false` / `tenderbridge` / empty | Tracing (mask PII first) |
+| `LANGSMITH_TRACING` / `LANGSMITH_PROJECT` / `LANGSMITH_API_KEY` | `false` / `tenderbridge` / empty | Optional tracing; every run is redacted (emails, phones, PAN/Aadhaar, keys; restricted KB text withheld) |
 | `MAX_COST_USD` / `MAX_LLM_CALLS` / `MAX_RETRIES` / `MAX_REWRITES` / `MAX_PARALLEL_LLM` | 5 / 400 / 1 / 2 / 4 | Per-run budget and loop limits |
 | `DEMO_MODE` / `ANALYSIS_MODE` | `true` / `focused` | Demo disclosures; `focused` = 42-item live subset, `full` = offline |
 | `DEFAULT_COMPANY_ID` | `NIMBUS-001` | Company workspace (matches `structured_facts/company.json`) |
@@ -521,7 +560,6 @@ provider's model list before relying on them):
 | Injection screening | `groq:meta-llama/llama-prompt-guard-2-86m` |
 | Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, exports |
 
-Groq needs `langchain-groq` (task 1.2) and the per-node routing fix (task 4.1).
 Groq's 8K tokens/minute limit is the main throughput constraint: batch
 sections, cap parallelism, cache by content hash, and label replayed runs.
 
@@ -567,8 +605,8 @@ uv run python dev.py test        # SQLite            (make test); extra args go 
 uv run python dev.py test-pg     # Postgres + pgvector (make test-pg)
 uv run python dev.py lint        # (make lint)
 uv run python dev.py typecheck   # (make typecheck)
-uv run python -m evals.run_evals          # Phase 7.5
-cd frontend && npm run typecheck && npm run build
+uv run python dev.py evals       # pipeline on TDR-001 in a fresh DB, scored against the gold files
+uv run python dev.py web-check   # frontend typecheck + production build
 ```
 
 Key acceptance checks: idempotent seed and KB ingest · isolated, role-filtered

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileSearch, LayoutDashboard, PlusCircle, ShieldCheck } from "lucide-react";
+import { Activity, FileSearch, Library, LayoutDashboard, PlusCircle, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -12,6 +12,8 @@ import { cn } from "@/lib/formatting";
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/tenders/new", label: "New tender", icon: PlusCircle },
+  { href: "/kb", label: "Knowledge base", icon: Library },
+  { href: "/ops", label: "AgentOps", icon: Activity },
 ];
 
 export function Shell({ children }: { children: ReactNode }) {

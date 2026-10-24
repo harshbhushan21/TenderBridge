@@ -418,7 +418,7 @@ export interface KbStatus {
   chunks: number;
   by_type: Record<string, number>;
   facts: Record<string, number>;
-  expiring: { kind: string; name: string; expiry_date: string; days_left: number }[];
+  expiring: { kind: string; id?: string; name: string; expiry_date: string; days_left: number; source?: string }[];
   warnings: string[];
 }
 
@@ -431,6 +431,7 @@ export interface KbDocument {
   sensitivity: string;
   approved_for_reuse: boolean;
   live_subset: boolean;
+  title?: string | null;
 }
 
 export interface RetrievedChunk {
@@ -462,6 +463,7 @@ export interface SettingsResponse {
   max_cost_usd: number;
   max_llm_calls: number;
   company_id: string;
+  langsmith?: { tracing: boolean; project: string };
 }
 
 export interface GuardrailEvent {
@@ -477,6 +479,47 @@ export interface GuardrailEvent {
   detail?: string | null;
   quarantined: boolean;
   resolved?: boolean;
+}
+
+export interface OpsSummary {
+  runs: { total: number; by_status: Record<string, number> };
+  analysis_seconds: { count: number; avg: number | null; max: number | null };
+  llm: {
+    calls: number; input_tokens: number; output_tokens: number; cost_usd: number; unpriced_calls: number;
+    by_model: Record<string, { calls: number; input_tokens: number; output_tokens: number; cost_usd: number;
+      errors: number; avg_latency_ms: number }>;
+  };
+  guardrails: { total: number; quarantined: number; by_severity: Record<string, number> };
+}
+
+/** One version's requirement scores from `dev.py evals` (backend/app/evals/evaluators.py). */
+export interface RequirementScore {
+  mandatory_expected: number;
+  mandatory_found: number;
+  mandatory_recall: number;
+  recall_all: number;
+  precision: number;
+  mandatory_flag_accuracy: number;
+  extracted: number;
+  missed: string[];
+}
+
+export interface RetrievalScore { questions: number; recall_at_6: number; mrr: number; missed: string[] }
+
+export interface EvalReport {
+  available: boolean;
+  file?: string;
+  generated_at?: string;
+  results?: {
+    requirements: Record<string, { live_subset: RequirementScore; all_gold: RequirementScore }>;
+    assessment: Record<string, { expected: [number, string]; got: [number, string] | null; match: boolean }>;
+    retrieval: { embedder: string; all: RetrievalScore; tender: RetrievalScore; company: RetrievalScore };
+    safety: { injection_traps_caught: string; traps: Record<string, boolean> };
+    claims: { mode: string; claims: number; bad_claims_struck: string; good_claims_wrongly_struck: string[];
+      agreement: number };
+    timings: Record<string, number>;
+    cost: { llm_calls: number; cost_usd: number; llm_fast: string; llm_strong: string };
+  };
 }
 
 export interface OpsMetrics {

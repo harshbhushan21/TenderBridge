@@ -60,17 +60,81 @@ def guardrail_to_dict(r) -> dict[str, Any]:
 
 
 def latest_eval_results() -> dict[str, Any] | None:
-    results_dir = get_settings().project_root / "evals" / "results"
-    if not results_dir.exists():
-        return None
-    files = sorted(results_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-    for f in files:
+    """The last `dev.py evals` report (storage/evals/report.json), else a legacy evals/results file."""
+    from datetime import UTC, datetime
+
+    s = get_settings()
+    candidates = [s.storage_dir / "evals" / "report.json"]
+    legacy = s.project_root / "evals" / "results"
+    if legacy.exists():
+        candidates += sorted(legacy.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for f in candidates:
+        if not f.exists():
+            continue
         try:
             data = json.loads(f.read_text(encoding="utf-8"))
-            return {"file": f.name, "measured": True, "results": data}
         except Exception:
             continue
+        return {"file": f.name, "measured": True, "results": data,
+                "generated_at": datetime.fromtimestamp(f.stat().st_mtime, UTC).isoformat()}
     return None
+
+
+def ops_summary(session: Session) -> dict[str, Any]:
+    """Totals across all runs: status counts, analysis time, LLM usage and cost, guardrails."""
+    from backend.app.db.models import AnalysisRun, GuardrailEvent, ModelUsage, RunEvent
+
+    runs = session.scalars(select(AnalysisRun)).all()
+    by_status: dict[str, int] = defaultdict(int)
+    unpriced = 0
+    for r in runs:
+        by_status[r.status] += 1
+        unpriced += int((r.usage or {}).get("unpriced_calls", 0))
+
+    # Analysis time = run_started -> first pause/finish event, per run (resumes are not re-counted).
+    durations: list[float] = []
+    first: dict[str, Any] = {}
+    end: dict[str, Any] = {}
+    for e in session.scalars(select(RunEvent).where(RunEvent.event.in_(
+            ("run_started", "human_review_required", "run_completed"))).order_by(RunEvent.id)):
+        if e.event == "run_started":
+            first.setdefault(e.run_id, e.created_at)
+        elif e.run_id in first and e.run_id not in end:
+            end[e.run_id] = e.created_at
+    durations = [(end[r] - first[r]).total_seconds() for r in end]
+
+    models: dict[str, dict[str, Any]] = defaultdict(lambda: {"calls": 0, "input_tokens": 0, "output_tokens": 0,
+                                                             "cost_usd": 0.0, "errors": 0, "latency_ms": 0.0})
+    for u in session.scalars(select(ModelUsage)):
+        mm = models[u.model]
+        mm["calls"] += 1
+        mm["input_tokens"] += u.input_tokens
+        mm["output_tokens"] += u.output_tokens
+        mm["cost_usd"] += u.cost_usd
+        mm["errors"] += 0 if u.ok else 1
+        mm["latency_ms"] += u.latency_ms
+    for mm in models.values():
+        mm["avg_latency_ms"] = round(mm.pop("latency_ms") / mm["calls"], 1) if mm["calls"] else 0.0
+        mm["cost_usd"] = round(mm["cost_usd"], 6)
+
+    severity: dict[str, int] = defaultdict(int)
+    quarantined = 0
+    for g in session.scalars(select(GuardrailEvent)):
+        severity[g.severity] += 1
+        quarantined += int(bool(g.quarantined))
+    return {
+        "runs": {"total": len(runs), "by_status": dict(by_status)},
+        "analysis_seconds": {"count": len(durations),
+                             "avg": round(sum(durations) / len(durations), 2) if durations else None,
+                             "max": round(max(durations), 2) if durations else None},
+        "llm": {"calls": sum(m["calls"] for m in models.values()),
+                "input_tokens": sum(m["input_tokens"] for m in models.values()),
+                "output_tokens": sum(m["output_tokens"] for m in models.values()),
+                "cost_usd": round(sum(m["cost_usd"] for m in models.values()), 6),
+                "unpriced_calls": unpriced, "by_model": dict(models)},
+        "guardrails": {"total": sum(severity.values()), "quarantined": quarantined,
+                       "by_severity": dict(severity)},
+    }
 
 
 def run_metrics(session: Session, run_id: str | None) -> dict[str, Any]:

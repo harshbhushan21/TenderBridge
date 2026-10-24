@@ -2,7 +2,7 @@
 import type {
   AmendmentDiff, AmendmentSummary, AuditEntry, BidAssessment, CompareResponse, ComplianceItem,
   DraftReview, ExportInfo, GateDecision, GuardrailEvent, IngestionStatusResponse, Items, KbDocument,
-  KbStatus, KeyFacts, OpsMetrics, PageText, ReadyResponse, Requirement, RetrievedChunk, RiskItem,
+  EvalReport, KbStatus, KeyFacts, OpsMetrics, OpsSummary, PageText, ReadyResponse, Requirement, RetrievedChunk, RiskItem,
   RunEvent, RunInfo, SectionDraft, SettingsResponse, SourceSpan, TenderView, VersionsResponse,
 } from "./types";
 
@@ -206,6 +206,8 @@ export const api = {
 
   // ops
   opsMetrics: (runId?: string) => request<OpsMetrics>(`/ops/metrics${qs({ run_id: runId })}`),
+  opsSummary: () => request<OpsSummary>("/ops/summary"),
+  opsEvals: () => request<EvalReport>("/ops/evals"),
   opsGuardrails: (tenderId?: string) => request<Items<GuardrailEvent>>(`/ops/guardrails${qs({ tender_id: tenderId })}`),
   opsRuns: (tenderId?: string) => request<Items<RunInfo>>(`/ops/runs${qs({ tender_id: tenderId })}`),
   cancelRun: (runId: string) => json<{ cancelled: boolean }>(`/ops/runs/${encodeURIComponent(runId)}/cancel`, "POST"),
