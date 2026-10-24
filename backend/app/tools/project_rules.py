@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import date
 
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.eligibility import (
     Calculation,
     EligibilityStatus,
@@ -37,6 +38,7 @@ def _pending_value(project: ProjectRecord) -> float | None:
     return project.contract_value_inr
 
 
+@traceable(name="check_similar_work", run_type="tool")
 def check_similar_work(projects: list[ProjectRecord], rule: SimilarWorkRule) -> RuleResult:
     """Evaluate every OR branch using client-certified eligible value only."""
     reference = rule.reference_date or date.today()

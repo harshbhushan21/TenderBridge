@@ -5,11 +5,12 @@ All path resolution lives here so no other module needs `parents[...]` tricks.
 from __future__ import annotations
 
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/app/core/config.py -> parents[3] == project root
@@ -48,6 +49,17 @@ class Settings(BaseSettings):
     embedding_provider: str = Field(default="hash", alias="EMBEDDING_PROVIDER")
     embedding_dim: int = Field(default=1024, alias="EMBEDDING_DIM")
     reranker: str = Field(default="none", alias="RERANKER")  # "none" | "bge-reranker-v2-m3"
+
+    # --- Provider secrets ---
+    # Declared so values in .env are read; exported to os.environ by get_settings(), because the
+    # provider SDKs (langchain-groq, langchain-google-genai, langsmith, huggingface) read only that.
+    groq_api_key: SecretStr | None = Field(default=None, alias="GROQ_API_KEY")
+    google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY")
+    gemini_api_key: SecretStr | None = Field(default=None, alias="GEMINI_API_KEY")
+    openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY")
+    langsmith_api_key: SecretStr | None = Field(default=None, alias="LANGSMITH_API_KEY")
+    langchain_api_key: SecretStr | None = Field(default=None, alias="LANGCHAIN_API_KEY")
+    hf_token: SecretStr | None = Field(default=None, alias="HF_TOKEN")
 
     # --- Tracing ---
     langsmith_tracing: bool = Field(default=False, alias="LANGSMITH_TRACING")
@@ -151,10 +163,44 @@ class Settings(BaseSettings):
             d.mkdir(parents=True, exist_ok=True)
 
 
+# Settings field -> environment variables the SDKs read. A variable already set in the real
+# environment is never overwritten.
+_SECRET_ENV = {
+    "groq_api_key": ("GROQ_API_KEY",),
+    "google_api_key": ("GOOGLE_API_KEY",),
+    "gemini_api_key": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),  # langchain-google-genai reads GOOGLE_API_KEY
+    "openai_api_key": ("OPENAI_API_KEY",),
+    "langsmith_api_key": ("LANGSMITH_API_KEY",),
+    "langchain_api_key": ("LANGCHAIN_API_KEY", "LANGSMITH_API_KEY"),
+    "hf_token": ("HF_TOKEN",),
+}
+
+
+def export_provider_env(s: Settings) -> None:
+    for field, names in _SECRET_ENV.items():
+        secret = getattr(s, field)
+        value = secret.get_secret_value().strip() if secret else ""
+        if value:
+            for name in names:
+                if not os.environ.get(name):
+                    os.environ[name] = value
+
+
+def provider_configured(provider: str) -> bool:
+    """True when the SDK for `provider` (groq, google_genai, openai, ...) will find an API key."""
+    names = {"groq": ("GROQ_API_KEY",), "google_genai": ("GOOGLE_API_KEY", "GEMINI_API_KEY"),
+             "openai": ("OPENAI_API_KEY",), "anthropic": ("ANTHROPIC_API_KEY",)}.get(provider)
+    if names is None:  # local providers (ollama, huggingface, fake) need no key
+        return True
+    get_settings()  # make sure .env values were exported
+    return any(os.environ.get(n) for n in names)
+
+
 @lru_cache
 def get_settings() -> Settings:
     s = Settings()
     s.ensure_storage()
+    export_provider_env(s)
     return s
 
 

@@ -31,6 +31,8 @@ def upsert_run(session: Session, state: dict[str, Any], *, status: str,
     run.error = error
     run.usage = {**(run.usage or {}), **(state.get("usage") or {}),
                  "node_timings": state.get("node_timings") or {}}
+    if state.get("runner_host"):  # which machine's server executes it (see recover_interrupted_runs)
+        run.usage["runner_host"] = state["runner_host"]
     if status in {"completed", "failed", "cancelled"}:
         from datetime import UTC, datetime
         run.finished_at = datetime.now(UTC)

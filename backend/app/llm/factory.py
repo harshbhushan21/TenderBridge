@@ -29,6 +29,7 @@ from backend.app.core.errors import BudgetExceeded, ConfigError, LLMOutputError
 from backend.app.core.logging import get_logger
 from backend.app.llm.budget import check_budget, estimate_cost, get_budget
 from backend.app.llm.routing import NodeRoute, Tier, get_routing_config, resolve
+from backend.app.ops.langsmith import traceable
 
 log = get_logger(__name__)
 T = TypeVar("T")
@@ -128,7 +129,7 @@ def _record(route: NodeRoute, node: str, in_t: int, out_t: int, latency_ms: floa
     try:
         from backend.app.ops.metrics import record_model_usage
         record_model_usage(run_id=budget.run_id, node=node, model=route.model, tier=route.tier,
-                           input_tokens=in_t, output_tokens=out_t, cost_usd=cost,
+                           input_tokens=in_t, output_tokens=out_t, cost_usd=cost or 0.0,
                            latency_ms=latency_ms, ok=ok, error=error)
     except Exception:  # metrics must never break a run
         pass
@@ -151,6 +152,7 @@ def _extract_json(text: str) -> Any:
     return json.loads(text)
 
 
+@traceable(name="structured_call", run_type="chain")
 def structured_call(node: str, schema: type[S], *, system: str, user: str,
                     heuristic: Callable[[], S] | None = None, tier: Tier | None = None) -> LLMResult[S]:
     """Call the routed model with structured output; one schema-repair retry.
@@ -171,6 +173,7 @@ def structured_call(node: str, schema: type[S], *, system: str, user: str,
     for attempt in range(max_retries + 1):
         check_budget(node)
         t0 = time.perf_counter()
+        in_t = out_t = 0  # an output that fails validation was still billed
         try:
             if attempt == 0:
                 msgs = _messages(system, user)
@@ -202,7 +205,7 @@ def structured_call(node: str, schema: type[S], *, system: str, user: str,
             raise
         except (ValidationError, json.JSONDecodeError, ValueError) as exc:
             last_err = str(exc)[:2000]
-            _record(route, node, 0, 0, (time.perf_counter() - t0) * 1000, False, last_err)
+            _record(route, node, in_t, out_t, (time.perf_counter() - t0) * 1000, False, last_err)
         except Exception as exc:  # provider/network error
             last_err = f"{type(exc).__name__}: {exc}"[:2000]
             _record(route, node, 0, 0, (time.perf_counter() - t0) * 1000, False, last_err)

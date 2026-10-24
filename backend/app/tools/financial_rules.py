@@ -1,6 +1,7 @@
 """Turnover and net-worth eligibility checks (deterministic)."""
 from __future__ import annotations
 
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.eligibility import (
     Calculation,
     CompanyProfile,
@@ -33,6 +34,7 @@ def _select_years(financials: list[FinancialRecord], fiscal_years: list[str],
     return chosen, missing
 
 
+@traceable(name="check_turnover", run_type="tool")
 def check_turnover(financials: list[FinancialRecord], rule: TurnoverRule,
                    company: CompanyProfile | None) -> RuleResult:
     years, missing = _select_years(financials, rule.fiscal_years, rule.n_years)
@@ -107,6 +109,7 @@ def check_turnover(financials: list[FinancialRecord], rule: TurnoverRule,
                       evidence=evidence, actions=actions, unknowns=unknowns)
 
 
+@traceable(name="check_net_worth", run_type="tool")
 def check_net_worth(financials: list[FinancialRecord], rule: NetWorthRule) -> RuleResult:
     years, missing = _select_years(financials, rule.fiscal_years, rule.n_years)
     calcs: list[Calculation] = []

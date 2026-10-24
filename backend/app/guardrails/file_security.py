@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import re
 import zipfile
 from pathlib import PurePosixPath
 
@@ -106,8 +107,37 @@ def validate_upload(filename: str, data: bytes, *, allowed: set[str] | None = No
     if ext in ("zip", "docx", "xlsx"):
         _check_zip(data, ext)
     if ext == "pdf":
-        head = data[:1 << 20]
-        for marker in (b"/JavaScript", b"/Launch", b"/EmbeddedFile"):
-            if marker in head:
-                raise FileRejected("PDF contains active content", details={"marker": marker.decode()})
+        _check_pdf_active_content(data)
     return {"mime": mime, "sha256": hashlib.sha256(data).hexdigest(), "ext": ext, "size": size}
+
+
+_PDF_ACTIVE = (b"/JavaScript", b"/Launch", b"/EmbeddedFile")
+_PDF_NAME_ESCAPE = re.compile(rb"#([0-9A-Fa-f]{2})")
+
+
+def _check_pdf_active_content(data: bytes) -> None:
+    """Reject scripts, launch actions and embedded files anywhere in the PDF.
+
+    The raw bytes are checked with `#xx` name escapes decoded (`/J#61vaScript`), then every
+    object is read through PyMuPDF so dictionaries inside compressed object streams are seen too.
+    """
+    decoded = _PDF_NAME_ESCAPE.sub(lambda m: bytes([int(m.group(1), 16)]), data)
+    found = next((mk for mk in _PDF_ACTIVE if mk in decoded), None)
+    if found is None:
+        try:
+            import pymupdf as fitz
+        except ImportError:  # pragma: no cover
+            import fitz  # type: ignore[no-redef]
+        try:
+            with fitz.open(stream=data, filetype="pdf") as doc:
+                if doc.embfile_count():
+                    found = b"/EmbeddedFile"
+                for xref in range(1, doc.xref_length()):
+                    if found:
+                        break
+                    obj = doc.xref_object(xref, compressed=False).encode("latin-1", "replace")
+                    found = next((mk for mk in _PDF_ACTIVE[:2] if mk in obj), None)
+        except Exception as exc:
+            raise FileRejected("PDF could not be read", details={"error": str(exc)[:200]}) from exc
+    if found:
+        raise FileRejected("PDF contains active content", details={"marker": found.decode()})

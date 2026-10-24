@@ -1,6 +1,8 @@
 """Company-KB retrieval tool. Role and reuse filters are enforced before ranking."""
 from __future__ import annotations
 
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from backend.app.core.errors import ToolError
@@ -10,7 +12,7 @@ from backend.app.schemas.documents import RetrievedChunk, Scope
 
 def search_company_kb(session: Session, company_id: str, query: str, *, k: int = 6,
                       role: str = "bid_manager", approved_only: bool = False,
-                      doc_types: list[str] | None = None) -> list[RetrievedChunk]:
+                      doc_types: list[str] | None = None, candidates: Any = None) -> list[RetrievedChunk]:
     if not company_id:
         raise ToolError("search_company_kb requires company_id")
     if not query or not query.strip():
@@ -18,7 +20,7 @@ def search_company_kb(session: Session, company_id: str, query: str, *, k: int =
     from backend.app.retrieval.hybrid import hybrid_search
 
     results = hybrid_search(session, Scope.kb, query, k=k, company_id=company_id, role=role,
-                            doc_types=doc_types, approved_only=approved_only)
+                            doc_types=doc_types, approved_only=approved_only, candidates=candidates)
     out = []
     for r in results:
         md = r.metadata or {}

@@ -69,6 +69,9 @@ def _header_block(ws: Worksheet, title: str, *, tender_id: str, version: int,
     return 6
 
 
+_FORMULA_START = ("=", "+", "-", "@", "\t", "\r")
+
+
 def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list[Any]],
            *, status_col: int | None = None, widths: list[int] | None = None) -> None:
     for ci, h in enumerate(headers, start=1):
@@ -79,6 +82,8 @@ def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list[An
     for ri, row in enumerate(rows, start=start_row + 1):
         for ci, v in enumerate(row, start=1):
             c = ws.cell(row=ri, column=ci, value=v)
+            if isinstance(v, str) and v[:1] in _FORMULA_START:
+                c.data_type = "s"  # tender text is data: never let "=HYPERLINK(...)" become a formula
             c.alignment = Alignment(wrap_text=True, vertical="top")
         if status_col is not None:
             st = str(row[status_col - 1] or "")

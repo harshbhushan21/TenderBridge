@@ -13,9 +13,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.app.api import amendments, exports, health, kb, ops, tenders
 from backend.app.api.errors import install_error_handlers
 from backend.app.core.config import get_settings
-from backend.app.core.logging import configure_logging
+from backend.app.core.logging import configure_logging, get_logger
 from backend.app.db.engine import init_db
 from backend.app.ops.langsmith import configure_tracing
+
+log = get_logger(__name__)
 
 
 @asynccontextmanager
@@ -24,6 +26,9 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     configure_logging(settings.log_level, settings.log_json)
     configure_tracing()
     init_db()  # creates missing tables; Postgres deployments run `dev.py migrate` first
+    from backend.app.agents.runner import recover_interrupted_runs
+    if recovered := recover_interrupted_runs():
+        log.warning("marked %d interrupted analysis runs as failed: %s", len(recovered), recovered)
     yield
 
 

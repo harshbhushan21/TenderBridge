@@ -1,6 +1,7 @@
 """Background analysis runner with durable run state and Gate 1 resume support."""
 from __future__ import annotations
 
+import socket
 import threading
 import uuid
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -18,8 +19,10 @@ from backend.app.ingestion.tender_ingest import load_effective_sections
 from backend.app.llm.budget import bind_budget, new_budget
 from backend.app.ops.audit import audit
 from backend.app.ops.events import emit_event
+from backend.app.ops.langsmith import configure_tracing, continue_trace, current_parent_headers, traceable
 
 _executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="tenderbridge-run")
+RUNNER_HOST = socket.gethostname()  # several laptops may share one (cloud) database
 _futures: dict[str, Future] = {}
 _lock = threading.Lock()
 
@@ -28,9 +31,80 @@ def _thread_id(run_id: str) -> str:
     return thread_id_for(run_id)
 
 
-def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None) -> None:
+def _track(run_id: str, future: Future) -> None:
+    with _lock:
+        _futures[run_id] = future
+
+    def done(_: Future) -> None:
+        from backend.app.llm.budget import release_budget
+        with _lock:
+            if _futures.get(run_id) is future:
+                _futures.pop(run_id, None)
+        release_budget(run_id)
+
+    future.add_done_callback(done)
+
+
+def is_active(run_id: str) -> bool:
+    with _lock:
+        future = _futures.get(run_id)
+    return future is not None and not future.done()
+
+
+def _trace_inputs(inputs: dict[str, Any]) -> dict[str, Any]:
+    """The graph state carries every section's text; the trace keeps what identifies the run."""
+    state, resume = inputs.get("state") or {}, inputs.get("resume")
+    return {"tender_id": state.get("tender_id"), "tender_version": state.get("tender_version"),
+            "analysis_run_id": state.get("analysis_run_id"), "mode": state.get("mode"),
+            "sections": len(state.get("sections") or []),
+            "amendment_changes": len(state.get("amendment_changes") or []),
+            "gate1_decision": {k: (resume or {}).get(k) for k in ("action", "tender_version", "comment")}
+            if resume else None}
+
+
+def _trace_outputs(result: dict[str, Any]) -> dict[str, Any]:
+    assessment = result.get("assessment") or {}
+    return {"run_status": result.get("run_status"), "score": assessment.get("score"),
+            "recommendation": assessment.get("recommendation"),
+            "hard_gate_failures": assessment.get("hard_gate_failures"),
+            "requirements": len(result.get("requirements") or []),
+            "compliance_items": len(result.get("compliance") or []), "usage": result.get("usage")}
+
+
+@traceable(name="analysis_run", run_type="chain", process_inputs=_trace_inputs, process_outputs=_trace_outputs)
+def _run_graph(state: dict[str, Any], resume: dict[str, Any] | None, budget: Any) -> dict[str, Any]:
     run_id = state["analysis_run_id"]
-    budget = new_budget(run_id)
+    meta = {"tender_id": state["tender_id"], "tender_version": state["tender_version"],
+            "analysis_run_id": run_id, "mode": state.get("mode"), "thread_id": _thread_id(run_id)}
+    compiled = build_graph(checkpointer=get_checkpointer())
+    config: dict[str, Any] = {"configurable": {"thread_id": _thread_id(run_id)}, "metadata": meta,
+                              "run_name": "tenderbridge_graph", "tags": ["tenderbridge", f"v{state['tender_version']}"]}
+    if resume is not None:
+        from langgraph.types import Command
+        result = compiled.invoke(Command(resume=resume), config=config)
+    else:
+        result = compiled.invoke(state, config=config)
+    checkpoint_state = compiled.get_state(config)
+    if checkpoint_state and checkpoint_state.values:
+        result = {**checkpoint_state.values, **result}
+    result.pop("_session", None)
+    result["usage"] = budget.snapshot()
+    result["run_status"] = "awaiting_human" if result.get("gate1_decision") is None else "completed"
+    return result
+
+
+
+def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None,
+             parent: dict[str, str] | None = None) -> None:
+    # Tracing is configured by the caller (start_run/resume_run), never here: langsmith.configure
+    # also sets a context variable, which would stick to this pooled worker thread.
+    with continue_trace(parent):
+        _execute_traced(state, resume=resume)
+
+
+def _execute_traced(state: dict[str, Any], *, resume: dict[str, Any] | None = None) -> None:
+    run_id = state["analysis_run_id"]
+    budget = new_budget(run_id, usage=state.get("usage"))  # a resume continues the pre-Gate 1 totals
     token = bind_budget(budget)
     try:
         with session_scope() as session:
@@ -39,21 +113,13 @@ def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None) -> 
                   version=state["tender_version"], run_id=run_id, session=session)
         emit_event(run_id=run_id, tender_id=state["tender_id"], version=state["tender_version"],
                    event="run_started", status="running")
+        result = _run_graph(state, resume, budget, langsmith_extra={
+            "name": "gate1_resume" if resume is not None else "analysis_run",
+            "metadata": {"tender_id": state["tender_id"], "tender_version": state["tender_version"],
+                         "analysis_run_id": run_id, "mode": state.get("mode"), "thread_id": _thread_id(run_id)},
+            "tags": ["tenderbridge", "gate1" if resume is not None else "analysis"]})
+        status = result["run_status"]
         with session_scope() as session:
-            compiled = build_graph(checkpointer=get_checkpointer())
-            config = {"configurable": {"thread_id": _thread_id(run_id)}}
-            if resume is not None:
-                from langgraph.types import Command
-                result = compiled.invoke(Command(resume=resume), config=config)
-            else:
-                result = compiled.invoke(state, config=config)
-            checkpoint_state = compiled.get_state(config)
-            if checkpoint_state and checkpoint_state.values:
-                result = {**checkpoint_state.values, **result}
-            result.pop("_session", None)
-            result["usage"] = budget.snapshot()
-            status = "awaiting_human" if result.get("gate1_decision") is None else "completed"
-            result["run_status"] = status
             persist_state(session, result)
             audit("agent:runner", f"analysis.{status}", tender_id=state["tender_id"],
                   version=state["tender_version"], run_id=run_id, session=session)
@@ -61,11 +127,12 @@ def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None) -> 
                    event="run_completed", status=status,
                    payload={"assessment": result.get("assessment")})
     except Exception as exc:
+        status = "cancelled" if budget.cancelled else "failed"
         with session_scope() as session:
-            upsert_run(session, state, status="failed", error=str(exc))
+            upsert_run(session, {**state, "usage": budget.snapshot()}, status=status, error=str(exc))
         emit_event(run_id=run_id, tender_id=state["tender_id"],
                    version=state["tender_version"], event="run_failed",
-                   status="failed", message=str(exc))
+                   status=status, message=str(exc))
         raise
     finally:
         from backend.app.llm.budget import _current
@@ -76,6 +143,7 @@ def start_run(tender_id: str, *, version: int | None = None,
               analysis_mode: str | None = None, mode: str = "full_analysis",
               previous_run_id: str | None = None,
               scoring_factors: dict[str, float] | None = None) -> dict[str, Any]:
+    configure_tracing()  # idempotent; CLI entry points reach the runner without the API lifespan
     with session_scope() as session:
         tender = get_tender(session, tender_id)
         chosen_version = version or tender.current_version
@@ -104,34 +172,58 @@ def start_run(tender_id: str, *, version: int | None = None,
             **amendment_state,
             "sections": [s.model_dump(mode="json") for s in sections],
             "flags": [], "raw_requirements": [], "requirements": [], "compliance": [],
-            "risks": [], "errors": [],
+            "risks": [], "errors": [], "runner_host": RUNNER_HOST,
         }
         upsert_run(session, state, status="queued")
-    future = _executor.submit(_execute, state)
-    with _lock:
-        _futures[run_id] = future
+    _track(run_id, _executor.submit(_execute, state, parent=current_parent_headers()))
     return {"analysis_run_id": run_id, "thread_id": _thread_id(run_id),
             "tender_version": chosen_version}
 
 
 def resume_run(run_id: str, decision: dict[str, Any]) -> dict[str, Any]:
     from backend.app.db.models import AnalysisRun
+    configure_tracing()
     with session_scope() as session:
         run = session.get(AnalysisRun, run_id)
         if run is None:
             raise ValueError(f"analysis run '{run_id}' not found")
         state = {"analysis_run_id": run_id, "tender_id": run.tender_id,
-                 "tender_version": run.version, "gate1_decision": decision}
-    future = _executor.submit(_execute, state, resume=decision)
-    with _lock:
-        _futures[run_id] = future
+                 "tender_version": run.version, "gate1_decision": decision, "runner_host": RUNNER_HOST,
+                 "usage": {k: v for k, v in (run.usage or {}).items() if k not in ("node_timings", "runner_host")}}
+    _track(run_id, _executor.submit(_execute, state, resume=decision, parent=current_parent_headers()))
     return {"analysis_run_id": run_id, "status": "resuming"}
 
 
 def cancel_run(run_id: str) -> bool:
+    """Stop a queued or running analysis; False if it is not running in this process."""
     from backend.app.llm.budget import cancel_run as cancel_budget
-    future = _futures.get(run_id)
-    return cancel_budget(run_id) or (future.cancel() if future is not None else False)
+    with _lock:
+        future = _futures.get(run_id)
+    if future is None or future.done():
+        return False
+    return future.cancel() or cancel_budget(run_id)
+
+
+def recover_interrupted_runs() -> list[str]:
+    """Runs left queued/running/resuming by a stopped server can never finish: mark them failed so
+    the tender can be analysed again. Runs paused at Gate 1 are untouched (the checkpoint resumes
+    them). Only runs started on this machine are touched: with a shared database, another
+    laptop's live runs are not ours to fail (runs from before owners were recorded are)."""
+    from sqlalchemy import select
+
+    from backend.app.db.models import AnalysisRun
+    recovered: list[str] = []
+    with session_scope() as session:
+        for run in session.scalars(select(AnalysisRun).where(
+                AnalysisRun.status.in_(("queued", "running", "resuming")))):
+            owner = (run.usage or {}).get("runner_host")
+            if is_active(run.run_id) or (owner and owner != RUNNER_HOST):
+                continue
+            upsert_run(session, {"analysis_run_id": run.run_id, "tender_id": run.tender_id,
+                                 "tender_version": run.version}, status="failed",
+                       error="interrupted by a server restart; start the analysis again")
+            recovered.append(run.run_id)
+    return recovered
 
 
 def get_run(run_id: str) -> dict[str, Any] | None:

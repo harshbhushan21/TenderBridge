@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 from datetime import date
 
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.eligibility import (
     Calculation,
     CertificateRecord,
@@ -95,6 +96,7 @@ def _applicable_date(rule: CertificationRule, key_facts: KeyFacts | None) -> tup
     return None, rule.valid_on.replace("_", " ")
 
 
+@traceable(name="check_certification", run_type="tool")
 def check_certification(certs: list[CertificateRecord], rule: CertificationRule,
                         key_facts: KeyFacts | None) -> RuleResult:
     required = normalize_standard(rule.standard) or rule.standard

@@ -122,8 +122,22 @@ def cmd_demo_cli() -> None:
 
 
 def cmd_evals() -> None:
-    """run the offline Phase 8 evaluation harness"""
-    _py("-m", "backend.app.evals.run_evals")
+    """run the pipeline on TDR-001 and score it against the gold files (fresh DB in storage/evals/)"""
+    if "--current-db" in sys.argv[2:]:
+        _py("-m", "backend.app.evals.run_evals")
+        return
+    out = ROOT / "storage" / "evals"
+    out.mkdir(parents=True, exist_ok=True)
+    for name in ("eval.sqlite", "eval_checkpoints.sqlite"):
+        (out / name).unlink(missing_ok=True)
+    _py("-m", "backend.app.evals.run_evals", env={
+        "DATABASE_URL": f"sqlite:///{(out / 'eval.sqlite').as_posix()}",
+        "CHECKPOINT_URL": f"sqlite:///{(out / 'eval_checkpoints.sqlite').as_posix()}"})
+
+
+def cmd_reembed() -> None:
+    """re-embed chunks made by a different embedder (after changing EMBEDDING_PROVIDER); --dry-run counts"""
+    _py("-m", "backend.scripts.reembed", *sys.argv[2:])
 
 
 def cmd_api() -> None:
@@ -297,7 +311,10 @@ def cmd_doctor() -> None:
         warn(".env missing: defaults apply (SQLite, fake LLMs). Create it with `uv run python dev.py env`")
 
     url = _env_value("DATABASE_URL", "sqlite (default)") or ""
-    if url.startswith("postgresql"):
+    local_pg = url.startswith("postgresql") and any(h in url for h in ("@localhost", "@127.0.0.1", "@db:"))
+    if url.startswith("postgresql") and not local_pg:
+        ok("DATABASE_URL points at a hosted Postgres (Docker not needed)")
+    if local_pg:
         if shutil.which("docker") is None:
             bad("DATABASE_URL is Postgres but Docker is not installed",
                 "install Docker Desktop, or switch .env back to the SQLite DATABASE_URL")
@@ -329,7 +346,7 @@ def cmd_doctor() -> None:
 COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
-    "demo-cli": cmd_demo_cli, "evals": cmd_evals,
+    "demo-cli": cmd_demo_cli, "evals": cmd_evals, "reembed": cmd_reembed,
     "reset-db": cmd_reset_db, "api": cmd_api, "web": cmd_web, "web-check": cmd_web_check,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,

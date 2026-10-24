@@ -10,9 +10,10 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from backend.app.db import models as m
+from backend.app.ops.langsmith import retrieval_outputs, traceable
 from backend.app.retrieval.embeddings import get_embedder
 from backend.app.retrieval.filters import SearchFilters, is_postgres
-from backend.app.retrieval.keyword import bm25_search, load_candidates
+from backend.app.retrieval.keyword import Candidates, bm25_search, prepare_candidates
 from backend.app.retrieval.query_rewrite import expand_query
 from backend.app.retrieval.reranker import rerank
 from backend.app.retrieval.vector import vector_search
@@ -41,19 +42,28 @@ def _metadata(row: Any, f: SearchFilters) -> dict[str, Any]:
     return md
 
 
+@traceable(name="hybrid_search", run_type="retriever", process_outputs=retrieval_outputs)
 def hybrid_search(session: Session, scope: Scope, query: str, *, k: int = 6, tender_id: str | None = None,
                   version: int | None = None, company_id: str | None = None, role: str = "bid_manager",
-                  doc_types: list[str] | None = None, approved_only: bool = False) -> list[RetrievedChunk]:
-    """Return up to k results, one per parent section, best first."""
+                  doc_types: list[str] | None = None, approved_only: bool = False,
+                  candidates: Candidates | None = None) -> list[RetrievedChunk]:
+    """Return up to k results, one per parent section, best first.
+
+    `candidates` (from `prepare_candidates` with the same filters) skips reloading and
+    re-indexing the corpus when many queries run against one scope.
+    """
     f = SearchFilters(scope=scope, tender_id=tender_id, version=version, company_id=company_id,
                       role=role, doc_types=doc_types, approved_only=approved_only)
     f.validate()
+    if candidates is not None and candidates.filters != f:
+        raise ValueError("prepared candidates were built for different filters")
     if not query or not query.strip():
         return []
 
-    rows = load_candidates(session, f)  # filtered once; role filter applied before any ranking
+    prepared = candidates or prepare_candidates(session, f)  # role filter applied before any ranking
+    rows = prepared.rows
     expanded = expand_query(query)
-    lexical = bm25_search(session, f, expanded, k=CANDIDATES, rows=rows)
+    lexical = bm25_search(session, f, expanded, k=CANDIDATES, prepared=prepared)
     # Postgres ranks vectors in SQL with pgvector; SQLite reuses the loaded rows.
     semantic = vector_search(session, f, get_embedder().embed_query(expanded), k=CANDIDATES,
                              rows=None if is_postgres(session) else rows)

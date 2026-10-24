@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from backend.app.ops.langsmith import summarize_sections, traceable
 from backend.app.schemas.documents import Scope, SourceSpan
 from backend.app.schemas.requirements import KeyFact, KeyFacts
 from backend.app.tools.date_normalization import parse_all_money, parse_datetime, parse_money
@@ -54,6 +55,7 @@ def _find(sections: list[dict[str, Any]], pattern: str, flags: int = re.IGNORECA
     return None
 
 
+@traceable(name="extract_key_facts", run_type="parser", process_inputs=summarize_sections)
 def extract_key_facts_deterministic(tender_id: str, version: int,
                                     sections: list[dict[str, Any]]) -> KeyFacts:
     values: dict[str, Any] = {}

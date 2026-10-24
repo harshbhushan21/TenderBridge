@@ -7,6 +7,7 @@ from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from backend.app.db import models as m
+from backend.app.ops.langsmith import traceable
 from backend.app.retrieval.embeddings import get_embedder
 from backend.app.schemas.documents import ChunkRecord, Scope
 
@@ -16,7 +17,15 @@ def embedding_text(chunk: ChunkRecord) -> str:
     return f"{chunk.section_path}\n{chunk.text}" if chunk.section_path else chunk.text
 
 
-def _embed(chunks: list[ChunkRecord]) -> tuple[dict[str, list[float]], str]:
+Vectors = tuple[dict[str, list[float]], str]
+
+
+@traceable(name="embed_chunks", run_type="embedding",
+           process_inputs=lambda d: {"chunks": len(d.get("chunks") or [])},
+           process_outputs=lambda out: {"vectors": len(out[0]), "embedding_model": out[1]})
+def embed_chunks(chunks: list[ChunkRecord]) -> Vectors:
+    """Embed child chunks. Call before opening a write transaction: a local model can take
+    longer than SQLite's lock timeout, and other writers would fail meanwhile."""
     embedder = get_embedder()
     children = [c for c in chunks if not c.metadata.get("is_parent")]
     vectors = embedder.embed_documents([embedding_text(c) for c in children]) if children else []
@@ -29,10 +38,11 @@ def delete_doc_chunks(session: Session, scope: Scope, doc_id: str) -> None:
 
 
 def index_tender_chunks(session: Session, tender_id: str, version: int, doc_id: str,
-                        chunks: list[ChunkRecord], *, quarantined_sections: set[str] | None = None) -> int:
+                        chunks: list[ChunkRecord], *, quarantined_sections: set[str] | None = None,
+                        vectors: Vectors | None = None) -> int:
     """Replace a tender file's chunks. Parents are stored but only children are embedded."""
+    by_id, model_name = vectors or embed_chunks(chunks)
     delete_doc_chunks(session, Scope.tender, doc_id)
-    vectors, model_name = _embed(chunks)
     quarantined_sections = quarantined_sections or set()
     for c in chunks:
         session.add(m.TenderChunk(
@@ -41,7 +51,7 @@ def index_tender_chunks(session: Session, tender_id: str, version: int, doc_id: 
             is_parent=bool(c.metadata.get("is_parent")), text=c.text, page=c.page,
             section_path=c.section_path, token_count=c.token_count,
             quarantined=c.metadata.get("section_id") in quarantined_sections,
-            embedding=vectors.get(c.chunk_id), embedding_model=model_name if c.chunk_id in vectors else None,
+            embedding=by_id.get(c.chunk_id), embedding_model=model_name if c.chunk_id in by_id else None,
             meta={**c.metadata, "tender_id": tender_id, "version": version}))
     session.flush()
     return len(chunks)
@@ -50,8 +60,8 @@ def index_tender_chunks(session: Session, tender_id: str, version: int, doc_id: 
 def index_kb_chunks(session: Session, company_id: str, kb_doc: m.KbDocument, chunks: list[ChunkRecord],
                     *, approved_sections: dict[str, bool] | None = None) -> int:
     """Replace a KB document's chunks, copying its access metadata onto every chunk."""
+    vectors, model_name = embed_chunks(chunks)
     delete_doc_chunks(session, Scope.kb, kb_doc.doc_id)
-    vectors, model_name = _embed(chunks)
     approved_sections = approved_sections or {}
     for c in chunks:
         section_id = c.metadata.get("section_id")

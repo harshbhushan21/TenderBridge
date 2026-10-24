@@ -26,6 +26,7 @@ class RunBudget:
     input_tokens: int = 0
     output_tokens: int = 0
     cost_usd: float = 0.0
+    unpriced_calls: int = 0  # calls to models with no configured price: cost unknown, not zero
     cancelled: bool = False
     per_node: dict[str, dict[str, float]] = field(default_factory=dict)
     _lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
@@ -40,11 +41,14 @@ class RunBudget:
             raise BudgetExceeded(f"cost cap reached (${self.max_cost_usd:.2f})",
                                  details={"run_id": self.run_id, "node": node})
 
-    def record(self, node: str | None, input_tokens: int, output_tokens: int, cost_usd: float) -> None:
+    def record(self, node: str | None, input_tokens: int, output_tokens: int, cost_usd: float | None) -> None:
         with self._lock:
             self.calls += 1
             self.input_tokens += input_tokens
             self.output_tokens += output_tokens
+            if cost_usd is None:
+                self.unpriced_calls += 1
+                cost_usd = 0.0
             self.cost_usd += cost_usd
             n = self.per_node.setdefault(node or "unknown", {"calls": 0, "input_tokens": 0,
                                                               "output_tokens": 0, "cost_usd": 0.0})
@@ -57,6 +61,7 @@ class RunBudget:
         return {
             "run_id": self.run_id, "calls": self.calls, "input_tokens": self.input_tokens,
             "output_tokens": self.output_tokens, "cost_usd": round(self.cost_usd, 6),
+            "unpriced_calls": self.unpriced_calls,
             "max_calls": self.max_calls, "max_cost_usd": self.max_cost_usd,
             "per_node": self.per_node,
         }
@@ -66,12 +71,24 @@ _current: contextvars.ContextVar[RunBudget | None] = contextvars.ContextVar("run
 _registry: dict[str, RunBudget] = {}
 
 
-def new_budget(run_id: str | None = None) -> RunBudget:
+def new_budget(run_id: str | None = None, *, usage: dict[str, Any] | None = None) -> RunBudget:
+    """A run's budget; `usage` (a previous snapshot) carries totals across a Gate 1 resume."""
     s = get_settings()
     b = RunBudget(run_id=run_id, max_cost_usd=s.max_cost_usd, max_calls=s.max_llm_calls)
+    if usage:
+        b.calls = int(usage.get("calls", 0))
+        b.input_tokens = int(usage.get("input_tokens", 0))
+        b.output_tokens = int(usage.get("output_tokens", 0))
+        b.cost_usd = float(usage.get("cost_usd", 0.0))
+        b.unpriced_calls = int(usage.get("unpriced_calls", 0))
+        b.per_node = {k: dict(v) for k, v in (usage.get("per_node") or {}).items()}
     if run_id:
         _registry[run_id] = b
     return b
+
+
+def release_budget(run_id: str) -> None:
+    _registry.pop(run_id, None)
 
 
 def bind_budget(budget: RunBudget) -> contextvars.Token:
@@ -101,12 +118,10 @@ def check_budget(node: str | None = None) -> None:
 
 
 def estimate_cost(model: str, input_tokens: int, output_tokens: int,
-                  prices: dict[str, dict[str, float]] | None = None) -> float:
-    """Prices are USD per 1M tokens, configured in llm_routing_and_budget.json.
-    Unknown models cost 0 (reported as such, never invented)."""
-    if not prices:
-        return 0.0
-    p = prices.get(model) or prices.get(model.split(":", 1)[-1])
+                  prices: dict[str, dict[str, float]] | None = None) -> float | None:
+    """USD from `prices_per_million` in llm_routing_and_budget.json. None when the model has no
+    price: the call is counted as unpriced (and the cost cap cannot see it), never as free."""
+    p = (prices or {}).get(model) or (prices or {}).get(model.split(":", 1)[-1])
     if not p:
-        return 0.0
+        return None
     return (input_tokens * p.get("input", 0.0) + output_tokens * p.get("output", 0.0)) / 1_000_000

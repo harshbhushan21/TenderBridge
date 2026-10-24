@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import date
 
+from backend.app.ops.langsmith import traceable
 from backend.app.schemas.eligibility import (
     Calculation,
     EligibilityStatus,
@@ -33,6 +34,7 @@ def _cert_valid(cert: PersonCert | None, as_of: date) -> bool:
     return cert.expiry_date is None or cert.expiry_date >= as_of
 
 
+@traceable(name="check_personnel", run_type="tool")
 def check_personnel(people: list[PersonRecord], rule: PersonnelRule) -> RuleResult:
     """Count qualified, available people for a role.
 
