@@ -311,7 +311,10 @@ def cmd_doctor() -> None:
         warn(".env missing: defaults apply (SQLite, fake LLMs). Create it with `uv run python dev.py env`")
 
     url = _env_value("DATABASE_URL", "sqlite (default)") or ""
-    if url.startswith("postgresql"):
+    local_pg = url.startswith("postgresql") and any(h in url for h in ("@localhost", "@127.0.0.1", "@db:"))
+    if url.startswith("postgresql") and not local_pg:
+        ok("DATABASE_URL points at a hosted Postgres (Docker not needed)")
+    if local_pg:
         if shutil.which("docker") is None:
             bad("DATABASE_URL is Postgres but Docker is not installed",
                 "install Docker Desktop, or switch .env back to the SQLite DATABASE_URL")
