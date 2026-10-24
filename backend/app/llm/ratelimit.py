@@ -25,6 +25,7 @@ WINDOW_S = 60.0
 class Limits:
     rpm: int = 0  # 0 = unlimited
     tpm: int = 0
+    rpd: int = 0  # requests/day: not enforced here (the provider answers 429), reported by llm-check
 
 
 @dataclass
@@ -46,7 +47,8 @@ def configured_limits() -> dict[str, Limits]:
     for name, cfg in (get_routing_config().limits_per_model_from_plan or {}).items():
         spec = spec_from_plan(name)
         if spec and isinstance(cfg, dict):
-            out[spec] = Limits(rpm=int(cfg.get("rpm") or 0), tpm=int(cfg.get("tpm") or 0))
+            out[spec] = Limits(rpm=int(cfg.get("rpm") or 0), tpm=int(cfg.get("tpm") or 0),
+                               rpd=int(cfg.get("rpd") or 0))
     return out
 
 

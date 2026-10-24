@@ -1,5 +1,5 @@
 {
-  "source": "Demo routing (24 Oct): Gemini 2.5 Flash-Lite for batched extraction (high TPM), Gemini 2.5 Flash for drafting, Groq gpt-oss-120b as fallback when no Google key. Free-tier limits change: check AI Studio and the Groq console, update limits_per_model_from_plan, and run `dev.py llm-check --ping`.",
+  "source": "Demo routing (24 Oct): limits from the team's AI Studio free tier (Gemini: 20 requests/day per model) and the Groq console. Extraction on Gemini 2.5 Flash-Lite in large batches (~4 calls per tender); drafting on Groq gpt-oss-120b (~1,000 requests/day), Gemini 2.5 Flash as fallback. Re-check limits before a demo and run `dev.py llm-check --ping`.",
   "routing": {
     "shred_requirements": {
       "primary": "gemini-2.5-flash-lite",
@@ -35,8 +35,8 @@
       "note": "deterministic section plan"
     },
     "write_sections": {
-      "primary": "gemini-2.5-flash",
-      "fallback": "groq/openai/gpt-oss-120b"
+      "primary": "groq/openai/gpt-oss-120b",
+      "fallback": "gemini-2.5-flash"
     },
     "verify_claims": {
       "exact": "code (facts tables)",
@@ -57,13 +57,18 @@
   },
   "limits_per_model_from_plan": {
     "gemini-2.5-flash-lite": {
-      "rpm": 15,
-      "rpd": 1000,
+      "rpm": 10,
+      "rpd": 20,
       "tpm": 250000
     },
     "gemini-2.5-flash": {
-      "rpm": 10,
-      "rpd": 250,
+      "rpm": 5,
+      "rpd": 20,
+      "tpm": 250000
+    },
+    "gemini-3-flash": {
+      "rpm": 5,
+      "rpd": 20,
       "tpm": 250000
     },
     "groq/openai/gpt-oss-20b": {
@@ -83,11 +88,6 @@
       "rpd": 14400,
       "tpm": 15000,
       "tpd": 500000
-    },
-    "gemini-3-flash": {
-      "rpm": 5,
-      "rpd": 20,
-      "tpm": 250000
     }
   },
   "tender_size_for_planning": {
@@ -101,5 +101,16 @@
   "per_case_reserve": {
     "gemini_3_flash_calls": "2 per drafting case (plan + write) + 1 rewrite; keep >= 5 unused on demo day"
   },
-  "realism_vs_quota_note": "The pack favours realism (50+ tender pages, 52 KB documents). For the live run, process the live_subset sections and the live_subset KB docs; run full-pack evals offline before the demo and cache them."
+  "realism_vs_quota_note": "The pack favours realism (50+ tender pages, 52 KB documents). For the live run, process the live_subset sections and the live_subset KB docs; run full-pack evals offline before the demo and cache them.",
+  "nodes": {
+    "shred_requirements": {
+      "timeout_s": 180
+    },
+    "write_sections": {
+      "timeout_s": 120
+    },
+    "rewrite_failed": {
+      "timeout_s": 120
+    }
+  }
 }

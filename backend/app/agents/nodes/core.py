@@ -201,7 +201,7 @@ class _BatchExtraction(BaseModel):
     sections: list[_SectionRequirements] = Field(default_factory=list)
 
 
-def _batches(sections: list[dict[str, Any]], max_tokens: int, max_sections: int = 8) -> list[list[dict[str, Any]]]:
+def _batches(sections: list[dict[str, Any]], max_tokens: int, max_sections: int = 30) -> list[list[dict[str, Any]]]:
     """Consecutive sections grouped up to ~max_tokens of text (a large section goes alone)."""
     out: list[list[dict[str, Any]]] = []
     size = 0
@@ -216,11 +216,22 @@ def _batches(sections: list[dict[str, Any]], max_tokens: int, max_sections: int 
     return out
 
 
+def shred_batch_tokens(model: str) -> int:
+    """Fewer, larger batches where the per-minute token limit allows (few requests/day on free tiers);
+    a batch plus its answer must stay under the model's tokens/minute (e.g. Groq 8K)."""
+    from backend.app.core.config import get_settings
+    from backend.app.llm.ratelimit import limits_for
+
+    tpm = limits_for(model).tpm
+    cap = get_settings().shred_batch_tokens
+    return min(cap, tpm // 3) if tpm else cap
+
+
 def _extract_sections(sections: list[dict[str, Any]]) -> list[tuple[dict[str, Any], list[ExtractedRequirement], bool]]:
     """(section, requirements, heuristic_used) per section.
 
-    With a configured model (and SHRED_WITH_LLM), sections go in batches of ~SHRED_BATCH_TOKENS:
-    about 10 calls for TDR-001 instead of ~100, which fits free-tier per-minute limits. A section the
+    With a configured model (and SHRED_WITH_LLM), sections go in batches (shred_batch_tokens): about
+    4 calls for TDR-001 on Gemini instead of ~100, which fits free-tier per-day and per-minute limits. A section the
     model leaves out, or a failed call, falls back to the deterministic extractor for that section.
     """
     from backend.app.core.config import get_settings
@@ -228,10 +239,11 @@ def _extract_sections(sections: list[dict[str, Any]]) -> list[tuple[dict[str, An
     from backend.app.llm.factory import is_fake, load_prompt, resolve, structured_call
 
     settings = get_settings()
-    if not settings.shred_with_llm or is_fake(resolve("shred_requirements").model):
+    model = resolve("shred_requirements").model
+    if not settings.shred_with_llm or is_fake(model):
         return [(sec, _heuristic_shred(sec).requirements, True) for sec in sections]
     out = []
-    for batch in _batches(sections, settings.shred_batch_tokens):
+    for batch in _batches(sections, shred_batch_tokens(model)):
         user = "\n\n".join(
             wrap_untrusted(str(sec.get("text", "")),
                            f"[S{i}] {sec.get('section_path') or sec.get('title') or ''} (page {sec.get('page_start')})")

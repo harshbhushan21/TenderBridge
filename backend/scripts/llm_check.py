@@ -27,14 +27,14 @@ class Pong(BaseModel):
     ok: bool
 
 
-def _extraction_load(batch_tokens: int) -> tuple[int, int]:
+def _extraction_load(model: str) -> tuple[int, int]:
     """Calls and input tokens for TDR-001's non-PQ sections in batches (from the checked-in extraction)."""
-    from backend.app.agents.nodes.core import _batches
+    from backend.app.agents.nodes.core import _batches, shred_batch_tokens
 
     data = json.loads((get_settings().demo_data_dir / "tender/TDR-001/extracted/tender_sections.json")
                       .read_text(encoding="utf-8"))
     sections = [s for d in data["documents"] for s in d.get("sections") or [] if str(s.get("text", "")).strip()]
-    batches = _batches(sections, batch_tokens)
+    batches = _batches(sections, shred_batch_tokens(model))
     return len(batches), sum(len(str(s["text"])) // 4 for s in sections) + 300 * len(batches)
 
 
@@ -45,7 +45,8 @@ def main() -> None:
     s = get_settings()
 
     print("TenderBridge model check\n")
-    calls_tokens = {"shred_requirements": _extraction_load(s.shred_batch_tokens) if s.shred_with_llm else (0, 0),
+    calls_tokens = {"shred_requirements": _extraction_load(resolve("shred_requirements").model)
+                    if s.shred_with_llm else (0, 0),
                     "extract_key_facts": (0, 0),  # TDR-001's key facts are all found deterministically
                     "write_sections": (1, 4500), "rewrite_failed": (1, 1500)}
     per_model: dict[str, list[tuple[int, int]]] = {}
@@ -71,10 +72,12 @@ def main() -> None:
             tokens = sum(t for _, t in loads)
             lim = limits_for(model)
             minutes = max(calls / lim.rpm if lim.rpm else 0, tokens / lim.tpm if lim.tpm else 0)
-            limit_txt = f"{lim.rpm or '∞'} rpm / {lim.tpm or '∞'} tpm"
+            limit_txt = f"{lim.rpm or '∞'} rpm / {lim.tpm or '∞'} tpm / {lim.rpd or '∞'} per day"
+            runs = f" · ~{lim.rpd // calls} full runs/day" if lim.rpd and calls else ""
             print(f"  {model:<40} {calls:>3} calls, ~{tokens:>6} tokens · limits {limit_txt} · "
-                  f"at least {math.ceil(minutes * 60) if minutes else 0}s of quota time")
-        print("  A v2 re-analysis after the corrigendum reuses cached answers for unchanged sections.")
+                  f"at least {math.ceil(minutes * 60) if minutes else 0}s of quota time{runs}")
+        print("  A v2 re-analysis after the corrigendum reuses cached answers for unchanged sections;")
+        print("  each --ping uses one request per model from the daily allowance.")
 
     print(f"\nEmbeddings: {s.embedding_provider} ({s.embedding_dim}-d) · LLM cache: {'on' if s.llm_cache else 'off'}")
     print(f"LangSmith tracing: {'on' if s.langsmith_tracing and (s.langsmith_api_key or s.langchain_api_key) else 'off'}"

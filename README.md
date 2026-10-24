@@ -560,18 +560,18 @@ provider's model list before relying on them):
 
 | Use | Model (`provider:model`) | Load per tender |
 |---|---|---|
-| Requirement extraction (batched), key-fact gaps | `google_genai:gemini-2.5-flash-lite` | ~12 calls, ~42k tokens (about 1 min at 15 RPM) |
-| The drafted section and its one rewrite | `google_genai:gemini-2.5-flash` | 1-2 calls |
-| Fallback when no Google key | `groq:openai/gpt-oss-20b` (extraction, ~5 min at 8K TPM), `groq:openai/gpt-oss-120b` (drafting) | |
+| Requirement extraction (large batches), key-fact gaps | `google_genai:gemini-2.5-flash-lite` | ~4 calls (free tier: 10 RPM, 250K TPM, **20 requests/day** → ~5 full runs/day) |
+| The drafted section and its one rewrite | `groq:openai/gpt-oss-120b` (fallback `google_genai:gemini-2.5-flash`) | 1-2 calls (Groq: ~1,000 requests/day) |
 | Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, eligibility, exports | |
 
-Set `LLM_FAST=google_genai:gemini-2.5-flash-lite`, `LLM_STRONG=google_genai:gemini-2.5-flash` and
-`GOOGLE_API_KEY` (optionally `GROQ_API_KEY`) in `.env`.
+Set `LLM_FAST=google_genai:gemini-2.5-flash-lite`, `LLM_STRONG=groq:openai/gpt-oss-120b`,
+`GOOGLE_API_KEY` and `GROQ_API_KEY` in `.env` (with only a Google key, drafting uses Gemini 2.5 Flash).
+Limits are those shown in the team's AI Studio and Groq consoles on 24 Oct; check yours before a demo.
 
 Before a demo, `uv run python dev.py llm-check` shows the model each node will use, whether its
 key is set, the enforced limits and the expected calls/tokens/time for one tender; `--ping` sends one
 tiny request per model to catch a wrong model id or key. Requirement extraction goes in batches of
-sections (~12 calls for TDR-001 instead of ~100), calls wait for room in each model's per-minute
+sections sized to each model's tokens/minute (~4 calls for TDR-001 on Gemini instead of ~100), calls wait for room in each model's per-minute
 window, a 429 is retried after the provider's suggested delay, and identical inputs are answered
 from the cache (a v2 re-analysis only pays for the changed sections).
 
