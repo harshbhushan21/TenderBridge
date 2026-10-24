@@ -3,7 +3,7 @@
 import { FilePlus2, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Badge, Button, Card, Empty, ErrorBanner, Spinner } from "@/components/ui";
+import { Badge, Button, Callout, Card, Empty, ErrorBanner, Spinner } from "@/components/ui";
 import { usePoll } from "@/hooks/use-poll";
 import { api, errorMessage } from "@/lib/api";
 import { humanize } from "@/lib/formatting";
@@ -111,13 +111,13 @@ export function AmendmentPanel({ tender, onChanged, onReanalysed }: {
             </div>
           )}
           {latest.status === "confirmed" && tender.status === "reanalysis_required" && (
-            <div className="mt-4 flex items-center gap-3 rounded-md bg-amber-50 p-3 text-sm text-amber-900">
+            <Callout tone="amber" className="mt-4"><div className="flex flex-wrap items-center gap-3">
               v{tender.currentVersion} is effective; the v{tender.currentVersion - 1} Gate 1 decision is superseded.
               <Button className="ml-auto" loading={busy === "reanalyse"} onClick={() => act("reanalyse", async () => {
                 const r = await api.reanalyse(tender.tenderId);
                 onReanalysed(r.analysis_run_id);
               })}><RefreshCw className="size-4" /> Re-analyse impact</Button>
-            </div>
+            </div></Callout>
           )}
         </Card>
       )}

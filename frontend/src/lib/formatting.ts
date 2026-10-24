@@ -63,13 +63,24 @@ export function spanLabel(s: SourceSpan | null | undefined): string {
 
 export type Tone = "green" | "amber" | "red" | "blue" | "slate" | "violet";
 
+/** Status tones are coloured text with an icon; neutral ones (slate, blue) are a quiet tag. */
 export const toneClasses: Record<Tone, string> = {
-  green: "bg-emerald-50 text-emerald-800 ring-emerald-600/20",
-  amber: "bg-amber-50 text-amber-800 ring-amber-600/20",
-  red: "bg-red-50 text-red-800 ring-red-600/20",
-  blue: "bg-sky-50 text-sky-800 ring-sky-600/20",
-  slate: "bg-slate-100 text-slate-700 ring-slate-500/20",
-  violet: "bg-violet-50 text-violet-800 ring-violet-600/20",
+  green: "text-emerald-800 [&>svg]:text-emerald-600",
+  amber: "text-amber-800 [&>svg]:text-amber-600",
+  red: "text-red-800 [&>svg]:text-red-600",
+  blue: "rounded-md bg-sky-50 px-2 py-0.5 text-sky-800",
+  slate: "rounded-md bg-slate-100 px-2 py-0.5 text-slate-700",
+  violet: "text-violet-800 [&>svg]:text-violet-600",
+};
+
+/** Filled labels for the states a reader must not miss (tender status, recommendation, gate decisions). */
+export const solidToneClasses: Record<Tone, string> = {
+  green: "bg-ok text-white",
+  amber: "bg-warn text-ink",
+  red: "bg-danger text-white",
+  blue: "bg-olive text-white",
+  slate: "bg-slate-200 text-ink",
+  violet: "bg-warn text-ink",
 };
 
 const STATUS_TONES: Record<string, Tone> = {

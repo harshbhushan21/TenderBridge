@@ -3,7 +3,7 @@
 import { CheckCircle2, Gavel, PauseCircle, XCircle } from "lucide-react";
 import { useState } from "react";
 
-import { Badge, Button, Card, ErrorBanner, Stat } from "@/components/ui";
+import { Badge, Button, Callout, Card, ErrorBanner, Stat } from "@/components/ui";
 import { useRole } from "@/hooks/use-role";
 import { api, currentUser, DEMO_IDENTITIES, errorMessage } from "@/lib/api";
 import { formatDateTime, formatInr, formatScore, humanize } from "@/lib/formatting";
@@ -23,21 +23,21 @@ export function Overview({ tender, assessment, keyFacts, compliance, onOpen, onD
       <div className="space-y-4 lg:col-span-2">
         <Card title={`System recommendation · v${assessment.tender_version}`}>
           <div className="flex flex-wrap items-center gap-6">
-            <Badge status={assessment.recommendation} className="px-3 py-1 text-sm" />
+            <Badge solid status={assessment.recommendation} className="px-3 py-1.5 text-sm" />
             <Stat label="Weighted score" value={formatScore(assessment.score)} />
             <Stat label="Hard-gate failures" value={assessment.hard_gate_failures.length || "None"} />
           </div>
           {assessment.hard_gate_failures.length > 0 && (
-            <p className="mt-3 rounded-md bg-red-50 p-2 text-sm text-red-800">
+            <Callout tone="red" className="mt-3">
               A failed hard gate means NO_BID whatever the score ({assessment.hard_gate_failures.join(", ")}).
-            </p>
+            </Callout>
           )}
           <div className="mt-4 space-y-2">
             {assessment.criteria.map((c) => (
               <div key={c.key}>
                 <div className="flex justify-between text-xs"><span>{c.label} · {c.weight.toFixed(0)}%</span>
                   <span className="font-medium">{c.raw_score.toFixed(2)}</span></div>
-                <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-slate-700"
+                <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-olive"
                   style={{ width: `${Math.min(100, c.raw_score)}%` }} /></div>
               </div>
             ))}
@@ -118,7 +118,7 @@ function Gate1Panel({ tender, assessment, onDecided }: {
 
   return (
     <Card title={<span className="flex items-center gap-2"><Gavel className="size-4" /> Gate 1: human decision</span>}
-      actions={<Badge status={tender.approvalStatus} />}>
+      actions={<Badge solid status={tender.approvalStatus} />}>
       <p className="text-sm text-slate-600">
         The system recommends <strong>{humanize(assessment.recommendation)}</strong>. Only a Bid Manager can decide;
         the decision is bound to v{assessment.tender_version}.
@@ -129,7 +129,7 @@ function Gate1Panel({ tender, assessment, onDecided }: {
             placeholder="Reason (recorded in the audit trail)"
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => decide("approve_bid")} loading={busy === "approve_bid"}>
+            <Button variant="success" onClick={() => decide("approve_bid")} loading={busy === "approve_bid"}>
               <CheckCircle2 className="size-4" /> Approve bid</Button>
             <Button variant="danger" onClick={() => decide("no_bid")} loading={busy === "no_bid"}>
               <XCircle className="size-4" /> No bid</Button>

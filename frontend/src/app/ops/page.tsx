@@ -28,8 +28,8 @@ export default function AgentOpsPage() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">AgentOps</h1>
-          <p className="text-sm text-slate-500">Cost, latency, evaluation scores and guardrail events, measured from real runs.</p>
+          <h1 className="text-2xl font-semibold">AgentOps</h1>
+          <p className="text-sm text-slate-500">Cost, latency, evaluations and guardrail events per run.</p>
         </div>
         {tracing?.tracing ? (
           <a href={LANGSMITH_URL} target="_blank" rel="noreferrer"
@@ -104,7 +104,7 @@ export default function AgentOpsPage() {
                   : entries.map(([node, ms]) => (
                     <div key={node}>
                       <div className="flex justify-between text-xs"><span>{humanize(node)}</span><span>{ms.toFixed(0)} ms</span></div>
-                      <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-slate-700" style={{ width: `${(ms / max) * 100}%` }} /></div>
+                      <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-olive" style={{ width: `${(ms / max) * 100}%` }} /></div>
                     </div>
                   ));
               })()}

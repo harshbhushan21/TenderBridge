@@ -3,7 +3,7 @@
 import { CheckCircle2, Download, FileText, MessageSquareWarning, Pencil, XCircle } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
-import { Badge, Button, Card, Empty, ErrorBanner, Spinner } from "@/components/ui";
+import { Badge, Button, Callout, Card, Empty, ErrorBanner, Spinner } from "@/components/ui";
 import { NodeStrip } from "@/components/workspace/node-strip";
 import { usePoll } from "@/hooks/use-poll";
 import { useRole } from "@/hooks/use-role";
@@ -122,8 +122,8 @@ function DraftReviewView({ tender, draft, runStatus, onReviewed }: {
           <Badge status={draft.status} />{draft.verifier?.passed && <Badge tone="green">verified</Badge>}</div>}>
           <p className="mb-3 text-xs text-slate-500">Revision {draft.revision} · {draft.generated_by ?? "draft"} ·
             {" "}{draft.evidence_count ?? sources.length} approved passages retrieved, {sources.length} cited · v{draft.tender_version}</p>
-          {draft.stale && <p className="mb-3 rounded-md bg-amber-50 p-2 text-sm text-amber-900">This draft belongs to a
-            superseded tender version and cannot be approved.</p>}
+          {draft.stale && <Callout tone="amber" className="mb-3">This draft belongs to a
+            superseded tender version and cannot be approved.</Callout>}
           {editing ? (
             <textarea value={edited} onChange={(e) => setEdited(e.target.value)} rows={12}
               className="w-full rounded-md border border-slate-300 p-2 font-mono text-sm" />
@@ -142,11 +142,11 @@ function DraftReviewView({ tender, draft, runStatus, onReviewed }: {
           {draft.human_edited && <p className="mt-2 text-xs text-slate-500">Edited by the reviewer at Gate 2: the edited
             text is the reviewer&apos;s responsibility and was not re-verified.</p>}
           {(draft.placeholders.length > 0 || (draft.removed_claims ?? []).length > 0) && (
-            <div className="mt-3 rounded-md bg-amber-50 p-2 text-sm text-amber-900">
+            <Callout tone="amber" className="mt-3">
               {draft.placeholders.map((p) => <p key={p}>{p}</p>)}
               {(draft.removed_claims ?? []).map((c) => (
                 <p key={c.text} className="mt-1 text-xs"><span className="line-through">{c.text}</span> — {c.reason}</p>))}
-            </div>
+            </Callout>
           )}
         </Card>
 

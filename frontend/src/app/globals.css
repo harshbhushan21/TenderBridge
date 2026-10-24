@@ -1,7 +1,74 @@
 @import "tailwindcss";
 
+/*
+ * Brand palette: Smoky Black #11120D · Off White #FDFCF8 · Olive Drab #565449 (the one accent).
+ * White and black carry the page; olive marks focus, selection and the active item. Status alone
+ * uses bright colours: green = approved / meets, orange = pending / awaiting, red = no bid / gap.
+ * The neutral scale ("slate") is rebuilt from the palette; components keep using slate-* /
+ * emerald-* / amber-* / red-* etc., so the whole UI follows it from here.
+ */
+@theme inline {
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-display: var(--font-poppins), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+}
+
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-ink: #11120d;     /* Smoky Black: sidebar, primary buttons, headings */
+  --color-paper: #fdfcf8;   /* Off White: page background */
+  --color-olive: #565449;   /* Olive Drab: the accent */
+  --color-ok: #16a34a;      /* approved */
+  --color-warn: #f59e0b;    /* pending / awaiting */
+  --color-danger: #dc2626;  /* no bid / rejected */
+
+  --color-slate-50: #fdfcf8;
+  --color-slate-100: #f4f3ee;
+  --color-slate-200: #e8e7e1;  /* borders */
+  --color-slate-300: #d5d4cc;
+  --color-slate-400: #a2a097;
+  --color-slate-500: #6d6b62;  /* muted text (AA on white) */
+  --color-slate-600: #565449;  /* Olive Drab */
+  --color-slate-700: #3b3a32;
+  --color-slate-800: #23231d;
+  --color-slate-900: #11120d;  /* Smoky Black */
+  --color-slate-950: #0a0a07;
+
+  /* info, links, "running": Olive Drab tints (the accent) */
+  --color-sky-50: #f3f3ef;
+  --color-sky-100: #e9e8e1;
+  --color-sky-200: #d6d4cb;
+  --color-sky-400: #8a887c;
+  --color-sky-600: #565449;
+  --color-sky-700: #45443a;
+  --color-sky-800: #33322a;
+
+  /* approved / meets: bright green */
+  --color-emerald-50: #ecfbf1;
+  --color-emerald-200: #b7ecc8;
+  --color-emerald-600: #16a34a;
+  --color-emerald-800: #15703a;
+
+  /* pending / awaiting: bright orange */
+  --color-amber-50: #fff6e5;
+  --color-amber-200: #fcdca0;
+  --color-amber-600: #f59e0b;
+  --color-amber-800: #a85a04;
+  --color-amber-900: #7c4204;
+
+  /* no bid / gap: bright red */
+  --color-red-50: #fef1f1;
+  --color-red-200: #fbc8c8;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-800: #b11d1d;
+
+  /* awaiting a human: same family as pending */
+  --color-violet-50: #fff6e5;
+  --color-violet-200: #fcdca0;
+  --color-violet-600: #f59e0b;
+  --color-violet-800: #a85a04;
+
+  --shadow-card: 0 1px 2px rgb(28 36 48 / 0.05), 0 2px 8px -2px rgb(28 36 48 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(28 36 48 / 0.05), 0 12px 24px -8px rgb(28 36 48 / 0.14);
 }
 
 /* Light theme only: native inputs and scrollbars should match it. */
@@ -11,7 +78,36 @@
 
 html,
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-paper font-sans text-slate-800 antialiased;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-display tracking-tight text-slate-900;
+}
+
+input,
+textarea,
+select {
+  @apply rounded-lg bg-white;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-olive;
+}
+
+[role="tab"]:focus-visible {
+  @apply outline-none bg-slate-100;
+}
+
+::selection {
+  background: #d6d4cb;
+  color: #11120d;
 }
 
 /* Long verbatim tender clauses wrap instead of stretching tables. */

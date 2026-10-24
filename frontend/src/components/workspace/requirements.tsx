@@ -22,14 +22,16 @@ export function RequirementsMatrix({ items, requirements, onOpen }: {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
+        <div className="inline-flex divide-x divide-slate-200 overflow-hidden rounded-md border border-slate-200 bg-white">
         {FILTERS.map((f) => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${filter === f ?
-              "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-600 ring-slate-300"}`}>
+            className={`px-3 py-1.5 text-xs font-medium transition-colors ${filter === f ?
+              "bg-slate-100 text-slate-900" : "text-slate-500 hover:text-slate-800"}`}>
             {f === "hard_gates" ? `Hard gates (${items.filter((c) => c.hard_gate).length})` :
               f === "all" ? `All (${items.length})` : `Unchecked (${items.filter((c) => c.status === "needs_human").length})`}
           </button>
         ))}
+        </div>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search requirements"
           className="ml-auto w-64 rounded-md border border-slate-300 px-3 py-1.5 text-sm" />
       </div>
