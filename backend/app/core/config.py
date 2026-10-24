@@ -74,6 +74,8 @@ class Settings(BaseSettings):
     # --- Tracing ---
     langsmith_tracing: bool = Field(default=False, alias="LANGSMITH_TRACING")
     langsmith_project: str = Field(default="tenderbridge", alias="LANGSMITH_PROJECT")
+    # Only for EU accounts: https://eu.api.smith.langchain.com (US accounts leave it empty)
+    langsmith_endpoint: str | None = Field(default=None, alias="LANGSMITH_ENDPOINT")
 
     # --- Budget ---
     max_cost_usd: float = Field(default=5.0, alias="MAX_COST_USD")
