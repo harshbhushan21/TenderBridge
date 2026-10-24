@@ -37,7 +37,7 @@ export function Overview({ tender, assessment, keyFacts, compliance, onOpen, onD
               <div key={c.key}>
                 <div className="flex justify-between text-xs"><span>{c.label} · {c.weight.toFixed(0)}%</span>
                   <span className="font-medium">{c.raw_score.toFixed(2)}</span></div>
-                <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-slate-700"
+                <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-olive"
                   style={{ width: `${Math.min(100, c.raw_score)}%` }} /></div>
               </div>
             ))}

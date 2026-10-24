@@ -49,10 +49,10 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function Button({ variant = "primary", loading, disabled, className, children, ...rest }: ButtonProps) {
   const styles = {
-    primary: "bg-midnight text-white shadow-sm hover:bg-slate-700 disabled:bg-slate-400 disabled:shadow-none",
-    success: "bg-olive text-white shadow-sm hover:bg-emerald-800 disabled:bg-slate-400 disabled:shadow-none",
+    primary: "bg-ink text-white shadow-sm hover:bg-slate-700 disabled:bg-slate-400 disabled:shadow-none",
+    success: "bg-ok text-white shadow-sm hover:bg-emerald-800 disabled:bg-slate-400 disabled:shadow-none",
     secondary: "bg-white text-slate-800 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 hover:ring-slate-400 disabled:text-slate-400",
-    danger: "bg-merlot text-white shadow-sm hover:bg-red-600 disabled:bg-red-200 disabled:shadow-none",
+    danger: "bg-danger text-white shadow-sm hover:bg-red-800 disabled:bg-red-200 disabled:shadow-none",
     ghost: "text-slate-700 hover:bg-slate-100 disabled:text-slate-400",
   }[variant];
   return (
@@ -106,7 +106,7 @@ export function Tabs<T extends string>({ tabs, value, onChange }: {
       {tabs.map((t) => (
         <button key={t.id} role="tab" aria-selected={value === t.id} onClick={() => onChange(t.id)}
           className={cn("-mb-px whitespace-nowrap border-b-2 px-3.5 py-2.5 text-sm font-medium transition-colors",
-            value === t.id ? "border-slate-900 font-semibold text-slate-900"
+            value === t.id ? "border-olive font-semibold text-slate-900"
               : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800")}>
           {t.label}
         </button>

@@ -10,7 +10,7 @@ import { api } from "@/lib/api";
 import { cn, daysUntil, formatDateTime, formatScore, statusTone } from "@/lib/formatting";
 import type { TenderView } from "@/lib/types";
 
-const RAIL = { green: "bg-olive", amber: "bg-tobacco", red: "bg-merlot" } as Record<string, string>;
+const RAIL = { green: "bg-ok", amber: "bg-warn", red: "bg-danger" } as Record<string, string>;
 
 function Metric({ icon, label, value, hint, accent }: {
   icon: ReactNode; label: string; value: ReactNode; hint?: ReactNode; accent?: boolean;
@@ -18,7 +18,7 @@ function Metric({ icon, label, value, hint, accent }: {
   return (
     <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-card">
       <span className={cn("grid size-9 shrink-0 place-items-center rounded-lg",
-        accent ? "bg-tobacco/10 text-tobacco" : "bg-slate-100 text-slate-700")}>{icon}</span>
+        accent ? "bg-amber-50 text-amber-800" : "bg-sky-50 text-olive")}>{icon}</span>
       <div className="min-w-0">
         <div className="text-xs font-medium text-slate-500">{label}</div>
         <div className="font-display text-xl font-semibold text-slate-900">{value}</div>
@@ -45,15 +45,15 @@ function TenderCard({ t }: { t: TenderView }) {
         </div>
         <Badge solid status={t.status} />
       </div>
-      <dl className="mx-5 mt-4 grid grid-cols-3 gap-4 border-t border-slate-200 pt-3 text-sm">
+      <dl className="mx-5 mb-4 mt-4 grid grid-cols-3 gap-4 border-t border-slate-200 pt-3 text-sm">
         <div><dt className="text-xs text-slate-500">Recommendation</dt>
           <dd className="mt-1">{a ? <Badge status={a.recommendation} /> : <span className="text-slate-400">Not analysed</span>}</dd></div>
         <div><dt className="text-xs text-slate-500">Score</dt>
           <dd className="mt-0.5 font-display text-lg font-semibold text-slate-900">{a ? formatScore(a.score) : "—"}</dd></div>
         <div><dt className="text-xs text-slate-500">Gate 1</dt><dd className="mt-1"><Badge status={t.approvalStatus} /></dd></div>
       </dl>
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-50 px-5 py-2.5 text-xs">
-        <span className={cn("flex items-center gap-1.5", soon ? "font-medium text-tobacco" : "text-slate-500")}>
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-200 bg-slate-100/60 px-5 py-2.5 text-xs">
+        <span className={cn("flex items-center gap-1.5", soon ? "font-medium text-amber-800" : "text-slate-500")}>
           <CalendarClock className="size-3.5" />
           {t.submissionDeadline ? <>Due {formatDateTime(t.submissionDeadline)}
             {days !== null && ` · ${days >= 0 ? `${days} days left` : `closed ${-days} days ago`}`}</> : "No deadline yet"}

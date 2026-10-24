@@ -29,9 +29,9 @@ export function Shell({ children }: { children: ReactNode }) {
   const initials = identity.label.split(" ").map((w) => w[0]).join("");
   return (
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-midnight text-slate-300 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-ink text-slate-300 md:flex">
         <Link href="/" className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
-          <span className="grid size-8 place-items-center rounded-md bg-bone text-midnight">
+          <span className="grid size-8 place-items-center rounded-md bg-olive text-white">
             <FileSearch className="size-[18px]" />
           </span>
           <span className="font-display text-[17px] font-semibold text-white">TenderBridge</span>
@@ -43,9 +43,9 @@ export function Shell({ children }: { children: ReactNode }) {
             return (
               <Link key={href} href={href}
                 className={cn("relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  active ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white")}>
-                {active && <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-tobacco" />}
-                <Icon className={cn("size-4", active ? "text-bone" : "text-slate-400")} /> {label}
+                  active ? "bg-olive/45 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white")}>
+                {active && <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-olive" />}
+                <Icon className={cn("size-4", active ? "text-white" : "text-slate-400")} /> {label}
               </Link>
             );
           })}
@@ -57,7 +57,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <span className="md:hidden">TenderBridge · </span>{section(pathname)}
           </span>
           <label className="relative flex cursor-pointer items-center gap-2.5 rounded-lg border border-slate-200 py-1 pl-1 pr-2 hover:border-slate-300">
-            <span className="grid size-7 place-items-center rounded-md bg-midnight text-[11px] font-semibold text-bone">{initials}</span>
+            <span className="grid size-7 place-items-center rounded-md bg-olive text-[11px] font-semibold text-white">{initials}</span>
             <span className="hidden text-left leading-tight sm:block">
               <span className="block text-xs font-semibold text-slate-900">{identity.label}</span>
               <span className="block text-[11px] text-slate-500">{identity.user}</span>

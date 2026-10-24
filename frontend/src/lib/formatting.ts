@@ -75,12 +75,12 @@ export const toneClasses: Record<Tone, string> = {
 
 /** Filled labels for the states a reader must not miss (tender status, recommendation, gate decisions). */
 export const solidToneClasses: Record<Tone, string> = {
-  green: "bg-olive text-white",
-  amber: "bg-tobacco text-white",
-  red: "bg-merlot text-white",
-  blue: "bg-slate-700 text-white",
-  slate: "bg-bone text-graphite",
-  violet: "bg-midnight text-bone",
+  green: "bg-ok text-white",
+  amber: "bg-warn text-ink",
+  red: "bg-danger text-white",
+  blue: "bg-olive text-white",
+  slate: "bg-slate-200 text-ink",
+  violet: "bg-warn text-ink",
 };
 
 const STATUS_TONES: Record<string, Tone> = {

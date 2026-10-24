@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 /*
- * Brand palette: Bone #E6E0D6 (lifted towards white for surfaces) · Midnight Blue #1C2430 ·
- * Graphite #121212 · Olive #6B6F4E · Tobacco #8A5A2B · Merlot #4B1E23.
- * The neutral scale ("slate") is rebuilt from Bone and Midnight Blue: light shades for surfaces,
- * dark ones for accents. Olive / Tobacco / Merlot carry success / warning / error. Components keep
- * using slate-* / emerald-* / amber-* / red-* etc., so the whole UI follows the palette from here.
+ * Brand palette: Smoky Black #11120D · Off White #FDFCF8 · Olive Drab #565449 (the one accent).
+ * White and black carry the page; olive marks focus, selection and the active item. Status alone
+ * uses bright colours: green = approved / meets, orange = pending / awaiting, red = no bid / gap.
+ * The neutral scale ("slate") is rebuilt from the palette; components keep using slate-* /
+ * emerald-* / amber-* / red-* etc., so the whole UI follows it from here.
  */
 @theme inline {
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
@@ -13,60 +13,59 @@
 }
 
 @theme {
-  /* brand colours, used directly for emphasis (solid status labels, accents) */
-  --color-bone: #e6e0d6;
-  --color-merlot: #4b1e23;
-  --color-olive: #6b6f4e;
-  --color-midnight: #1c2430;
-  --color-tobacco: #8a5a2b;
-  --color-graphite: #121212;
+  --color-ink: #11120d;     /* Smoky Black: sidebar, primary buttons, headings */
+  --color-paper: #fdfcf8;   /* Off White: page background */
+  --color-olive: #565449;   /* Olive Drab: the accent */
+  --color-ok: #16a34a;      /* approved */
+  --color-warn: #f59e0b;    /* pending / awaiting */
+  --color-danger: #dc2626;  /* no bid / rejected */
 
-  --color-slate-50: #f5f2ec;   /* Bone, whitened: page background */
-  --color-slate-100: #f0ece5;
-  --color-slate-200: #e6e0d6;  /* Bone: borders */
-  --color-slate-300: #d4cdc1;
-  --color-slate-400: #a29e96;
-  --color-slate-500: #6c6b68;  /* muted text (AA on white) */
-  --color-slate-600: #4e525a;
-  --color-slate-700: #343b47;
-  --color-slate-800: #252c38;
-  --color-slate-900: #1c2430;  /* Midnight Blue */
-  --color-slate-950: #121212;  /* Graphite */
+  --color-slate-50: #fdfcf8;
+  --color-slate-100: #f4f3ee;
+  --color-slate-200: #e8e7e1;  /* borders */
+  --color-slate-300: #d5d4cc;
+  --color-slate-400: #a2a097;
+  --color-slate-500: #6d6b62;  /* muted text (AA on white) */
+  --color-slate-600: #565449;  /* Olive Drab */
+  --color-slate-700: #3b3a32;
+  --color-slate-800: #23231d;
+  --color-slate-900: #11120d;  /* Smoky Black */
+  --color-slate-950: #0a0a07;
 
-  /* info / links: Midnight Blue tints */
-  --color-sky-50: #eef0f3;
-  --color-sky-100: #e2e6eb;
-  --color-sky-200: #c9d0d9;
-  --color-sky-400: #7b8696;
-  --color-sky-600: #3d4859;
-  --color-sky-700: #2b3443;
-  --color-sky-800: #1c2430;
+  /* info, links, "running": Olive Drab tints (the accent) */
+  --color-sky-50: #f3f3ef;
+  --color-sky-100: #e9e8e1;
+  --color-sky-200: #d6d4cb;
+  --color-sky-400: #8a887c;
+  --color-sky-600: #565449;
+  --color-sky-700: #45443a;
+  --color-sky-800: #33322a;
 
-  /* success: Olive */
-  --color-emerald-50: #f2f3ec;
-  --color-emerald-200: #d7d9c6;
-  --color-emerald-600: #6b6f4e;
-  --color-emerald-800: #4a4d34;
+  /* approved / meets: bright green */
+  --color-emerald-50: #ecfbf1;
+  --color-emerald-200: #b7ecc8;
+  --color-emerald-600: #16a34a;
+  --color-emerald-800: #15703a;
 
-  /* warning: Tobacco */
-  --color-amber-50: #f8f1e8;
-  --color-amber-200: #e9d6bf;
-  --color-amber-600: #8a5a2b;
-  --color-amber-800: #6b4420;
-  --color-amber-900: #4f3218;
+  /* pending / awaiting: bright orange */
+  --color-amber-50: #fff6e5;
+  --color-amber-200: #fcdca0;
+  --color-amber-600: #f59e0b;
+  --color-amber-800: #a85a04;
+  --color-amber-900: #7c4204;
 
-  /* error: Merlot */
-  --color-red-50: #f7eeee;
-  --color-red-200: #e4cacc;
-  --color-red-500: #85404a;
-  --color-red-600: #6e2a32;
-  --color-red-800: #4b1e23;
+  /* no bid / gap: bright red */
+  --color-red-50: #fef1f1;
+  --color-red-200: #fbc8c8;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-800: #b11d1d;
 
-  /* awaiting a human: dusk, between Merlot and Midnight Blue */
-  --color-violet-50: #f2eff3;
-  --color-violet-200: #d9d1db;
-  --color-violet-600: #5e4a63;
-  --color-violet-800: #42324a;
+  /* awaiting a human: same family as pending */
+  --color-violet-50: #fff6e5;
+  --color-violet-200: #fcdca0;
+  --color-violet-600: #f59e0b;
+  --color-violet-800: #a85a04;
 
   --shadow-card: 0 1px 2px rgb(28 36 48 / 0.05), 0 2px 8px -2px rgb(28 36 48 / 0.06);
   --shadow-lift: 0 2px 4px rgb(28 36 48 / 0.05), 0 12px 24px -8px rgb(28 36 48 / 0.14);
@@ -79,7 +78,7 @@
 
 html,
 body {
-  @apply bg-slate-50 font-sans text-slate-800 antialiased;
+  @apply bg-paper font-sans text-slate-800 antialiased;
 }
 
 h1,
@@ -99,7 +98,7 @@ textarea:focus-visible,
 select:focus-visible,
 button:focus-visible,
 a:focus-visible {
-  @apply outline-2 outline-offset-2 outline-slate-700;
+  @apply outline-2 outline-offset-2 outline-olive;
 }
 
 [role="tab"]:focus-visible {
@@ -107,8 +106,8 @@ a:focus-visible {
 }
 
 ::selection {
-  background: #e6e0d6;
-  color: #121212;
+  background: #d6d4cb;
+  color: #11120d;
 }
 
 /* Long verbatim tender clauses wrap instead of stretching tables. */

@@ -104,7 +104,7 @@ export default function AgentOpsPage() {
                   : entries.map(([node, ms]) => (
                     <div key={node}>
                       <div className="flex justify-between text-xs"><span>{humanize(node)}</span><span>{ms.toFixed(0)} ms</span></div>
-                      <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-slate-700" style={{ width: `${(ms / max) * 100}%` }} /></div>
+                      <div className="h-1.5 rounded bg-slate-100"><div className="h-1.5 rounded bg-olive" style={{ width: `${(ms / max) * 100}%` }} /></div>
                     </div>
                   ));
               })()}
