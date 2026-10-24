@@ -9,13 +9,18 @@ from backend.app.agents.nodes.core import (
     extract_key_facts,
     finalize,
     gate1_review,
+    gate2_review,
     intake_guard,
     load_tender,
     merge_and_dedupe,
+    plan_response,
     reconcile_corrigenda,
+    rewrite_failed,
     route_requirements,
     shred_requirements,
+    verify_claims,
     write_no_bid_report,
+    write_sections,
 )
 from backend.app.ops.events import emit_event
 from backend.app.schemas.graph_state import TenderState
@@ -28,6 +33,13 @@ def _after_intake(state: TenderState) -> str:
 def _after_score(state: TenderState) -> str:
     assessment = state.get("assessment") or {}
     return "write_no_bid_report" if assessment.get("recommendation") == "NO_BID" else "finalize"
+
+
+def _after_gate1(state: TenderState) -> str:
+    decision = state.get("gate1_decision") or {}
+    if state.get("drafting_requested") and decision.get("action") == "approve_bid":
+        return "plan_response"
+    return "write_no_bid_report" if decision.get("action") == "approve_no_bid" else "finalize"
 
 
 def build_graph(*, checkpointer: Any = None):
@@ -72,8 +84,10 @@ def build_graph(*, checkpointer: Any = None):
         "shred_requirements": shred_requirements, "merge_and_dedupe": merge_and_dedupe,
         "extract_key_facts": extract_key_facts, "reconcile_corrigenda": reconcile_corrigenda,
         "route_requirements": route_requirements, "eligibility_and_risk": eligibility_and_risk,
-        "bid_score": bid_score, "gate1_review": gate1_review,
-        "write_no_bid_report": write_no_bid_report, "finalize": finalize,
+        "bid_score": bid_score, "gate1_review": gate1_review, "gate2_review": gate2_review,
+        "write_no_bid_report": write_no_bid_report, "plan_response": plan_response,
+        "write_sections": write_sections, "verify_claims": verify_claims,
+        "rewrite_failed": rewrite_failed, "finalize": finalize,
     }.items():
         graph.add_node(name, instrument(name, fn))
     graph.add_edge(START, "intake_guard")
@@ -86,8 +100,13 @@ def build_graph(*, checkpointer: Any = None):
     graph.add_edge("route_requirements", "eligibility_and_risk")
     graph.add_edge("eligibility_and_risk", "bid_score")
     graph.add_edge("bid_score", "gate1_review")
-    graph.add_conditional_edges("gate1_review", _after_score)
+    graph.add_conditional_edges("gate1_review", _after_gate1)
     graph.add_edge("write_no_bid_report", "finalize")
+    graph.add_edge("plan_response", "write_sections")
+    graph.add_edge("write_sections", "verify_claims")
+    graph.add_edge("verify_claims", "rewrite_failed")
+    graph.add_edge("rewrite_failed", "gate2_review")
+    graph.add_edge("gate2_review", "finalize")
     graph.add_edge("finalize", END)
     return graph.compile(checkpointer=checkpointer)
 
