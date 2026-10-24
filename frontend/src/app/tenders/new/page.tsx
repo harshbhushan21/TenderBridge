@@ -57,7 +57,7 @@ export default function NewTender() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">New tender</h1>
+        <h1 className="text-2xl font-semibold">New tender</h1>
         <p className="text-sm text-slate-500">
           Upload the original pack (notice, RFP, annexures, price schedule). A corrigendum is added later, to the
           same tender, from its Documents tab.

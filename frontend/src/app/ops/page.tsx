@@ -28,7 +28,7 @@ export default function AgentOpsPage() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">AgentOps</h1>
+          <h1 className="text-2xl font-semibold">AgentOps</h1>
           <p className="text-sm text-slate-500">Cost, latency, evaluation scores and guardrail events, measured from real runs.</p>
         </div>
         {tracing?.tracing ? (

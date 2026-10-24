@@ -15,7 +15,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Tenders</h1>
+          <h1 className="text-2xl font-semibold">Tenders</h1>
           <p className="text-sm text-slate-500">Every recommendation waits for a person at Gate 1.</p>
         </div>
         <Link href="/tenders/new"><Button><PlusCircle className="size-4" /> New tender</Button></Link>

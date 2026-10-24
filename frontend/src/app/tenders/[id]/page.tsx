@@ -56,7 +56,7 @@ export default function TenderWorkspace() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">{t.title}</h1>
+          <h1 className="text-2xl font-semibold">{t.title}</h1>
           <p className="text-sm text-slate-500">{t.tenderId}{t.buyer ? ` · ${t.buyer}` : ""} · version {t.currentVersion}
             {t.submissionDeadline ? ` · bids due ${formatDateTime(t.submissionDeadline)}` : ""}</p>
         </div>
