@@ -23,15 +23,21 @@ MANAGER = {"user_id": "bid.manager@nimbus.example", "role": "bid_manager"}
 def test_restart_marks_orphaned_runs_failed_but_keeps_gate1_pauses():
     prepare_v1(TENDER, data_dir=DATA)
     with session_scope() as s:
-        for run_id, status in (("RUN-ORPHAN", "running"), ("RUN-PAUSED", "awaiting_human")):
+        for run_id, status, host in (("RUN-ORPHAN", "running", runner.RUNNER_HOST),
+                                     ("RUN-PAUSED", "awaiting_human", runner.RUNNER_HOST),
+                                     ("RUN-OTHER-LAPTOP", "running", "harsh-laptop")):
             s.add(m.AnalysisRun(run_id=run_id, tender_id=TENDER, version=1, thread_id=f"t-{run_id}",
-                                status=status, mode="full_analysis", analysis_mode="focused"))
-    assert "RUN-ORPHAN" in recover_interrupted_runs()
+                                status=status, mode="full_analysis", analysis_mode="focused",
+                                usage={"runner_host": host}))
+    recovered = recover_interrupted_runs()
+    assert "RUN-ORPHAN" in recovered and "RUN-OTHER-LAPTOP" not in recovered
     with session_scope() as s:
         assert s.get(m.AnalysisRun, "RUN-ORPHAN").status == "failed"
         assert "restart" in s.get(m.AnalysisRun, "RUN-ORPHAN").error
         assert s.get(m.AnalysisRun, "RUN-PAUSED").status == "awaiting_human"
-        s.delete(s.get(m.AnalysisRun, "RUN-PAUSED"))  # not a real paused graph
+        assert s.get(m.AnalysisRun, "RUN-OTHER-LAPTOP").status == "running"  # another server's live run
+        for run_id in ("RUN-PAUSED", "RUN-OTHER-LAPTOP"):
+            s.delete(s.get(m.AnalysisRun, run_id))  # not real graphs
 
 
 def test_second_concurrent_gate1_decision_is_refused(monkeypatch):

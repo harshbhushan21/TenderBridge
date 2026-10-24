@@ -1,6 +1,7 @@
 """Background analysis runner with durable run state and Gate 1 resume support."""
 from __future__ import annotations
 
+import socket
 import threading
 import uuid
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -21,6 +22,7 @@ from backend.app.ops.events import emit_event
 from backend.app.ops.langsmith import configure_tracing, continue_trace, current_parent_headers, traceable
 
 _executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="tenderbridge-run")
+RUNNER_HOST = socket.gethostname()  # several laptops may share one (cloud) database
 _futures: dict[str, Future] = {}
 _lock = threading.Lock()
 
@@ -170,7 +172,7 @@ def start_run(tender_id: str, *, version: int | None = None,
             **amendment_state,
             "sections": [s.model_dump(mode="json") for s in sections],
             "flags": [], "raw_requirements": [], "requirements": [], "compliance": [],
-            "risks": [], "errors": [],
+            "risks": [], "errors": [], "runner_host": RUNNER_HOST,
         }
         upsert_run(session, state, status="queued")
     _track(run_id, _executor.submit(_execute, state, parent=current_parent_headers()))
@@ -186,8 +188,8 @@ def resume_run(run_id: str, decision: dict[str, Any]) -> dict[str, Any]:
         if run is None:
             raise ValueError(f"analysis run '{run_id}' not found")
         state = {"analysis_run_id": run_id, "tender_id": run.tender_id,
-                 "tender_version": run.version, "gate1_decision": decision,
-                 "usage": {k: v for k, v in (run.usage or {}).items() if k != "node_timings"}}
+                 "tender_version": run.version, "gate1_decision": decision, "runner_host": RUNNER_HOST,
+                 "usage": {k: v for k, v in (run.usage or {}).items() if k not in ("node_timings", "runner_host")}}
     _track(run_id, _executor.submit(_execute, state, resume=decision, parent=current_parent_headers()))
     return {"analysis_run_id": run_id, "status": "resuming"}
 
@@ -205,7 +207,8 @@ def cancel_run(run_id: str) -> bool:
 def recover_interrupted_runs() -> list[str]:
     """Runs left queued/running/resuming by a stopped server can never finish: mark them failed so
     the tender can be analysed again. Runs paused at Gate 1 are untouched (the checkpoint resumes
-    them). Assumes one API process owns the runner (the default `dev.py api`)."""
+    them). Only runs started on this machine are touched: with a shared database, another
+    laptop's live runs are not ours to fail (runs from before owners were recorded are)."""
     from sqlalchemy import select
 
     from backend.app.db.models import AnalysisRun
@@ -213,7 +216,8 @@ def recover_interrupted_runs() -> list[str]:
     with session_scope() as session:
         for run in session.scalars(select(AnalysisRun).where(
                 AnalysisRun.status.in_(("queued", "running", "resuming")))):
-            if is_active(run.run_id):
+            owner = (run.usage or {}).get("runner_host")
+            if is_active(run.run_id) or (owner and owner != RUNNER_HOST):
                 continue
             upsert_run(session, {"analysis_run_id": run.run_id, "tender_id": run.tender_id,
                                  "tender_version": run.version}, status="failed",
