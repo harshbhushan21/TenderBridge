@@ -8,12 +8,18 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any
 
 from backend.app.agents.checkpoint import get_checkpointer
-from backend.app.agents.graph import build_graph
-from backend.app.agents.persistence import load_compliance, persist_state, thread_id_for, upsert_run
+from backend.app.agents.graph import build_drafting_graph, build_graph
+from backend.app.agents.persistence import (
+    load_compliance,
+    persist_drafts,
+    persist_state,
+    thread_id_for,
+    upsert_run,
+)
 from backend.app.core.config import get_settings
 from backend.app.db.engine import session_scope
 from backend.app.db.repositories.amendments import confirmed_for_version
-from backend.app.db.repositories.analysis import latest_run, run_to_dict
+from backend.app.db.repositories.analysis import DRAFTING, latest_run, run_to_dict
 from backend.app.db.repositories.tenders import get_tender
 from backend.app.ingestion.tender_ingest import load_effective_sections
 from backend.app.llm.budget import bind_budget, new_budget
@@ -76,7 +82,8 @@ def _run_graph(state: dict[str, Any], resume: dict[str, Any] | None, budget: Any
     run_id = state["analysis_run_id"]
     meta = {"tender_id": state["tender_id"], "tender_version": state["tender_version"],
             "analysis_run_id": run_id, "mode": state.get("mode"), "thread_id": _thread_id(run_id)}
-    compiled = build_graph(checkpointer=get_checkpointer())
+    drafting = state.get("mode") == DRAFTING
+    compiled = (build_drafting_graph if drafting else build_graph)(checkpointer=get_checkpointer())
     config: dict[str, Any] = {"configurable": {"thread_id": _thread_id(run_id)}, "metadata": meta,
                               "run_name": "tenderbridge_graph", "tags": ["tenderbridge", f"v{state['tender_version']}"]}
     if resume is not None:
@@ -89,14 +96,9 @@ def _run_graph(state: dict[str, Any], resume: dict[str, Any] | None, budget: Any
         result = {**checkpoint_state.values, **result}
     result.pop("_session", None)
     result["usage"] = budget.snapshot()
-    next_nodes = set(checkpoint_state.next if checkpoint_state else ())
-    result["run_status"] = "awaiting_human" if (
-        result.get("gate1_decision") is None
-        or result.get("gate2_pending")
-        or "gate2_review" in next_nodes
-    ) else "completed"
+    # Paused at an interrupt (Gate 1 or Gate 2) <=> the checkpoint still has nodes to run.
+    result["run_status"] = "awaiting_human" if checkpoint_state and checkpoint_state.next else "completed"
     return result
-
 
 
 def _execute(state: dict[str, Any], *, resume: dict[str, Any] | None = None,
@@ -118,14 +120,16 @@ def _execute_traced(state: dict[str, Any], *, resume: dict[str, Any] | None = No
                   version=state["tender_version"], run_id=run_id, session=session)
         emit_event(run_id=run_id, tender_id=state["tender_id"], version=state["tender_version"],
                    event="run_started", status="running")
+        drafting = state.get("mode") == DRAFTING
+        gate = "gate2" if drafting else "gate1"
         result = _run_graph(state, resume, budget, langsmith_extra={
-            "name": "gate1_resume" if resume is not None else "analysis_run",
+            "name": f"{gate}_resume" if resume is not None else ("drafting_run" if drafting else "analysis_run"),
             "metadata": {"tender_id": state["tender_id"], "tender_version": state["tender_version"],
                          "analysis_run_id": run_id, "mode": state.get("mode"), "thread_id": _thread_id(run_id)},
-            "tags": ["tenderbridge", "gate1" if resume is not None else "analysis"]})
+            "tags": ["tenderbridge", gate if resume is not None else ("drafting" if drafting else "analysis")]})
         status = result["run_status"]
         with session_scope() as session:
-            persist_state(session, result)
+            (persist_drafts if drafting else persist_state)(session, result)
             audit("agent:runner", f"analysis.{status}", tender_id=state["tender_id"],
                   version=state["tender_version"], run_id=run_id, session=session)
         emit_event(run_id=run_id, tender_id=state["tender_id"], version=state["tender_version"],
@@ -147,9 +151,7 @@ def _execute_traced(state: dict[str, Any], *, resume: dict[str, Any] | None = No
 def start_run(tender_id: str, *, version: int | None = None,
               analysis_mode: str | None = None, mode: str = "full_analysis",
               previous_run_id: str | None = None,
-              scoring_factors: dict[str, float] | None = None,
-              drafting_requested: bool = False,
-              gate1_decision: dict[str, Any] | None = None) -> dict[str, Any]:
+              scoring_factors: dict[str, float] | None = None) -> dict[str, Any]:
     configure_tracing()  # idempotent; CLI entry points reach the runner without the API lifespan
     with session_scope() as session:
         tender = get_tender(session, tender_id)
@@ -176,8 +178,6 @@ def start_run(tender_id: str, *, version: int | None = None,
             "mode": mode, "analysis_mode": analysis_mode or tender.analysis_mode,
             "previous_run_id": previous_run_id,
             "scoring_factors": scoring_factors or {},
-            "drafting_requested": drafting_requested,
-            "gate1_decision": gate1_decision,
             **amendment_state,
             "sections": [s.model_dump(mode="json") for s in sections],
             "flags": [], "raw_requirements": [], "requirements": [], "compliance": [],
@@ -189,6 +189,27 @@ def start_run(tender_id: str, *, version: int | None = None,
             "tender_version": chosen_version}
 
 
+def start_drafting_run(tender_id: str, version: int, base_run_id: str, gate1_decision: dict[str, Any]
+                       ) -> dict[str, Any]:
+    """Draft the response on the persisted analysis of `base_run_id` (no re-analysis)."""
+    from backend.app.agents.persistence import load_assessment, load_requirements
+
+    configure_tracing()
+    with session_scope() as session:
+        run_id = f"RUN-{uuid.uuid4().hex[:10].upper()}"
+        state: dict[str, Any] = {
+            "tender_id": tender_id, "tender_version": version, "analysis_run_id": run_id,
+            "company_id": get_settings().default_company_id, "mode": DRAFTING,
+            "previous_run_id": base_run_id, "gate1_decision": gate1_decision,
+            "requirements": load_requirements(session, tender_id, version, base_run_id),
+            "assessment": load_assessment(session, tender_id, version, base_run_id),
+            "drafts": [], "verifier_reports": [], "errors": [], "runner_host": RUNNER_HOST,
+        }
+        upsert_run(session, state, status="queued")
+    _track(run_id, _executor.submit(_execute, state, parent=current_parent_headers()))
+    return {"analysis_run_id": run_id, "thread_id": _thread_id(run_id), "tender_version": version}
+
+
 def resume_run(run_id: str, decision: dict[str, Any]) -> dict[str, Any]:
     from backend.app.db.models import AnalysisRun
     configure_tracing()
@@ -197,7 +218,7 @@ def resume_run(run_id: str, decision: dict[str, Any]) -> dict[str, Any]:
         if run is None:
             raise ValueError(f"analysis run '{run_id}' not found")
         state = {"analysis_run_id": run_id, "tender_id": run.tender_id,
-                 "tender_version": run.version, "gate1_decision": decision, "runner_host": RUNNER_HOST,
+                 "tender_version": run.version, "mode": run.mode, "runner_host": RUNNER_HOST,
                  "usage": {k: v for k, v in (run.usage or {}).items() if k not in ("node_timings", "runner_host")}}
     _track(run_id, _executor.submit(_execute, state, resume=decision, parent=current_parent_headers()))
     return {"analysis_run_id": run_id, "status": "resuming"}

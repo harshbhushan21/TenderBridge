@@ -11,12 +11,16 @@ from backend.app.agents.nodes.core import (
     intake_guard,
     load_tender,
     merge_and_dedupe,
-    plan_response,
     reconcile_corrigenda,
     route_requirements,
     shred_requirements,
-    verify_claims,
     write_no_bid_report,
+)
+from backend.app.agents.nodes.drafting import (
+    gate2_review,
+    plan_response,
+    rewrite_failed,
+    verify_claims,
     write_sections,
 )
 
@@ -25,5 +29,5 @@ __all__ = [
     "extract_key_facts", "route_requirements", "eligibility_and_risk",
     "bid_score", "reconcile_corrigenda", "plan_response", "write_sections",
     "verify_claims", "final_compliance_check", "human_gate_1", "human_gate_2",
-    "write_no_bid_report", "finalize",
+    "write_no_bid_report", "finalize", "rewrite_failed", "gate2_review",
 ]

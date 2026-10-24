@@ -6,14 +6,23 @@ from sqlalchemy.orm import Session
 
 from backend.app.db.models import AnalysisRun, BidAssessmentRow, ExportRow, ReviewRow, SectionDraftRow
 
+DRAFTING = "drafting"
+
 
 def latest_run(session: Session, tender_id: str, version: int | None = None,
                *, completed_only: bool = False) -> AnalysisRun | None:
-    q = select(AnalysisRun).where(AnalysisRun.tender_id == tender_id)
+    """Latest analysis run (drafting runs never hold analysis results, so they are skipped)."""
+    q = select(AnalysisRun).where(AnalysisRun.tender_id == tender_id, AnalysisRun.mode != DRAFTING)
     if version is not None:
         q = q.where(AnalysisRun.version == version)
     if completed_only:
         q = q.where(AnalysisRun.status.in_(("completed", "awaiting_human")))
+    return session.scalars(q.order_by(AnalysisRun.started_at.desc(), AnalysisRun.run_id.desc())).first()
+
+
+def latest_drafting_run(session: Session, tender_id: str, version: int) -> AnalysisRun | None:
+    q = select(AnalysisRun).where(AnalysisRun.tender_id == tender_id, AnalysisRun.version == version,
+                                  AnalysisRun.mode == DRAFTING)
     return session.scalars(q.order_by(AnalysisRun.started_at.desc(), AnalysisRun.run_id.desc())).first()
 
 
