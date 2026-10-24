@@ -11,6 +11,7 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 
+from backend.app.exports.citations import cite
 from backend.app.schemas.assessment import BidAssessment
 from backend.app.schemas.documents import SourceSpan
 from backend.app.schemas.eligibility import ComplianceItem, RiskItem
@@ -48,7 +49,7 @@ def _span_text(span: SourceSpan | None, max_quote: int = 200) -> str:
     quote = (span.text_span or "").replace("\n", " ").strip()
     if len(quote) > max_quote:
         quote = quote[: max_quote - 1] + "…"
-    return f"{span.short()}: \"{quote}\"" if quote else span.short()
+    return f"{cite(span)}: \"{quote}\"" if quote else cite(span)
 
 
 def _spans_text(spans: Iterable[SourceSpan]) -> str:
@@ -91,7 +92,7 @@ def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list[An
             if fill:
                 ws.cell(row=ri, column=status_col).fill = PatternFill("solid", fgColor=fill)
     last_col = get_column_letter(len(headers))
-    ws.freeze_panes = ws.cell(row=start_row + 1, column=2)  # type: ignore[assignment]
+    ws.freeze_panes = f"B{start_row + 1}"  # header row and ID column stay visible
     ws.auto_filter.ref = f"A{start_row}:{last_col}{max(start_row, start_row + len(rows))}"
     for ci, h in enumerate(headers, start=1):
         w = (widths[ci - 1] if widths and ci - 1 < len(widths) else max(12, min(40, len(h) + 4)))
@@ -138,12 +139,13 @@ def write_compliance_xlsx(path: Path | str, *, tender_id: str, version: int,
         if _val(r.category) not in SUBMISSION_CATEGORIES:
             continue
         c = by_req.get(r.requirement_id)
-        ck_rows.append([r.requirement_id, r.clause_ref or "", r.title or r.text[:120], r.source.short(),  # type: ignore[union-attr]
+        ck_rows.append([r.requirement_id, r.clause_ref or "", r.title or r.text[:120],
+                        cite(r.source) if r.source else "",
                         _val(c.status) if c else "not_analysed", "\n".join(c.actions) if c else "", "☐"])
     if key_facts and key_facts.submission_deadline:
         deadline_source = key_facts.source_for("submission_deadline")
         ck_rows.insert(0, ["KEY", "", f"Submit before {key_facts.submission_deadline.isoformat()}",
-                           deadline_source.short() if deadline_source else "", "", "", "☐"])
+                           cite(deadline_source) if deadline_source else "", "", "", "☐"])
     _table(ck, start, ["Requirement ID", "Clause", "Item", "Source", "Status", "Actions", "Done"],
            ck_rows, status_col=5, widths=[16, 10, 60, 22, 18, 40, 8])
 

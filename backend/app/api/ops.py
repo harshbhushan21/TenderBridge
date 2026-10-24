@@ -13,7 +13,7 @@ from backend.app.db import models as m
 from backend.app.db.engine import db_dependency
 from backend.app.db.repositories.analysis import list_runs, run_to_dict
 from backend.app.ops.audit import audit
-from backend.app.ops.metrics import guardrail_to_dict, run_metrics
+from backend.app.ops.metrics import guardrail_to_dict, latest_eval_results, ops_summary, run_metrics
 
 router = APIRouter(prefix="/ops", tags=["agentops"])
 
@@ -21,6 +21,18 @@ router = APIRouter(prefix="/ops", tags=["agentops"])
 @router.get("/metrics")
 def metrics(run_id: str | None = None, session: Session = Depends(db_dependency)) -> dict[str, Any]:
     return run_metrics(session, run_id)
+
+
+@router.get("/summary")
+def summary(session: Session = Depends(db_dependency)) -> dict[str, Any]:
+    return ops_summary(session)
+
+
+@router.get("/evals")
+def evals() -> dict[str, Any]:
+    """Latest `dev.py evals` report; `available: false` until the harness has been run."""
+    report = latest_eval_results()
+    return {"available": report is not None, **(report or {})}
 
 
 @router.get("/guardrails")

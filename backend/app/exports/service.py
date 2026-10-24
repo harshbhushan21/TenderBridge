@@ -15,8 +15,9 @@ from sqlalchemy.orm import Session
 
 from backend.app.core.config import get_settings
 from backend.app.core.logging import get_logger
-from backend.app.db.models import AuditLog, ExportRow, ReviewRow, Tender, new_id
+from backend.app.db.models import AuditLog, ExportRow, ReviewRow, Tender, TenderFile, new_id
 from backend.app.exports.audit_json import write_audit_json
+from backend.app.exports.citations import doc_labels
 from backend.app.exports.compliance_xlsx import write_compliance_xlsx, write_eligibility_xlsx
 from backend.app.exports.dates_ics import write_dates_ics
 from backend.app.exports.draft_docx import write_draft_docx, write_no_bid_docx
@@ -137,6 +138,12 @@ def export_outputs(session: Session, tender_id: str, version: int, run_id: str |
                    kinds: list[str] | tuple[str, ...] | None = None) -> list[dict]:
     """Write the requested exports; silently skip kinds whose preconditions are unmet."""
     kinds = list(kinds or ALL_KINDS)
+    labels = {f.doc_id: f.filename for f in session.scalars(select(TenderFile).where(TenderFile.tender_id == tender_id))}
+    with doc_labels(labels):
+        return _export(session, tender_id, version, run_id, kinds)
+
+
+def _export(session: Session, tender_id: str, version: int, run_id: str | None, kinds: list[str]) -> list[dict]:
     data = _load(session, tender_id, version, run_id)
     tender = session.get(Tender, tender_id)
     analysis_mode = (tender.analysis_mode if tender else None) or get_settings().analysis_mode

@@ -8,6 +8,7 @@ from fastapi import APIRouter
 from backend.app.core.config import get_settings
 from backend.app.db.engine import check_db, session_scope
 from backend.app.llm.factory import llm_status
+from backend.app.ops.langsmith import tracing_enabled
 from backend.app.retrieval.embeddings import get_embedder
 
 router = APIRouter(tags=["health"])
@@ -43,4 +44,5 @@ def settings_view() -> dict[str, Any]:
     return {"analysis_mode": s.analysis_mode, "demo_mode": s.demo_mode,
             "llm": {"fast": s.llm_fast, "strong": s.llm_strong},
             "embedding_provider": s.embedding_provider, "max_cost_usd": s.max_cost_usd,
-            "max_llm_calls": s.max_llm_calls, "company_id": s.default_company_id}
+            "max_llm_calls": s.max_llm_calls, "company_id": s.default_company_id,
+            "langsmith": {"tracing": tracing_enabled(), "project": s.langsmith_project}}
