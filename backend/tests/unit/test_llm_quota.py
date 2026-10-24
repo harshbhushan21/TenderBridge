@@ -58,9 +58,13 @@ def _sections() -> list[dict]:
 def test_extraction_is_batched_and_every_section_mapped(stub):
     sections = _sections()
     out = core._extract_sections(sections)
-    assert len(out) == len(sections)
-    assert len(sections) > 80 and stub.calls <= len(sections) // 5  # ~10 calls, not one per section
-    assert all(not heuristic and items[0].text.startswith("The bidder shall") for _, items, heuristic in out)
+    by_model = [(sec, items) for sec, items, heuristic in out if not heuristic]
+    assert len(by_model) == len(sections)  # every section answered by the model
+    assert len(sections) > 80 and stub.calls <= len(sections) // 5  # a few batches, not one call per section
+    assert all(items[0].text.startswith("The bidder shall") for _, items in by_model)
+    # clauses the model left out come from the deterministic extractor, labelled as such
+    added = [items for _, items, heuristic in out if heuristic]
+    assert added and all(not i.text.startswith("The bidder shall") for items in added for i in items)
 
 
 def test_identical_input_is_served_from_the_cache(stub):
@@ -79,8 +83,11 @@ def test_missing_section_falls_back_to_deterministic_extractor(stub, monkeypatch
         data["sections"] = [s for s in data["sections"] if s["section"] != 2]
         return AIMessage(content=json.dumps(data), usage_metadata=msg.usage_metadata)
     monkeypatch.setattr(stub, "invoke", drop_second)
-    out = core._extract_sections(_sections()[:6])
-    assert [heuristic for _, _, heuristic in out].count(True) >= 1
+    sections = _sections()[:6]
+    out = core._extract_sections(sections)
+    answered = {id(sec) for sec, _, heuristic in out if not heuristic}
+    assert len(answered) < len(sections)  # the forgotten sections are covered by the rules instead
+    assert {id(sec) for sec, _, _ in out} == {id(sec) for sec in sections}
 
 
 def test_rate_limited_call_is_retried_not_fallen_back(stub, monkeypatch):
@@ -91,7 +98,7 @@ def test_rate_limited_call_is_retried_not_fallen_back(stub, monkeypatch):
     monkeypatch.setattr(factory.time, "sleep", lambda s: waits.append(s))
     out = core._extract_sections(_sections()[:3])
     assert waits and 1.5 <= waits[0] <= 3.0  # provider's suggested delay, not a blind fallback
-    assert not any(heuristic for _, _, heuristic in out)
+    assert sum(not heuristic for _, _, heuristic in out) == 3  # all three sections answered by the model
 
 
 def test_per_minute_limits_make_calls_wait(monkeypatch):

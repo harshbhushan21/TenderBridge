@@ -255,10 +255,31 @@ def _extract_sections(sections: list[dict[str, Any]]) -> list[tuple[dict[str, An
                 for i, sec in enumerate(b, 1)]))
         by_index = {entry.section: entry.requirements for entry in result.value.sections}
         for i, sec in enumerate(batch, 1):
+            rules = _heuristic_shred(sec).requirements
             if i in by_index and not result.fallback:
                 out.append((sec, by_index[i], False))
+                # The model's wording and categories are kept; clauses it left out are added from the
+                # deterministic extractor, so recall never drops below the rules (measured on TDR-001:
+                # the model alone found 74% of mandatory gold items, the rules 100%).
+                missed = _not_covered(rules, by_index[i])
+                if missed:
+                    out.append((sec, missed, True))
             else:
-                out.append((sec, _heuristic_shred(sec).requirements, True))
+                out.append((sec, rules, True))
+    return out
+
+
+def _not_covered(candidates: list[ExtractedRequirement], extracted: list[ExtractedRequirement]
+                 ) -> list[ExtractedRequirement]:
+    """Candidates whose text no extracted requirement already covers (token containment >= 0.6)."""
+    def words(text: str) -> set[str]:
+        return set(re.findall(r"[a-z0-9]+", text.lower()))
+    have = [words(e.text) for e in extracted]
+    out = []
+    for c in candidates:
+        w = words(c.text)
+        if w and not any(len(w & h) / len(w) >= 0.6 for h in have):
+            out.append(c)
     return out
 
 
@@ -323,6 +344,7 @@ def merge_and_dedupe(state: TenderState) -> dict[str, Any]:
             "needs_review": raw.get("confidence", 0.65) < 0.7,
             "parsed_rule": raw.get("parsed_rule"),
             "check": raw.get("check"),
+            "llm_fallback": bool(raw.get("llm_fallback")),  # True: deterministic extractor, not the model
         })
     return {"requirements": requirements}
 
