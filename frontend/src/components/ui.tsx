@@ -3,19 +3,20 @@
 import { AlertTriangle, CheckCircle2, Clock, Info, Loader2, XCircle, type LucideIcon } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-import { cn, humanize, statusTone, toneClasses, type Tone } from "@/lib/formatting";
+import { cn, humanize, solidToneClasses, statusTone, toneClasses, type Tone } from "@/lib/formatting";
 
 const TONE_ICONS: Partial<Record<Tone, LucideIcon>> = {
   green: CheckCircle2, amber: AlertTriangle, red: XCircle, violet: Clock,
 };
 
-export function Badge({ status, tone, children, className }: {
-  status?: string | null; tone?: Tone; children?: ReactNode; className?: string;
+export function Badge({ status, tone, solid, children, className }: {
+  status?: string | null; tone?: Tone; solid?: boolean; children?: ReactNode; className?: string;
 }) {
   const t = tone ?? statusTone(status);
   const Icon = TONE_ICONS[t];
   return (
-    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-medium", toneClasses[t], className)}>
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-medium",
+      solid ? cn("rounded-md px-2.5 py-1 font-semibold tracking-wide", solidToneClasses[t]) : toneClasses[t], className)}>
       {Icon && <Icon className="size-3.5 shrink-0" strokeWidth={2.25} />}
       {children ?? humanize(status)}
     </span>
@@ -42,15 +43,16 @@ export function Callout({ tone = "amber", children, className, role }: {
 }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "danger" | "ghost";
+  variant?: "primary" | "success" | "secondary" | "danger" | "ghost";
   loading?: boolean;
 };
 
 export function Button({ variant = "primary", loading, disabled, className, children, ...rest }: ButtonProps) {
   const styles = {
-    primary: "bg-slate-900 text-slate-50 hover:bg-slate-700 disabled:bg-slate-400",
+    primary: "bg-midnight text-white shadow-sm hover:bg-slate-700 disabled:bg-slate-400 disabled:shadow-none",
+    success: "bg-olive text-white shadow-sm hover:bg-emerald-800 disabled:bg-slate-400 disabled:shadow-none",
     secondary: "bg-white text-slate-800 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 hover:ring-slate-400 disabled:text-slate-400",
-    danger: "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-200",
+    danger: "bg-merlot text-white shadow-sm hover:bg-red-600 disabled:bg-red-200 disabled:shadow-none",
     ghost: "text-slate-700 hover:bg-slate-100 disabled:text-slate-400",
   }[variant];
   return (
@@ -67,9 +69,9 @@ export function Card({ title, actions, children, className }: {
   title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string;
 }) {
   return (
-    <section className={cn("rounded-lg border border-slate-200 bg-white", className)}>
+    <section className={cn("rounded-xl border border-slate-200 bg-white shadow-card", className)}>
       {(title || actions) && (
-        <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5">
+        <header className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-3.5">
           <h2 className="text-[15px] font-semibold">{title}</h2>
           {actions}
         </header>

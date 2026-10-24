@@ -13,7 +13,15 @@
 }
 
 @theme {
-  --color-slate-50: #f8f6f2;   /* Bone, whitened: page background */
+  /* brand colours, used directly for emphasis (solid status labels, accents) */
+  --color-bone: #e6e0d6;
+  --color-merlot: #4b1e23;
+  --color-olive: #6b6f4e;
+  --color-midnight: #1c2430;
+  --color-tobacco: #8a5a2b;
+  --color-graphite: #121212;
+
+  --color-slate-50: #f5f2ec;   /* Bone, whitened: page background */
   --color-slate-100: #f0ece5;
   --color-slate-200: #e6e0d6;  /* Bone: borders */
   --color-slate-300: #d4cdc1;
@@ -60,7 +68,8 @@
   --color-violet-600: #5e4a63;
   --color-violet-800: #42324a;
 
-  --shadow-card: 0 1px 2px rgb(28 36 48 / 0.04);
+  --shadow-card: 0 1px 2px rgb(28 36 48 / 0.05), 0 2px 8px -2px rgb(28 36 48 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(28 36 48 / 0.05), 0 12px 24px -8px rgb(28 36 48 / 0.14);
 }
 
 /* Light theme only: native inputs and scrollbars should match it. */

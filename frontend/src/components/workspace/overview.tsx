@@ -23,7 +23,7 @@ export function Overview({ tender, assessment, keyFacts, compliance, onOpen, onD
       <div className="space-y-4 lg:col-span-2">
         <Card title={`System recommendation · v${assessment.tender_version}`}>
           <div className="flex flex-wrap items-center gap-6">
-            <Badge status={assessment.recommendation} className="px-3 py-1 text-sm" />
+            <Badge solid status={assessment.recommendation} className="px-3 py-1.5 text-sm" />
             <Stat label="Weighted score" value={formatScore(assessment.score)} />
             <Stat label="Hard-gate failures" value={assessment.hard_gate_failures.length || "None"} />
           </div>
@@ -118,7 +118,7 @@ function Gate1Panel({ tender, assessment, onDecided }: {
 
   return (
     <Card title={<span className="flex items-center gap-2"><Gavel className="size-4" /> Gate 1: human decision</span>}
-      actions={<Badge status={tender.approvalStatus} />}>
+      actions={<Badge solid status={tender.approvalStatus} />}>
       <p className="text-sm text-slate-600">
         The system recommends <strong>{humanize(assessment.recommendation)}</strong>. Only a Bid Manager can decide;
         the decision is bound to v{assessment.tender_version}.
@@ -129,7 +129,7 @@ function Gate1Panel({ tender, assessment, onDecided }: {
             placeholder="Reason (recorded in the audit trail)"
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => decide("approve_bid")} loading={busy === "approve_bid"}>
+            <Button variant="success" onClick={() => decide("approve_bid")} loading={busy === "approve_bid"}>
               <CheckCircle2 className="size-4" /> Approve bid</Button>
             <Button variant="danger" onClick={() => decide("no_bid")} loading={busy === "no_bid"}>
               <XCircle className="size-4" /> No bid</Button>

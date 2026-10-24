@@ -73,6 +73,16 @@ export const toneClasses: Record<Tone, string> = {
   violet: "text-violet-800 [&>svg]:text-violet-600",
 };
 
+/** Filled labels for the states a reader must not miss (tender status, recommendation, gate decisions). */
+export const solidToneClasses: Record<Tone, string> = {
+  green: "bg-olive text-white",
+  amber: "bg-tobacco text-white",
+  red: "bg-merlot text-white",
+  blue: "bg-slate-700 text-white",
+  slate: "bg-bone text-graphite",
+  violet: "bg-midnight text-bone",
+};
+
 const STATUS_TONES: Record<string, Tone> = {
   // eligibility
   meets: "green",

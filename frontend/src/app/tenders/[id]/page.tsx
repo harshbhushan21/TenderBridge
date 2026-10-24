@@ -1,6 +1,7 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Building2, CalendarClock, ChevronRight, Download, Hash, Layers } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -53,15 +54,26 @@ export default function TenderWorkspace() {
   const refresh = () => { tender.reload(); results.reload(); };
 
   return (
-    <div className="space-y-4">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+    <div className="space-y-5">
+      <header className="space-y-3">
+        <nav className="flex items-center gap-1 text-xs text-slate-500">
+          <Link href="/" className="hover:text-slate-900">Tenders</Link>
+          <ChevronRight className="size-3.5" /> <span className="text-slate-700">{t.tenderId}</span>
+        </nav>
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-2xl font-semibold">{t.title}</h1>
-          <p className="text-sm text-slate-500">{t.tenderId}{t.buyer ? ` · ${t.buyer}` : ""} · version {t.currentVersion}
-            {t.submissionDeadline ? ` · bids due ${formatDateTime(t.submissionDeadline)}` : ""}</p>
+          <div className="flex items-center gap-2">
+            {t.amendmentPending && t.status !== "amendment_pending" && <Badge tone="amber">Corrigendum pending</Badge>}
+            <Badge solid status={t.status}>{humanize(t.status)}</Badge>
+          </div>
         </div>
-        <div className="flex items-center gap-2"><Badge status={t.status}>{humanize(t.status)}</Badge>
-          {t.amendmentPending && t.status !== "amendment_pending" && <Badge tone="amber">corrigendum pending</Badge>}</div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-slate-600">
+          {t.buyer && <span className="flex items-center gap-1.5"><Building2 className="size-4 text-slate-400" /> {t.buyer}</span>}
+          {t.referenceNo && <span className="flex items-center gap-1.5"><Hash className="size-4 text-slate-400" /> {t.referenceNo}</span>}
+          <span className="flex items-center gap-1.5"><Layers className="size-4 text-slate-400" /> Version {t.currentVersion}</span>
+          {t.submissionDeadline && <span className="flex items-center gap-1.5">
+            <CalendarClock className="size-4 text-slate-400" /> Bids due {formatDateTime(t.submissionDeadline)}</span>}
+        </div>
       </header>
 
       {t.latestRunId && (running || t.analysisStatus === "awaiting_human") && (
