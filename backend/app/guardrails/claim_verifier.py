@@ -64,8 +64,9 @@ def verify_claim(claim: dict[str, Any], evidence: str) -> ClaimVerdict:
     citation_errors = verify_citations({"citations": citations}, evidence)
     if citation_errors:
         return verdict("unsupported", "; ".join(citation_errors))
-    if _NEGATION.search(evidence):
-        return verdict("contradicted", f"evidence states '{_NEGATION.search(evidence).group(0)}'")  # type: ignore[union-attr]
+    negation = _NEGATION.search(evidence)
+    if negation and negation.group(0).lower() not in claim_text.lower():  # a claim may report the negation
+        return verdict("contradicted", f"evidence states '{negation.group(0)}'")
     if _OPEN_ENDED.search(claim_text) and _BOUNDED_VALIDITY.search(evidence):
         return verdict("contradicted", "claim asserts open-ended validity; evidence gives an expiry")
     missing = _values(claim_text) - _values(evidence)

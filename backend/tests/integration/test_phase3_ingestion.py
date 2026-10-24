@@ -67,7 +67,7 @@ def _upload_v1() -> str:
 def world():
     with session_scope() as s:
         seed_company_facts(s, facts_dir=DATA / "structured_facts")
-    first = _ingest_kb()
+    first = _ingest_kb(force=True)  # index every file even if an earlier test module already did
     return {"kb_first": first, "kb_second": _ingest_kb(), "tender": _upload_v1(), "other": _upload_v1()}
 
 
@@ -182,7 +182,8 @@ def test_v1_upload_reaches_ready_without_analysis(world):
         state = tender_ingestion_status(s, world["tender"])
         assert state["ready"] and state["status"] == "ready_for_analysis"
         assert {f["doc_role"] for f in state["files"]} == {"notice", "main_rfp", "annexures", "boq"}
-        assert not s.scalars(select(m.BidAssessmentRow)).all()  # upload != analyze
+        assert not s.scalars(select(m.BidAssessmentRow).where(
+            m.BidAssessmentRow.tender_id == world["tender"])).all()  # upload != analyze
         assert len(load_boq_items(s, world["tender"], 1)) > 0
         assert len(load_effective_sections(s, world["tender"], 1)) > 90
 

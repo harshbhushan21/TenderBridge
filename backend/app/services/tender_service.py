@@ -40,7 +40,7 @@ def _latest_gate1(session: Session, tender_id: str, version: int) -> m.ReviewRow
 
 def tender_view(session: Session, tender: m.Tender) -> dict:
     """camelCase TenderView (docs/api_contract.md), derived from files, runs and reviews."""
-    from backend.app.db.repositories.analysis import latest_assessment_row, latest_run
+    from backend.app.db.repositories.analysis import latest_assessment_row, latest_drafting_run, latest_run
     from backend.app.ingestion.upload_service import tender_ingestion_status
     from backend.app.tools.facts import get_key_facts
 
@@ -63,12 +63,22 @@ def tender_view(session: Session, tender: m.Tender) -> dict:
                                                  "reanalysis_required"):
         status = {"running": "analyzing", "awaiting_human": "awaiting_bid_decision",
                   "failed": "failed"}.get(analysis_status, status)
+    drafting = latest_drafting_run(session, tender.tender_id, version)
+    draft_status = None
+    if drafting is not None:
+        draft_status = {"queued": "drafting", "running": "drafting", "resuming": "drafting",
+                        "awaiting_human": "awaiting_review", "completed": "completed",
+                        "failed": "failed", "cancelled": "failed"}.get(drafting.status, "drafting")
+        if tender.status in ("bid_approved", "drafting"):
+            status = {"drafting": "drafting", "awaiting_review": "awaiting_draft_review"}.get(
+                draft_status, "bid_approved")
     key_facts = get_key_facts(session, tender.tender_id, version)
     return {
         "tenderId": tender.tender_id, "title": tender.title, "buyer": tender.buyer,
         "referenceNo": tender.reference_no, "status": status, "currentVersion": version,
         "analysisMode": tender.analysis_mode, "ingestionStatus": ingestion_status,
         "analysisStatus": analysis_status, "latestRunId": run.run_id if run else None,
+        "draftStatus": draft_status, "draftRunId": drafting.run_id if drafting else None,
         "latestAssessment": {
             "version": assessment.version, "recommendation": assessment.recommendation,
             "score": assessment.score,
@@ -171,24 +181,74 @@ def decide_gate1(session: Session, tender_id: str, decision: dict, *, user_id: s
 
 
 def start_drafting(session: Session, tender_id: str, *, actor: str, role: str) -> dict:
-    """Start the cited drafting flow only after the current version passed Gate 1."""
-    from backend.app.agents.runner import start_run
-    from backend.app.core.errors import InvalidStateError
-    from backend.app.core.security import APPROVER_ROLES
-    from backend.app.db.repositories.analysis import gate1_reviews
+    """Draft the response for the current version: only after a Gate 1 bid approval, on the
+    persisted analysis (no re-analysis), and never twice at once."""
+    from backend.app.agents.runner import start_drafting_run
+    from backend.app.core.errors import ConflictError, InvalidStateError
+    from backend.app.core.security import APPROVER_ROLES, CurrentUser
+    from backend.app.db.repositories.analysis import gate1_reviews, latest_drafting_run, latest_run
     from backend.app.db.repositories.tenders import get_tender
 
-    if role not in APPROVER_ROLES:
-        raise PermissionError("only bid_manager or admin may start drafting")
     tender = get_tender(session, tender_id)
-    review = next((r for r in gate1_reviews(session, tender_id, tender.current_version)
+    version = tender.current_version
+    if role not in APPROVER_ROLES:
+        audit(actor, "drafting.denied", tender_id=tender_id, version=version, role=role)
+        CurrentUser(user_id=actor, role=role).require_approver()  # 403
+    review = next((r for r in gate1_reviews(session, tender_id, version)
                    if r.status == "approved" and r.action == "approve_bid"), None)
-    if review is None:
-        raise InvalidStateError("Gate 1 bid approval is required before drafting")
-    result = start_run(
-        tender_id, version=tender.current_version, drafting_requested=True,
-        gate1_decision=review.data,
-    )
-    audit(actor, "drafting.requested", tender_id=tender_id, version=tender.current_version,
-          run_id=result["analysis_run_id"], session=session)
+    base = latest_run(session, tender_id, version, completed_only=True)
+    if review is None or base is None:
+        raise InvalidStateError("drafting needs a Gate 1 bid approval for the current version")
+    active = latest_drafting_run(session, tender_id, version)
+    if active is not None and active.status in ("queued", "running", "resuming", "awaiting_human"):
+        raise ConflictError("a draft for this version is already in progress", details={"run_id": active.run_id})
+    tender.status = TenderStatus.drafting.value
+    session.commit()  # the runner writes from its own thread/session
+    result = start_drafting_run(tender_id, version, base.run_id, review.data or {})
+    audit(actor, "drafting.requested", tender_id=tender_id, version=version, run_id=result["analysis_run_id"])
     return result
+
+
+def decide_gate2(session: Session, draft_id: str, review: dict, *, user_id: str, role: str) -> dict:
+    """Record a Gate 2 decision on a section draft and resume its drafting run.
+
+    Same rules as Gate 1: approver roles only (refusals audited), bound to the current tender
+    version, and only one decision can resume the paused run.
+    """
+    from sqlalchemy import update
+
+    from backend.app.agents.runner import resume_run
+    from backend.app.core.errors import ConflictError, InvalidStateError, NotFoundError
+    from backend.app.core.security import APPROVER_ROLES, CurrentUser
+    from backend.app.schemas.assessment import DraftReview
+
+    draft = session.get(m.SectionDraftRow, draft_id)
+    if draft is None:
+        raise NotFoundError(f"draft '{draft_id}' not found")
+    decision = DraftReview.model_validate({**review, "reviewer": user_id})
+    if role not in APPROVER_ROLES:
+        audit(user_id, "gate2.denied", tender_id=draft.tender_id, version=draft.version, target=draft_id,
+              role=role, requested_action=decision.action)
+        CurrentUser(user_id=user_id, role=role).require_approver()  # 403
+    tender = session.get(m.Tender, draft.tender_id)
+    if tender is None or draft.version != tender.current_version or draft.stale:
+        raise ConflictError("this draft belongs to a superseded tender version",
+                            details={"draft_version": draft.version,
+                                     "current": tender.current_version if tender else None})
+    if decision.action == "edit" and not (decision.edited_markdown or "").strip():
+        raise InvalidStateError("an edit needs the edited text")
+    result: Any = session.execute(update(m.AnalysisRun).where(
+        m.AnalysisRun.run_id == draft.run_id, m.AnalysisRun.status == "awaiting_human")
+        .values(status="resuming"))
+    if result.rowcount != 1:
+        raise ConflictError("this draft is not waiting for a Gate 2 decision", details={"run_id": draft.run_id})
+    status = {"approve": "approved", "edit": "approved", "reject": "rejected",
+              "request_changes": "changes_requested"}[decision.action]
+    session.add(m.ReviewRow(tender_id=draft.tender_id, version=draft.version, run_id=draft.run_id, gate="gate2",
+                            target_id=draft_id, action=decision.action, status=status, reviewer=user_id,
+                            comment=decision.comment, data=decision.model_dump(mode="json")))
+    audit(user_id, f"gate2.{decision.action}", tender_id=draft.tender_id, version=draft.version,
+          run_id=draft.run_id, target=draft_id, session=session, comment=decision.comment, role=role)
+    session.commit()
+    resume_run(draft.run_id, decision.model_dump(mode="json"))
+    return {"status": "resuming", "review_status": status, "run_id": draft.run_id}

@@ -334,14 +334,13 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 10.1 | `plan_response` + `write_sections` with the routed Gemini 3 Flash model over approved KB chunks (one section: Format T-1 §2/§4); deterministic offline fallback remains available | ✅ |
-| 10.2 | Verifier on the draft (Phase 8), `rewrite_failed` loop (max 2), Gate 2 `interrupt()` per section, persisted review and resume | ✅ |
-| 10.3 | Draft DOCX through the export service after Gate 2 approval | ✅ |
+| 10.1 | `agents/nodes/drafting.py`: one section (Format T-1 §2/§4) drafted from approved-for-reuse KB passages; with a model, claims each cite numbered evidence; offline, an extractive draft (sentences from the passages, near-duplicates removed) | ✅ |
+| 10.2 | Separate drafting graph on the persisted analysis (no re-analysis): verify every claim against its own citations, rewrite loop (one model rewrite, then unsupported claims removed with a placeholder), Gate 2 `interrupt()` that applies approve / edit / reject / request changes (bounded redraft) | ✅ |
+| 10.3 | Draft DOCX through the export service after Gate 2 approval; `POST /tenders/{id}/drafts`, `GET /tenders/{id}/drafts`, `POST /drafts/{id}/review` (approver only, refusals audited, version-bound, one decision resumes) | ✅ |
 
 **Done when:** after Gate 1 approval one cited section passes verification and waits at Gate 2.
-**Result:** ✅ implemented. Drafting is explicitly requested after Gate 1, is version-bound, stores citations and verifier reports, pauses per section at Gate 2, and resumes after approval. Existing analysis runs remain unchanged when drafting is not requested. `draft_docx` is emitted only for approved drafts.
-
-**Phase 10 configuration:** keep the default `LLM_FAST=fake:fast` and `LLM_STRONG=fake:strong` for offline deterministic drafting, or configure the routed `write_sections` model in `demo_data/demo_config/llm_routing_and_budget.json`. For Gemini, set `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) and select the configured Gemini model. The database/checkpointer and company KB must already be configured as described in Phases 1 and 3. LangSmith remains optional; set `LANGSMITH_TRACING=true` and its API/project variables only when tracing is required.
+**Review fixes (24 Oct, [S]):** starting a draft re-ran the whole analysis (with real models, ~100 extraction calls again); the offline draft was a fixed paragraph the verifier always struck, so every section ended as "requires human confirmation" with no citations; the Gate 2 decision was overwritten when the run was saved, so approved drafts stayed `pending` and the DOCX was never produced; the rewrite step never looped back to verification; Gate 2 had no double-submit protection or audited refusals; a No-Bid decision skipped the No-Bid report (`approve_no_bid` is not an action); the tender page did not show that a draft was waiting for review. The verifier no longer treats a claim that reports a negation ("is not held") as contradicted. `tests/integration/test_phase10_drafting.py` (4 tests).
+**Result:** offline, the section has 5 claims from 5 approved documents (operations, transition, CERT-In reporting, data residency), all verified, and approves to a DOCX with numbered sources. Drafting takes under a second offline and makes one model call (plus at most one rewrite) once models are configured.
 
 ### Phase 11 · [S] *Stretch:* draft review UI and routes
 

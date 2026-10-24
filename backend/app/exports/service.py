@@ -93,7 +93,7 @@ def _load(session: Session, tender_id: str, version: int, run_id: str | None) ->
         data["compliance"] = _coerce(p.load_compliance(session, tender_id, version, run_id), ComplianceItem)
         data["risks"] = _coerce(p.load_risks(session, tender_id, version, run_id), RiskItem)
         data["assessment"] = _coerce_one(p.load_assessment(session, tender_id, version, run_id), BidAssessment)
-        data["drafts"] = _coerce(p.load_drafts(session, tender_id, version, run_id), SectionDraft)
+        data["drafts"] = _coerce(p.load_drafts(session, tender_id, version), SectionDraft)  # latest drafting run
     except Exception as exc:  # loaders unavailable or no run yet
         log.warning("export: persistence loaders failed: %s", exc)
     try:

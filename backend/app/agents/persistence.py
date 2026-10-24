@@ -84,19 +84,20 @@ def persist_state(session: Session, state: dict[str, Any]) -> None:
             score=assessment.get("score", 0), recommendation=assessment.get("recommendation", "NO_BID"),
             data=assessment))
 
-    session.execute(delete(m.SectionDraftRow).where(
-        m.SectionDraftRow.tender_id == tender_id, m.SectionDraftRow.version == version,
-        m.SectionDraftRow.run_id == run_id))
+
+def persist_drafts(session: Session, state: dict[str, Any]) -> None:
+    """A drafting run owns only its run row and its section drafts (the analysis rows are untouched)."""
+    run_id = state["analysis_run_id"]
+    upsert_run(session, state, status=state.get("run_status", "running"))
+    session.execute(delete(m.SectionDraftRow).where(m.SectionDraftRow.run_id == run_id))
+    reports = {r.get("draft_id"): r for r in state.get("verifier_reports", [])}
     for draft in state.get("drafts", []):
         session.add(m.SectionDraftRow(
-            draft_id=draft["draft_id"], tender_id=tender_id, version=version, run_id=run_id,
-            section_key=draft["section_key"], status=draft.get("status", "pending"),
-            stale=draft.get("stale", False), revision=draft.get("revision", 0),
-            data=draft, verifier=next(
-                (r for r in state.get("verifier_reports", []) if r.get("draft_id") == draft["draft_id"]),
-                None,
-            ),
-        ))
+            draft_id=draft["draft_id"], tender_id=state["tender_id"], version=state["tender_version"],
+            run_id=run_id, section_key=draft["section_key"], status=draft.get("status", "pending"),
+            stale=draft.get("stale", False), revision=draft.get("revision", 0), data=draft,
+            verifier=reports.get(draft["draft_id"])))
+    session.flush()
 
 
 def _rows(session: Session, model: type[Any], tender_id: str, version: int,
@@ -130,8 +131,15 @@ def load_assessment(session: Session, tender_id: str, version: int,
 
 def load_drafts(session: Session, tender_id: str, version: int,
                 run_id: str | None = None) -> list[dict[str, Any]]:
-    q = select(m.SectionDraftRow).where(
-        m.SectionDraftRow.tender_id == tender_id, m.SectionDraftRow.version == version)
-    if run_id is not None:
-        q = q.where(m.SectionDraftRow.run_id == run_id)
-    return [r.data for r in session.scalars(q.order_by(m.SectionDraftRow.created_at)).all()]
+    """Drafts of `run_id`, else of the latest drafting run for the version, with verifier report."""
+    if run_id is None:
+        from backend.app.db.repositories.analysis import latest_drafting_run
+        run = latest_drafting_run(session, tender_id, version)
+        if run is None:
+            return []
+        run_id = run.run_id
+    q = select(m.SectionDraftRow).where(m.SectionDraftRow.tender_id == tender_id,
+                                        m.SectionDraftRow.version == version,
+                                        m.SectionDraftRow.run_id == run_id)
+    return [{**r.data, "status": r.status, "stale": r.stale, "verifier": r.verifier, "run_id": r.run_id}
+            for r in session.scalars(q.order_by(m.SectionDraftRow.created_at)).all()]
