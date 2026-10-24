@@ -541,6 +541,9 @@ Copy `.env.example` to `.env`. Environment variables override the JSON demo conf
 | `EMBEDDING_PROVIDER` / `EMBEDDING_DIM` | `hash` / `1024` | Offline hash embedder, or `huggingface:BAAI/bge-m3` (local; run `dev.py reembed` after switching) |
 | `HF_TOKEN` | empty | Optional: faster Hugging Face model downloads |
 | `RERANKER` | `none` | Optional `bge-reranker-v2-m3` |
+| `LLM_RPM` / `LLM_TPM` | `0` / `0` | Rate limits for models not listed in `llm_routing_and_budget.json` (0 = none); listed models use the plan's limits |
+| `LLM_CACHE` | `true` | Reuse model answers for identical inputs (`storage/cache/llm`, per machine; shown as cached in AgentOps) |
+| `SHRED_WITH_LLM` / `SHRED_BATCH_TOKENS` | `true` / `2500` | Requirement extraction by the model in batches of sections, or deterministic only (`false`) |
 | `LANGSMITH_TRACING` / `LANGSMITH_PROJECT` / `LANGSMITH_API_KEY` | `false` / `tenderbridge` / empty | Optional tracing; every run is redacted (emails, phones, PAN/Aadhaar, keys; restricted KB text withheld) |
 | `MAX_COST_USD` / `MAX_LLM_CALLS` / `MAX_RETRIES` / `MAX_REWRITES` / `MAX_PARALLEL_LLM` | 5 / 400 / 1 / 2 / 4 | Per-run budget and loop limits |
 | `DEMO_MODE` / `ANALYSIS_MODE` | `true` / `focused` | Demo disclosures; `focused` = 42-item live subset, `full` = offline |
@@ -562,6 +565,13 @@ provider's model list before relying on them):
 | Response planning and the one drafted section | `google_genai:gemini-3-flash` (20 requests/day: keep ≥5 for the live demo) |
 | Injection screening | `groq:meta-llama/llama-prompt-guard-2-86m` |
 | Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, exports |
+
+Before a demo, `uv run python dev.py llm-check` shows the model each node will use, whether its
+key is set, the enforced limits and the expected calls/tokens/time for one tender; `--ping` sends one
+tiny request per model to catch a wrong model id or key. Requirement extraction goes in batches of
+sections (~12 calls for TDR-001 instead of ~100), calls wait for room in each model's per-minute
+window, a 429 is retried after the provider's suggested delay, and identical inputs are answered
+from the cache (a v2 re-analysis only pays for the changed sections).
 
 Groq's 8K tokens/minute limit is the main throughput constraint: batch
 sections, cap parallelism, cache by content hash, and label replayed runs.

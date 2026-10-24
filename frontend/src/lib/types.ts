@@ -500,7 +500,8 @@ export interface OpsSummary {
   analysis_seconds: { count: number; avg: number | null; max: number | null };
   llm: {
     calls: number; input_tokens: number; output_tokens: number; cost_usd: number; unpriced_calls: number;
-    by_model: Record<string, { calls: number; input_tokens: number; output_tokens: number; cost_usd: number;
+    cached_calls?: number;
+    by_model: Record<string, { calls: number; cached?: number; input_tokens: number; output_tokens: number; cost_usd: number;
       errors: number; avg_latency_ms: number }>;
   };
   guardrails: { total: number; quarantined: number; by_severity: Record<string, number> };

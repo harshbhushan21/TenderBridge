@@ -48,7 +48,8 @@ export default function AgentOpsPage() {
               hint={Object.entries(s.runs.by_status).map(([k, v]) => `${v} ${humanize(k)}`).join(", ") || "none yet"} />
             <Stat label="Analysis time" value={s.analysis_seconds.avg == null ? "—" : `${s.analysis_seconds.avg}s avg`}
               hint={s.analysis_seconds.max == null ? undefined : `max ${s.analysis_seconds.max}s, to Gate 1`} />
-            <Stat label="LLM calls" value={s.llm.calls} hint={`${s.llm.input_tokens + s.llm.output_tokens} tokens`} />
+            <Stat label="LLM calls" value={s.llm.calls}
+              hint={`${s.llm.input_tokens + s.llm.output_tokens} tokens${s.llm.cached_calls ? `, ${s.llm.cached_calls} from cache` : ""}`} />
             <Stat label="LLM cost" value={`$${s.llm.cost_usd.toFixed(4)}`}
               hint={s.llm.unpriced_calls ? `${s.llm.unpriced_calls} calls have no configured price` : "priced calls only"} />
             <Stat label="Guardrail events" value={s.guardrails.total} hint={`${s.guardrails.quarantined} quarantined`} />
@@ -56,12 +57,12 @@ export default function AgentOpsPage() {
           {Object.keys(s.llm.by_model).length > 0 && (
             <table className="mt-4 w-full text-sm">
               <thead className="text-left text-xs uppercase text-slate-500">
-                <tr><th className="py-1">Model</th><th>Calls</th><th>Tokens in / out</th><th>Avg latency</th><th>Errors</th><th>Cost</th></tr>
+                <tr><th className="py-1">Model</th><th>Calls (cached)</th><th>Tokens in / out</th><th>Avg latency</th><th>Errors</th><th>Cost</th></tr>
               </thead>
               <tbody>
                 {Object.entries(s.llm.by_model).map(([model, m]) => (
                   <tr key={model} className="border-t border-slate-100">
-                    <td className="py-1 font-medium">{model}</td><td>{m.calls}</td>
+                    <td className="py-1 font-medium">{model}</td><td>{m.calls}{m.cached ? ` (${m.cached})` : ""}</td>
                     <td>{m.input_tokens} / {m.output_tokens}</td><td>{m.avg_latency_ms} ms</td><td>{m.errors}</td>
                     <td>${m.cost_usd.toFixed(4)}</td>
                   </tr>

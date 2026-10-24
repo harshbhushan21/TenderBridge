@@ -10,6 +10,8 @@ import re
 from datetime import UTC, datetime
 from typing import Any
 
+from pydantic import BaseModel, Field
+
 from backend.app.schemas.assessment import (
     HardGateResult,
     Recommendation,
@@ -190,15 +192,68 @@ def load_tender(state: TenderState) -> dict[str, Any]:
     return {"sections": sections}
 
 
-def shred_requirements(state: TenderState) -> dict[str, Any]:
-    """Extract conservative requirement candidates from parsed sections.
+class _SectionRequirements(BaseModel):
+    section: int = Field(description="The [S<n>] number of the section")
+    requirements: list[ExtractedRequirement] = Field(default_factory=list)
 
-    This is a safe fallback for environments without a configured LLM.  It
-    never invents a clause: callers may replace this node with a structured
-    model node while retaining the same output contract.
+
+class _BatchExtraction(BaseModel):
+    sections: list[_SectionRequirements] = Field(default_factory=list)
+
+
+def _batches(sections: list[dict[str, Any]], max_tokens: int, max_sections: int = 8) -> list[list[dict[str, Any]]]:
+    """Consecutive sections grouped up to ~max_tokens of text (a large section goes alone)."""
+    out: list[list[dict[str, Any]]] = []
+    size = 0
+    for sec in sections:
+        tokens = len(str(sec.get("text", ""))) // 4 + 20
+        if out and size + tokens <= max_tokens and len(out[-1]) < max_sections:
+            out[-1].append(sec)
+            size += tokens
+        else:
+            out.append([sec])
+            size = tokens
+    return out
+
+
+def _extract_sections(sections: list[dict[str, Any]]) -> list[tuple[dict[str, Any], list[ExtractedRequirement], bool]]:
+    """(section, requirements, heuristic_used) per section.
+
+    With a configured model (and SHRED_WITH_LLM), sections go in batches of ~SHRED_BATCH_TOKENS:
+    about 10 calls for TDR-001 instead of ~100, which fits free-tier per-minute limits. A section the
+    model leaves out, or a failed call, falls back to the deterministic extractor for that section.
     """
+    from backend.app.core.config import get_settings
+    from backend.app.guardrails.injection import wrap_untrusted
+    from backend.app.llm.factory import is_fake, load_prompt, resolve, structured_call
+
+    settings = get_settings()
+    if not settings.shred_with_llm or is_fake(resolve("shred_requirements").model):
+        return [(sec, _heuristic_shred(sec).requirements, True) for sec in sections]
+    out = []
+    for batch in _batches(sections, settings.shred_batch_tokens):
+        user = "\n\n".join(
+            wrap_untrusted(str(sec.get("text", "")),
+                           f"[S{i}] {sec.get('section_path') or sec.get('title') or ''} (page {sec.get('page_start')})")
+            for i, sec in enumerate(batch, 1))
+        result = structured_call(
+            "shred_requirements", _BatchExtraction, system=load_prompt("shred_requirements"), user=user,
+            heuristic=lambda b=batch: _BatchExtraction(sections=[
+                _SectionRequirements(section=i, requirements=_heuristic_shred(sec).requirements)
+                for i, sec in enumerate(b, 1)]))
+        by_index = {entry.section: entry.requirements for entry in result.value.sections}
+        for i, sec in enumerate(batch, 1):
+            if i in by_index and not result.fallback:
+                out.append((sec, by_index[i], False))
+            else:
+                out.append((sec, _heuristic_shred(sec).requirements, True))
+    return out
+
+
+def shred_requirements(state: TenderState) -> dict[str, Any]:
+    """Requirement candidates: the PQ table deterministically (hard gates), every other section by
+    the model in batches or by the deterministic extractor, plus structured table rows."""
     from backend.app.agents.prequalification import extract_pq_requirements
-    from backend.app.llm.factory import load_prompt, structured_call
 
     # Pre-qualification rows are the hard gates; they get a deterministic extractor.
     pq = extract_pq_requirements(state.get("sections", []))
@@ -207,25 +262,16 @@ def shred_requirements(state: TenderState) -> dict[str, Any]:
         **r, "section_path": r["source"]["section_path"], "llm_fallback": False,
         "tender_id": state["tender_id"], "tender_version": state["tender_version"],
     } for r in pq]
-    for section in state.get("sections", []):
-        text = str(section.get("text", "")).strip()
-        if not text or section.get("section_id") in pq_sections:
-            continue
-        def fallback(current_section: dict[str, Any] = section) -> RequirementExtraction:
-            return _heuristic_shred(current_section)
-
-        result = structured_call(
-            "shred_requirements", RequirementExtraction,
-            system=load_prompt("shred_requirements"), user=text,
-            heuristic=fallback,
-        )
-        for item, heuristic_used in [(i, result.fallback) for i in result.value.requirements] + [
+    todo = [sec for sec in state.get("sections", [])
+            if str(sec.get("text", "")).strip() and sec.get("section_id") not in pq_sections]
+    for section, items, heuristic_used in _extract_sections(todo):
+        for item, from_heuristic in [(i, heuristic_used) for i in items] + [
                 (row, False) for row in _table_requirements(section)]:
             sentence = item.text
             extracted.append({
                 **item.model_dump(mode="json"),
                 "source": {**_source(section, sentence), "page": item.page or section.get("page_start")},
-                "llm_fallback": heuristic_used,
+                "llm_fallback": from_heuristic,
                 "section_path": section.get("section_path"),
                 "hard_gate": False,  # hard gates come only from the PQ table above
                 "tender_id": state["tender_id"],
@@ -269,6 +315,26 @@ def merge_and_dedupe(state: TenderState) -> dict[str, Any]:
     return {"requirements": requirements}
 
 
+_KEY_FACT_HINTS = re.compile(r"\b(last date|submission|opening|pre-?bid|emd|earnest money|performance (bank )?"
+                             r"guarantee|pbg|payment|penalt|liquidated|validity|estimated cost|evaluation|qcbs)\b",
+                             re.I)
+
+
+def _key_fact_context(sections: list[dict[str, Any]], max_tokens: int = 6000) -> str:
+    """Only sections that can hold key facts (fact sheet, dates, EMD/PBG, payment, penalties), so the
+    model gap-filler stays within one free-tier minute of tokens instead of sending the whole tender."""
+    from backend.app.guardrails.injection import wrap_untrusted
+
+    picked, size = [], 0
+    for sec in sorted(sections, key=lambda x: -len(_KEY_FACT_HINTS.findall(str(x.get("text", ""))))):
+        text = str(sec.get("text", ""))
+        if not _KEY_FACT_HINTS.search(text) or size + len(text) // 4 > max_tokens:
+            continue
+        picked.append(wrap_untrusted(text, f"{sec.get('section_path') or ''} (page {sec.get('page_start')})"))
+        size += len(text) // 4
+    return "\n\n".join(picked)
+
+
 def extract_key_facts(state: TenderState) -> dict[str, Any]:
     """Deterministic, sourced extraction first; the LLM (when configured) only fills gaps."""
     from backend.app.agents.key_facts import extract_key_facts_deterministic, merge_key_facts
@@ -281,7 +347,7 @@ def extract_key_facts(state: TenderState) -> dict[str, Any]:
         validated = found
     else:
         from backend.app.llm.factory import load_prompt, structured_call
-        text = "\n\n".join(str(s.get("text", "")) for s in sections)
+        text = _key_fact_context(sections)
         result = structured_call("extract_key_facts", KeyFacts, system=load_prompt("extract_key_facts"),
                                  user=text, heuristic=lambda: found)
         model_facts = result.value.model_copy(update={

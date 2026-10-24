@@ -42,6 +42,14 @@ class Settings(BaseSettings):
     llm_fast: str = Field(default="fake:fast", alias="LLM_FAST")
     llm_strong: str = Field(default="fake:strong", alias="LLM_STRONG")
     llm_timeout_s: float = Field(default=60.0, alias="LLM_TIMEOUT_S")
+    # Free-tier safety: per-model limits come from llm_routing_and_budget.json; these apply to
+    # models it does not list (0 = unlimited). Responses are cached by content hash on disk.
+    llm_rpm: int = Field(default=0, alias="LLM_RPM")
+    llm_tpm: int = Field(default=0, alias="LLM_TPM")
+    llm_cache: bool = Field(default=True, alias="LLM_CACHE")
+    # Requirement extraction: model in batches of sections (true) or the deterministic extractor only.
+    shred_with_llm: bool = Field(default=True, alias="SHRED_WITH_LLM")
+    shred_batch_tokens: int = Field(default=2500, alias="SHRED_BATCH_TOKENS")
 
     # --- Embeddings ---
     # "hash" = deterministic local fallback (no download). Others: "huggingface:BAAI/bge-m3",
