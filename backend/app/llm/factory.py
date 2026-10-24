@@ -56,6 +56,9 @@ def is_fake(model_spec: str) -> bool:
     return model_spec.startswith("fake")
 
 
+ANTHROPIC_MAX_TOKENS = 16000
+
+
 @lru_cache(maxsize=16)
 def _build_chat_model(model_spec: str, temperature: float, max_tokens: int | None, timeout_s: float):
     if is_fake(model_spec):
@@ -71,6 +74,11 @@ def _build_chat_model(model_spec: str, temperature: float, max_tokens: int | Non
     kwargs: dict[str, Any] = {"temperature": temperature, "timeout": timeout_s}
     if max_tokens:
         kwargs["max_tokens"] = max_tokens
+    if provider == "anthropic":
+        # Claude rejects temperature/top_p/top_k on every model since 2026-10-21, and adaptive
+        # thinking (on by default) is billed inside max_tokens, so give it room.
+        kwargs.pop("temperature", None)
+        kwargs.setdefault("max_tokens", ANTHROPIC_MAX_TOKENS)
     try:
         return init_chat_model(model, model_provider=provider, **kwargs)
     except TypeError:
@@ -146,7 +154,9 @@ def structured_runnable(llm: Any, schema: type[BaseModel], model: str) -> Any:
     """Structured output with the provider's native JSON schema where tool calling is unreliable:
     Groq's gpt-oss can answer in prose instead of calling the tool ("Tool choice is required");
     json_schema constrains the output itself. Gemini already defaults to json_schema."""
-    if model.startswith("groq:"):
+    if model.startswith(("groq:", "anthropic:")):
+        # Claude: forced tool use is rejected on current models (Sonnet 5.5, Opus 5.5) and conflicts
+        # with thinking; output_config.format (structured outputs) constrains the JSON instead.
         try:
             return llm.with_structured_output(schema, method="json_schema", include_raw=True)
         except (NotImplementedError, ValueError):

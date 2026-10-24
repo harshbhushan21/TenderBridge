@@ -26,6 +26,7 @@ from backend.app.schemas.eligibility import (
 from backend.app.schemas.graph_state import TenderState, dump
 from backend.app.schemas.requirements import (
     ExtractedRequirement,
+    KeyFact,
     KeyFacts,
     RequirementCategory,
     RequirementExtraction,
@@ -354,6 +355,15 @@ _KEY_FACT_HINTS = re.compile(r"\b(last date|submission|opening|pre-?bid|emd|earn
                              re.I)
 
 
+class _TypedKeyFact(KeyFact):
+    value: str | float | bool | None = None  # `Any` has no JSON type: Claude's structured output rejects it
+
+
+class _KeyFactsOut(KeyFacts):
+    """KeyFacts as the model fills it (typed fact values); converted back to KeyFacts."""
+    facts: list[_TypedKeyFact] = Field(default_factory=list)  # type: ignore[assignment]  # pydantic override
+
+
 def _key_fact_context(sections: list[dict[str, Any]], max_tokens: int = 6000) -> str:
     """Only sections that can hold key facts (fact sheet, dates, EMD/PBG, payment, penalties), so the
     model gap-filler stays within one free-tier minute of tokens instead of sending the whole tender."""
@@ -382,9 +392,9 @@ def extract_key_facts(state: TenderState) -> dict[str, Any]:
     else:
         from backend.app.llm.factory import load_prompt, structured_call
         text = _key_fact_context(sections)
-        result = structured_call("extract_key_facts", KeyFacts, system=load_prompt("extract_key_facts"),
-                                 user=text, heuristic=lambda: found)
-        model_facts = result.value.model_copy(update={
+        result = structured_call("extract_key_facts", _KeyFactsOut, system=load_prompt("extract_key_facts"),
+                                 user=text, heuristic=lambda: _KeyFactsOut.model_validate(found.model_dump()))
+        model_facts = KeyFacts.model_validate(result.value.model_dump()).model_copy(update={
             "tender_id": state["tender_id"], "tender_version": state["tender_version"]})
         validated = merge_key_facts(model_facts, found)
     return {"key_facts": dump(validated)}

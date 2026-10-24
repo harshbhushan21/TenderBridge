@@ -15,8 +15,10 @@ import time
 from pydantic import BaseModel
 
 from backend.app.core.config import get_settings, provider_configured
+from backend.app.llm.budget import estimate_cost
 from backend.app.llm.factory import is_fake, resolve
 from backend.app.llm.ratelimit import limits_for
+from backend.app.llm.routing import get_routing_config
 
 # Nodes that can call a model, and how often for one tender (TDR-001 analysis + one drafted section).
 NODES = ("shred_requirements", "extract_key_facts", "write_sections", "rewrite_failed")
@@ -74,6 +76,9 @@ def main() -> None:
             minutes = max(calls / lim.rpm if lim.rpm else 0, tokens / lim.tpm if lim.tpm else 0)
             limit_txt = f"{lim.rpm or '∞'} rpm / {lim.tpm or '∞'} tpm / {lim.rpd or '∞'} per day"
             runs = f" · ~{lim.rpd // calls} full runs/day" if lim.rpd and calls else ""
+            cost = estimate_cost(model, int(tokens * 0.6), int(tokens * 0.4) * 2,  # thinking ~doubles output
+                                 get_routing_config().prices_per_million)
+            runs += f" · ~${cost:.3f}/tender" if cost is not None else " · no price configured"
             print(f"  {model:<40} {calls:>3} calls, ~{tokens:>6} tokens · limits {limit_txt} · "
                   f"at least {math.ceil(minutes * 60) if minutes else 0}s of quota time{runs}")
         print("  A v2 re-analysis after the corrigendum reuses cached answers for unchanged sections;")

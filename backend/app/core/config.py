@@ -66,6 +66,7 @@ class Settings(BaseSettings):
     google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY")
     gemini_api_key: SecretStr | None = Field(default=None, alias="GEMINI_API_KEY")
     openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY")
+    anthropic_api_key: SecretStr | None = Field(default=None, alias="ANTHROPIC_API_KEY")
     langsmith_api_key: SecretStr | None = Field(default=None, alias="LANGSMITH_API_KEY")
     langchain_api_key: SecretStr | None = Field(default=None, alias="LANGCHAIN_API_KEY")
     hf_token: SecretStr | None = Field(default=None, alias="HF_TOKEN")
@@ -179,6 +180,7 @@ _SECRET_ENV = {
     "google_api_key": ("GOOGLE_API_KEY",),
     "gemini_api_key": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),  # langchain-google-genai reads GOOGLE_API_KEY
     "openai_api_key": ("OPENAI_API_KEY",),
+    "anthropic_api_key": ("ANTHROPIC_API_KEY",),
     "langsmith_api_key": ("LANGSMITH_API_KEY",),
     "langchain_api_key": ("LANGCHAIN_API_KEY", "LANGSMITH_API_KEY"),
     "hf_token": ("HF_TOKEN",),

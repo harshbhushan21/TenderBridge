@@ -97,6 +97,8 @@ def spec_from_plan(name: str | None) -> str | None:
         return "groq:" + name.removeprefix("groq/")
     if name.startswith("gemini"):
         return "google_genai:" + name
+    if name.startswith("claude"):
+        return "anthropic:" + name
     if name.startswith(("gpt-", "o1", "o3", "o4")):
         return "openai:" + name
     return None

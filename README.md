@@ -558,15 +558,17 @@ Routing follows `demo_data/demo_config/llm_routing_and_budget.json` (free-tier
 quotas from the team's Groq and Google accounts; verify model IDs with each
 provider's model list before relying on them):
 
-| Use | Model (`provider:model`) | Load per tender |
+| Use | Model (`provider:model`) | Load per tender (estimated by `dev.py llm-check`) |
 |---|---|---|
-| Requirement extraction (large batches), key-fact gaps | `google_genai:gemini-3.1-flash-lite` | ~4 calls (free tier: 10 RPM, 250K TPM, **20 requests/day** → ~5 full runs/day) |
-| The drafted section and its one rewrite | `groq:openai/gpt-oss-120b` (fallback `google_genai:gemini-3-flash-preview`) | 1-2 calls (Groq: ~1,000 requests/day) |
+| Requirement extraction (batched), key-fact gaps | `anthropic:claude-haiku-5-5` | ~4 calls, ~$0.01 |
+| The drafted section and its one rewrite | `anthropic:claude-sonnet-5-5` | 1-2 calls, ~$0.07 |
+| Fallbacks when no Anthropic key is set | `google_genai:gemini-3.1-flash-lite` (extraction), `groq:openai/gpt-oss-120b` (drafting) | |
 | Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, eligibility, exports | |
 
-Set `LLM_FAST=google_genai:gemini-3.1-flash-lite`, `LLM_STRONG=groq:openai/gpt-oss-120b`,
-`GOOGLE_API_KEY` and `GROQ_API_KEY` in `.env` (with only a Google key, drafting uses Gemini 3 Flash).
-Limits are those shown in the team's AI Studio and Groq consoles on 24 Oct; check yours before a demo.
+Set `LLM_FAST=anthropic:claude-haiku-5-5`, `LLM_STRONG=anthropic:claude-sonnet-5-5`, `ANTHROPIC_API_KEY` and a
+per-run cap such as `MAX_COST_USD=0.50` in `.env`. Claude prices are in `llm_routing_and_budget.json`, so the
+cap and AgentOps use real dollars; repeated identical calls are answered from the cache at no cost.
+Claude requests never carry `temperature` (rejected since 2026-10-21) and use native structured outputs.
 
 Before a demo, `uv run python dev.py llm-check` shows the model each node will use, whether its
 key is set, the enforced limits and the expected calls/tokens/time for one tender; `--ping` sends one
