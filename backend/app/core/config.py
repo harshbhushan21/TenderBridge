@@ -42,6 +42,15 @@ class Settings(BaseSettings):
     llm_fast: str = Field(default="fake:fast", alias="LLM_FAST")
     llm_strong: str = Field(default="fake:strong", alias="LLM_STRONG")
     llm_timeout_s: float = Field(default=60.0, alias="LLM_TIMEOUT_S")
+    # Free-tier safety: per-model limits come from llm_routing_and_budget.json; these apply to
+    # models it does not list (0 = unlimited). Responses are cached by content hash on disk.
+    llm_rpm: int = Field(default=0, alias="LLM_RPM")
+    llm_tpm: int = Field(default=0, alias="LLM_TPM")
+    llm_cache: bool = Field(default=True, alias="LLM_CACHE")
+    # Requirement extraction: model in batches of sections (true) or the deterministic extractor only.
+    shred_with_llm: bool = Field(default=True, alias="SHRED_WITH_LLM")
+    # Upper bound; each batch is also kept under a third of the model's tokens/minute (Groq 8K -> ~2.6K).
+    shred_batch_tokens: int = Field(default=8000, alias="SHRED_BATCH_TOKENS")
 
     # --- Embeddings ---
     # "hash" = deterministic local fallback (no download). Others: "huggingface:BAAI/bge-m3",
@@ -57,6 +66,7 @@ class Settings(BaseSettings):
     google_api_key: SecretStr | None = Field(default=None, alias="GOOGLE_API_KEY")
     gemini_api_key: SecretStr | None = Field(default=None, alias="GEMINI_API_KEY")
     openai_api_key: SecretStr | None = Field(default=None, alias="OPENAI_API_KEY")
+    anthropic_api_key: SecretStr | None = Field(default=None, alias="ANTHROPIC_API_KEY")
     langsmith_api_key: SecretStr | None = Field(default=None, alias="LANGSMITH_API_KEY")
     langchain_api_key: SecretStr | None = Field(default=None, alias="LANGCHAIN_API_KEY")
     hf_token: SecretStr | None = Field(default=None, alias="HF_TOKEN")
@@ -64,6 +74,8 @@ class Settings(BaseSettings):
     # --- Tracing ---
     langsmith_tracing: bool = Field(default=False, alias="LANGSMITH_TRACING")
     langsmith_project: str = Field(default="tenderbridge", alias="LANGSMITH_PROJECT")
+    # Only for EU accounts: https://eu.api.smith.langchain.com (US accounts leave it empty)
+    langsmith_endpoint: str | None = Field(default=None, alias="LANGSMITH_ENDPOINT")
 
     # --- Budget ---
     max_cost_usd: float = Field(default=5.0, alias="MAX_COST_USD")
@@ -170,6 +182,7 @@ _SECRET_ENV = {
     "google_api_key": ("GOOGLE_API_KEY",),
     "gemini_api_key": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),  # langchain-google-genai reads GOOGLE_API_KEY
     "openai_api_key": ("OPENAI_API_KEY",),
+    "anthropic_api_key": ("ANTHROPIC_API_KEY",),
     "langsmith_api_key": ("LANGSMITH_API_KEY",),
     "langchain_api_key": ("LANGCHAIN_API_KEY", "LANGSMITH_API_KEY"),
     "hf_token": ("HF_TOKEN",),

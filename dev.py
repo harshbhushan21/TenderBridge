@@ -140,6 +140,11 @@ def cmd_reembed() -> None:
     _py("-m", "backend.scripts.reembed", *sys.argv[2:])
 
 
+def cmd_llm_check() -> None:
+    """show model routing, keys, rate limits and the expected load per tender; --ping tests each model"""
+    _py("-m", "backend.scripts.llm_check", *sys.argv[2:])
+
+
 def cmd_api() -> None:
     """start the FastAPI server on http://localhost:8000 (docs at /docs)"""
     _py("-m", "uvicorn", "backend.app.main:app", "--reload", "--port", "8000", *sys.argv[2:])
@@ -377,7 +382,7 @@ def cmd_doctor() -> None:
 COMMANDS: dict[str, Callable[[], None]] = {
     "setup": cmd_setup, "env": cmd_env, "doctor": cmd_doctor,
     "init-db": cmd_init_db, "migrate": cmd_migrate, "seed": cmd_seed, "ingest-kb": cmd_ingest_kb,
-    "demo-cli": cmd_demo_cli, "evals": cmd_evals, "reembed": cmd_reembed,
+    "demo-cli": cmd_demo_cli, "evals": cmd_evals, "reembed": cmd_reembed, "llm-check": cmd_llm_check,
     "reset-db": cmd_reset_db, "api": cmd_api, "web": cmd_web, "web-check": cmd_web_check, "demo": cmd_demo,
     "test": cmd_test, "test-pg": cmd_test_pg, "lint": cmd_lint, "typecheck": cmd_typecheck,
     "db-up": cmd_db_up, "db-down": cmd_db_down, "db-psql": cmd_db_psql,

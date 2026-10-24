@@ -142,7 +142,8 @@ function Gate1Panel({ tender, assessment, onDecided }: {
       ) : (
         <p className="mt-3 text-sm text-slate-500">
           {tender.approvalStatus === "pending" ? "Waiting for the analysis to reach Gate 1." :
-            `Decision recorded: ${humanize(tender.approvalStatus)}.`}
+            `Decision recorded: ${humanize(tender.approvalStatus)}.${tender.approvalStatus === "approved"
+              ? " Next: draft the response section in the Response draft tab." : ""}`}
         </p>
       )}
     </Card>

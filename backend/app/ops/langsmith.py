@@ -95,7 +95,8 @@ def configure_tracing() -> bool:
         ls.configure(enabled=False)
         _configured = False
         return False
-    client = ls.Client(api_key=key.get_secret_value().strip(), hide_inputs=redact_for_trace,
+    client = ls.Client(api_key=key.get_secret_value().strip(), api_url=s.langsmith_endpoint or None,
+                       hide_inputs=redact_for_trace,
                        hide_outputs=redact_for_trace, hide_metadata=redact_for_trace)
     ls.configure(client=client, enabled=True, project_name=s.langsmith_project)
     log.info("LangSmith tracing on (project %s); inputs/outputs are redacted", s.langsmith_project)

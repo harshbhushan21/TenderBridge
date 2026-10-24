@@ -1,13 +1,15 @@
 {
-  "source": "TenderBridge_LLM_Implementation_Plan.md (quotas transcribed from account screenshots; verify model IDs with models.list before use)",
+  "source": "Demo routing (24 Oct): Claude API. Extraction on claude-haiku-5-5 (batched, ~4 calls per tender), drafting on claude-sonnet-5-5; Gemini / Groq remain fallbacks when no Anthropic key is set. Prices are Anthropic list prices (USD per 1M tokens) so AgentOps and MAX_COST_USD see real cost; limits are conservative Tier 1 assumptions: check the Anthropic console and run `dev.py llm-check --ping`.",
   "routing": {
     "shred_requirements": {
-      "primary": "groq/openai/gpt-oss-20b",
-      "fallback": "gemini-2.5-flash",
-      "batch": "2-3 short sections per call; tables intact"
+      "primary": "claude-haiku-5-5",
+      "fallback": "gemini-3.1-flash-lite",
+      "batch": "sections batched up to SHRED_BATCH_TOKENS (capped at tpm/3)"
     },
     "extract_key_facts": {
-      "primary": "groq/openai/gpt-oss-20b"
+      "primary": "claude-haiku-5-5",
+      "fallback": "gemini-3.1-flash-lite",
+      "note": "only when the deterministic extractor leaves gaps"
     },
     "reconcile_corrigenda": {
       "primary": "groq/openai/gpt-oss-20b",
@@ -29,10 +31,11 @@
       "plus": "risk_positions.json compare in code"
     },
     "plan_response": {
-      "primary": "gemini-3-flash"
+      "primary": "code",
+      "note": "deterministic section plan"
     },
     "write_sections": {
-      "primary": "gemini-3-flash",
+      "primary": "claude-sonnet-5-5",
       "fallback": "groq/openai/gpt-oss-120b"
     },
     "verify_claims": {
@@ -53,6 +56,27 @@
     ]
   },
   "limits_per_model_from_plan": {
+    "claude-haiku-5-5": {
+      "rpm": 50,
+      "tpm": 40000,
+      "note": "assumed Tier 1; check console.anthropic.com limits"
+    },
+    "claude-sonnet-5-5": {
+      "rpm": 50,
+      "tpm": 40000,
+      "note": "assumed Tier 1; check console.anthropic.com limits"
+    },
+    "gemini-3.1-flash-lite": {
+      "rpm": 10,
+      "rpd": 20,
+      "tpm": 250000,
+      "note": "assumed equal to the 2.5 Flash-Lite row; confirm in AI Studio"
+    },
+    "gemini-3-flash-preview": {
+      "rpm": 5,
+      "rpd": 20,
+      "tpm": 250000
+    },
     "groq/openai/gpt-oss-20b": {
       "rpm": 30,
       "rpd": 1000,
@@ -70,11 +94,6 @@
       "rpd": 14400,
       "tpm": 15000,
       "tpd": 500000
-    },
-    "gemini-3-flash": {
-      "rpm": 5,
-      "rpd": 20,
-      "tpm": 250000
     }
   },
   "tender_size_for_planning": {
@@ -88,5 +107,30 @@
   "per_case_reserve": {
     "gemini_3_flash_calls": "2 per drafting case (plan + write) + 1 rewrite; keep >= 5 unused on demo day"
   },
-  "realism_vs_quota_note": "The pack favours realism (50+ tender pages, 52 KB documents). For the live run, process the live_subset sections and the live_subset KB docs; run full-pack evals offline before the demo and cache them."
+  "realism_vs_quota_note": "The pack favours realism (50+ tender pages, 52 KB documents). For the live run, process the live_subset sections and the live_subset KB docs; run full-pack evals offline before the demo and cache them.",
+  "nodes": {
+    "shred_requirements": {
+      "timeout_s": 180
+    },
+    "write_sections": {
+      "timeout_s": 120
+    },
+    "rewrite_failed": {
+      "timeout_s": 120
+    }
+  },
+  "prices_per_million": {
+    "claude-haiku-5-5": {
+      "input": 0.1,
+      "output": 0.5
+    },
+    "claude-sonnet-5-5": {
+      "input": 2.0,
+      "output": 10.0
+    },
+    "claude-opus-5-5": {
+      "input": 4.0,
+      "output": 20.0
+    }
+  }
 }

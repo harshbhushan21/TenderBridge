@@ -1,7 +1,7 @@
 // Typed fetch client for the TenderBridge API (docs/api_contract.md).
 import type {
   AmendmentDiff, AmendmentSummary, AuditEntry, BidAssessment, CompareResponse, ComplianceItem,
-  DraftReview, ExportInfo, GateDecision, GuardrailEvent, IngestionStatusResponse, Items, KbDocument,
+  DraftReview, DraftsResponse, ExportInfo, GateDecision, GuardrailEvent, IngestionStatusResponse, Items, KbDocument,
   EvalReport, KbStatus, KeyFacts, OpsMetrics, OpsSummary, PageText, ReadyResponse, Requirement, RetrievedChunk, RiskItem,
   RunEvent, RunInfo, SectionDraft, SettingsResponse, SourceSpan, TenderView, VersionsResponse,
 } from "./types";
@@ -196,9 +196,10 @@ export const api = {
     }),
 
   // drafts / exports
-  drafts: (id: string, version?: number) => request<Items<SectionDraft>>(`${t(id)}/drafts${qs({ version })}`),
+  drafts: (id: string, version?: number) => request<DraftsResponse>(`${t(id)}/drafts${qs({ version })}`),
+  startDrafting: (id: string) => json<{ analysis_run_id: string; tender_version: number }>(`${t(id)}/drafts`, "POST", {}),
   reviewDraft: (draftId: string, body: DraftReview) =>
-    json<{ status: string }>(`/drafts/${encodeURIComponent(draftId)}/review`, "POST", body),
+    json<{ status: string; review_status: string; run_id: string }>(`/drafts/${encodeURIComponent(draftId)}/review`, "POST", body),
   exports: (id: string, version?: number) => request<Items<ExportInfo>>(`${t(id)}/exports${qs({ version })}`),
   generateExports: (id: string, version?: number, kinds?: string[]) =>
     json<Items<ExportInfo>>(`${t(id)}/exports`, "POST", { version, kinds }),

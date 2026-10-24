@@ -53,6 +53,7 @@ class RoutingConfig(BaseModel):
     # Plan-style section in llm_routing_and_budget.json: node -> {"primary": "groq/openai/gpt-oss-20b", ...}
     routing: dict[str, Any] = Field(default_factory=dict)
     prices_per_million: dict[str, dict[str, float]] = Field(default_factory=dict)
+    limits_per_model_from_plan: dict[str, dict[str, Any]] = Field(default_factory=dict)
     budget: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -96,6 +97,8 @@ def spec_from_plan(name: str | None) -> str | None:
         return "groq:" + name.removeprefix("groq/")
     if name.startswith("gemini"):
         return "google_genai:" + name
+    if name.startswith("claude"):
+        return "anthropic:" + name
     if name.startswith(("gpt-", "o1", "o3", "o4")):
         return "openai:" + name
     return None

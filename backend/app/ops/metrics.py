@@ -103,18 +103,21 @@ def ops_summary(session: Session) -> dict[str, Any]:
             end[e.run_id] = e.created_at
     durations = [(end[r] - first[r]).total_seconds() for r in end]
 
-    models: dict[str, dict[str, Any]] = defaultdict(lambda: {"calls": 0, "input_tokens": 0, "output_tokens": 0,
-                                                             "cost_usd": 0.0, "errors": 0, "latency_ms": 0.0})
+    models: dict[str, dict[str, Any]] = defaultdict(lambda: {"calls": 0, "cached": 0, "input_tokens": 0,
+                                                             "output_tokens": 0, "cost_usd": 0.0, "errors": 0,
+                                                             "latency_ms": 0.0})
     for u in session.scalars(select(ModelUsage)):
         mm = models[u.model]
         mm["calls"] += 1
+        mm["cached"] += int(bool(u.cached))
         mm["input_tokens"] += u.input_tokens
         mm["output_tokens"] += u.output_tokens
         mm["cost_usd"] += u.cost_usd
         mm["errors"] += 0 if u.ok else 1
         mm["latency_ms"] += u.latency_ms
     for mm in models.values():
-        mm["avg_latency_ms"] = round(mm.pop("latency_ms") / mm["calls"], 1) if mm["calls"] else 0.0
+        live = mm["calls"] - mm["cached"]
+        mm["avg_latency_ms"] = round(mm.pop("latency_ms") / live, 1) if live else 0.0
         mm["cost_usd"] = round(mm["cost_usd"], 6)
 
     severity: dict[str, int] = defaultdict(int)
@@ -131,6 +134,7 @@ def ops_summary(session: Session) -> dict[str, Any]:
                 "input_tokens": sum(m["input_tokens"] for m in models.values()),
                 "output_tokens": sum(m["output_tokens"] for m in models.values()),
                 "cost_usd": round(sum(m["cost_usd"] for m in models.values()), 6),
+                "cached_calls": sum(m["cached"] for m in models.values()),
                 "unpriced_calls": unpriced, "by_model": dict(models)},
         "guardrails": {"total": sum(severity.values()), "quarantined": quarantined,
                        "by_severity": dict(severity)},
