@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, ErrorBanner, Spinner } from "@/components/ui";
+import { Badge, Callout, ErrorBanner, Spinner } from "@/components/ui";
 import { usePoll } from "@/hooks/use-poll";
 import { api } from "@/lib/api";
 import { formatDate, formatInrCrore, humanize } from "@/lib/formatting";
@@ -65,8 +65,8 @@ export function FactsTable({ kind, role }: { kind: FactKind; role: string }) {
   if (facts.loading && !facts.data) return <Spinner />;
   if (facts.error) {
     return kind === "risk_positions"
-      ? <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-900">Approved commercial risk positions are visible to
-        bid managers only. The refusal is enforced by the API, not just hidden here.</p>
+      ? <Callout tone="amber">Approved commercial risk positions are visible to
+        bid managers only. The refusal is enforced by the API, not just hidden here.</Callout>
       : <ErrorBanner error={facts.error} />;
   }
   const cols = COLUMNS[kind];

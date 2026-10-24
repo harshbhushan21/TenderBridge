@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 /*
- * Brand palette: Midnight Navy #0F1B2A · Runway Slate #364252 · Silver Dust #9EA6AE ·
- * Atelier Beige #D5C7B6 · Salon White #F7F3EE.
- * The neutral scale ("slate") is rebuilt from these, light shades for surfaces, dark ones for
- * accents; status colours are muted to sit with them. Components keep using slate-* / sky-* /
- * emerald-* etc., so the whole UI follows the palette from here.
+ * Brand palette: Bone #E6E0D6 (lifted towards white for surfaces) · Midnight Blue #1C2430 ·
+ * Graphite #121212 · Olive #6B6F4E · Tobacco #8A5A2B · Merlot #4B1E23.
+ * The neutral scale ("slate") is rebuilt from Bone and Midnight Blue: light shades for surfaces,
+ * dark ones for accents. Olive / Tobacco / Merlot carry success / warning / error. Components keep
+ * using slate-* / emerald-* / amber-* / red-* etc., so the whole UI follows the palette from here.
  */
 @theme inline {
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
@@ -13,54 +13,54 @@
 }
 
 @theme {
-  --color-slate-50: #f7f3ee;   /* Salon White: page background */
-  --color-slate-100: #efe8df;
-  --color-slate-200: #e5dbcf;  /* borders */
-  --color-slate-300: #d5c7b6;  /* Atelier Beige */
-  --color-slate-400: #9ea6ae;  /* Silver Dust */
-  --color-slate-500: #6b7580;  /* muted text (AA on white) */
-  --color-slate-600: #4f5a67;
-  --color-slate-700: #364252;  /* Runway Slate */
-  --color-slate-800: #222e3d;
-  --color-slate-900: #0f1b2a;  /* Midnight Navy */
-  --color-slate-950: #09111b;
+  --color-slate-50: #f8f6f2;   /* Bone, whitened: page background */
+  --color-slate-100: #f0ece5;
+  --color-slate-200: #e6e0d6;  /* Bone: borders */
+  --color-slate-300: #d4cdc1;
+  --color-slate-400: #a29e96;
+  --color-slate-500: #6c6b68;  /* muted text (AA on white) */
+  --color-slate-600: #4e525a;
+  --color-slate-700: #343b47;
+  --color-slate-800: #252c38;
+  --color-slate-900: #1c2430;  /* Midnight Blue */
+  --color-slate-950: #121212;  /* Graphite */
 
-  /* info / links: navy-blue tints */
-  --color-sky-50: #eef1f5;
-  --color-sky-100: #e1e6ee;
-  --color-sky-200: #c6cfdb;
-  --color-sky-400: #7d8ca0;
-  --color-sky-600: #3e5068;
-  --color-sky-700: #2c3d54;
-  --color-sky-800: #1e2c3f;
+  /* info / links: Midnight Blue tints */
+  --color-sky-50: #eef0f3;
+  --color-sky-100: #e2e6eb;
+  --color-sky-200: #c9d0d9;
+  --color-sky-400: #7b8696;
+  --color-sky-600: #3d4859;
+  --color-sky-700: #2b3443;
+  --color-sky-800: #1c2430;
 
-  /* success: sage */
-  --color-emerald-50: #eef5f0;
-  --color-emerald-200: #c7decf;
-  --color-emerald-600: #3d7a57;
-  --color-emerald-800: #285940;
+  /* success: Olive */
+  --color-emerald-50: #f2f3ec;
+  --color-emerald-200: #d7d9c6;
+  --color-emerald-600: #6b6f4e;
+  --color-emerald-800: #4a4d34;
 
-  /* warning: ochre, close to Atelier Beige */
-  --color-amber-50: #faf3e7;
-  --color-amber-200: #ecd9b5;
-  --color-amber-600: #a8741e;
-  --color-amber-800: #7a5316;
-  --color-amber-900: #5c3f12;
+  /* warning: Tobacco */
+  --color-amber-50: #f8f1e8;
+  --color-amber-200: #e9d6bf;
+  --color-amber-600: #8a5a2b;
+  --color-amber-800: #6b4420;
+  --color-amber-900: #4f3218;
 
-  /* error: brick */
-  --color-red-50: #fbeeec;
-  --color-red-200: #edc6c1;
-  --color-red-500: #b4554c;
-  --color-red-600: #9c4037;
-  --color-red-800: #742e28;
+  /* error: Merlot */
+  --color-red-50: #f7eeee;
+  --color-red-200: #e4cacc;
+  --color-red-500: #85404a;
+  --color-red-600: #6e2a32;
+  --color-red-800: #4b1e23;
 
-  /* awaiting a human: muted indigo */
-  --color-violet-50: #f0f0f7;
-  --color-violet-200: #d2d1e6;
-  --color-violet-600: #575691;
-  --color-violet-800: #3c3b6b;
+  /* awaiting a human: dusk, between Merlot and Midnight Blue */
+  --color-violet-50: #f2eff3;
+  --color-violet-200: #d9d1db;
+  --color-violet-600: #5e4a63;
+  --color-violet-800: #42324a;
 
-  --shadow-card: 0 1px 2px rgb(15 27 42 / 0.04), 0 4px 16px -8px rgb(15 27 42 / 0.10);
+  --shadow-card: 0 1px 2px rgb(28 36 48 / 0.04);
 }
 
 /* Light theme only: native inputs and scrollbars should match it. */
@@ -93,9 +93,13 @@ a:focus-visible {
   @apply outline-2 outline-offset-2 outline-slate-700;
 }
 
+[role="tab"]:focus-visible {
+  @apply outline-none bg-slate-100;
+}
+
 ::selection {
-  background: #d5c7b6;
-  color: #0f1b2a;
+  background: #e6e0d6;
+  color: #121212;
 }
 
 /* Long verbatim tender clauses wrap instead of stretching tables. */

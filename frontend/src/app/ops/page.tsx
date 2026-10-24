@@ -29,7 +29,7 @@ export default function AgentOpsPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">AgentOps</h1>
-          <p className="text-sm text-slate-500">Cost, latency, evaluation scores and guardrail events, measured from real runs.</p>
+          <p className="text-sm text-slate-500">Cost, latency, evaluations and guardrail events per run.</p>
         </div>
         {tracing?.tracing ? (
           <a href={LANGSMITH_URL} target="_blank" rel="noreferrer"

@@ -42,18 +42,18 @@ export function NodeStrip({ tenderId, runId, onFinished, nodes = NODE_ORDER, lab
         <span>Run {runId}</span>
         <span>{conn === "open" ? "live" : conn}</span>
       </div>
-      <ol className="flex flex-wrap gap-2">
+      <ol className="flex flex-wrap gap-x-4 gap-y-1.5">
         {nodes.map((node) => {
           const s = states[node] ?? "pending";
           const Icon = { pending: CircleDashed, running: Loader2, done: Check, failed: XCircle, waiting: PauseCircle }[s];
           return (
-            <li key={node} className={cn("flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ring-1 ring-inset",
-              s === "done" && "bg-emerald-50 text-emerald-800 ring-emerald-200",
-              s === "running" && "bg-sky-50 text-sky-800 ring-sky-200",
-              s === "waiting" && "bg-violet-50 text-violet-800 ring-violet-200",
-              s === "failed" && "bg-red-50 text-red-800 ring-red-200",
-              s === "pending" && "bg-slate-50 text-slate-500 ring-slate-200")}>
-              <Icon className={cn("size-3.5", s === "running" && "animate-spin")} /> {labels[node] ?? node}
+            <li key={node} className={cn("flex items-center gap-1.5 px-1 py-0.5 text-xs font-medium",
+              s === "done" && "text-emerald-800 [&>svg]:text-emerald-600",
+              s === "running" && "text-sky-800",
+              s === "waiting" && "text-violet-800 [&>svg]:text-violet-600",
+              s === "failed" && "text-red-800 [&>svg]:text-red-600",
+              s === "pending" && "text-slate-400")}>
+              <Icon className={cn("size-3.5", s === "running" && "animate-spin")} strokeWidth={2.25} /> {labels[node] ?? node}
             </li>
           );
         })}

@@ -1,19 +1,43 @@
 "use client";
 
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, Info, Loader2, XCircle, type LucideIcon } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { cn, humanize, statusTone, toneClasses, type Tone } from "@/lib/formatting";
+
+const TONE_ICONS: Partial<Record<Tone, LucideIcon>> = {
+  green: CheckCircle2, amber: AlertTriangle, red: XCircle, violet: Clock,
+};
 
 export function Badge({ status, tone, children, className }: {
   status?: string | null; tone?: Tone; children?: ReactNode; className?: string;
 }) {
   const t = tone ?? statusTone(status);
+  const Icon = TONE_ICONS[t];
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
-      toneClasses[t], className)}>
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap text-xs font-medium", toneClasses[t], className)}>
+      {Icon && <Icon className="size-3.5 shrink-0" strokeWidth={2.25} />}
       {children ?? humanize(status)}
     </span>
+  );
+}
+
+const CALLOUT = {
+  red: { icon: XCircle, box: "border-red-600 bg-red-50 text-red-800", icon_: "text-red-600" },
+  amber: { icon: AlertTriangle, box: "border-amber-600 bg-amber-50 text-amber-900", icon_: "text-amber-600" },
+  blue: { icon: Info, box: "border-sky-600 bg-sky-50 text-sky-800", icon_: "text-sky-600" },
+} as const;
+
+/** Inline alert: tinted panel, accent edge and an icon, so warnings read at a glance. */
+export function Callout({ tone = "amber", children, className, role }: {
+  tone?: keyof typeof CALLOUT; children: ReactNode; className?: string; role?: string;
+}) {
+  const c = CALLOUT[tone];
+  return (
+    <div role={role} className={cn("flex items-start gap-2.5 rounded-md border-l-[3px] px-3 py-2.5 text-sm", c.box, className)}>
+      <c.icon className={cn("mt-0.5 size-4 shrink-0", c.icon_)} strokeWidth={2.25} />
+      <div className="min-w-0 flex-1">{children}</div>
+    </div>
   );
 }
 
@@ -24,9 +48,9 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function Button({ variant = "primary", loading, disabled, className, children, ...rest }: ButtonProps) {
   const styles = {
-    primary: "bg-slate-900 text-slate-50 shadow-sm hover:bg-slate-700 disabled:bg-slate-400",
+    primary: "bg-slate-900 text-slate-50 hover:bg-slate-700 disabled:bg-slate-400",
     secondary: "bg-white text-slate-800 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 hover:ring-slate-400 disabled:text-slate-400",
-    danger: "bg-red-600 text-white shadow-sm hover:bg-red-500 disabled:bg-red-200",
+    danger: "bg-red-600 text-white hover:bg-red-500 disabled:bg-red-200",
     ghost: "text-slate-700 hover:bg-slate-100 disabled:text-slate-400",
   }[variant];
   return (
@@ -43,7 +67,7 @@ export function Card({ title, actions, children, className }: {
   title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string;
 }) {
   return (
-    <section className={cn("rounded-xl border border-slate-200 bg-white shadow-card", className)}>
+    <section className={cn("rounded-lg border border-slate-200 bg-white", className)}>
       {(title || actions) && (
         <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5">
           <h2 className="text-[15px] font-semibold">{title}</h2>
@@ -65,15 +89,11 @@ export function Spinner({ label }: { label?: string }) {
 
 export function ErrorBanner({ error }: { error: string | null | undefined }) {
   if (!error) return null;
-  return (
-    <div role="alert" className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-      <AlertTriangle className="mt-0.5 size-4 shrink-0" /> <span>{error}</span>
-    </div>
-  );
+  return <Callout tone="red" role="alert">{error}</Callout>;
 }
 
 export function Empty({ children }: { children: ReactNode }) {
-  return <p className="rounded-xl border border-dashed border-slate-300 bg-white/60 p-8 text-center text-sm text-slate-500">{children}</p>;
+  return <p className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">{children}</p>;
 }
 
 export function Tabs<T extends string>({ tabs, value, onChange }: {

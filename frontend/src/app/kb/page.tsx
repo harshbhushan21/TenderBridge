@@ -46,7 +46,7 @@ export default function KnowledgeBasePage() {
     <div className="space-y-4">
       <header>
         <h1 className="text-2xl font-semibold">Company knowledge base</h1>
-        <p className="text-sm text-slate-500">{s?.name ?? "…"} · the evidence the eligibility rules read. Synthetic demo data.</p>
+        <p className="text-sm text-slate-500">{s?.name ?? "…"}</p>
       </header>
       <ErrorBanner error={status.error} />
       {s && (

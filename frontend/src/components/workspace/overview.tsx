@@ -3,7 +3,7 @@
 import { CheckCircle2, Gavel, PauseCircle, XCircle } from "lucide-react";
 import { useState } from "react";
 
-import { Badge, Button, Card, ErrorBanner, Stat } from "@/components/ui";
+import { Badge, Button, Callout, Card, ErrorBanner, Stat } from "@/components/ui";
 import { useRole } from "@/hooks/use-role";
 import { api, currentUser, DEMO_IDENTITIES, errorMessage } from "@/lib/api";
 import { formatDateTime, formatInr, formatScore, humanize } from "@/lib/formatting";
@@ -28,9 +28,9 @@ export function Overview({ tender, assessment, keyFacts, compliance, onOpen, onD
             <Stat label="Hard-gate failures" value={assessment.hard_gate_failures.length || "None"} />
           </div>
           {assessment.hard_gate_failures.length > 0 && (
-            <p className="mt-3 rounded-md bg-red-50 p-2 text-sm text-red-800">
+            <Callout tone="red" className="mt-3">
               A failed hard gate means NO_BID whatever the score ({assessment.hard_gate_failures.join(", ")}).
-            </p>
+            </Callout>
           )}
           <div className="mt-4 space-y-2">
             {assessment.criteria.map((c) => (
