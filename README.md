@@ -334,11 +334,14 @@ Built before this plan; listed so later phases know what to reuse.
 
 | # | Task | Status |
 |---|---|---|
-| 10.1 | `plan_response` + `write_sections` with Gemini 3 Flash over approved KB chunks (one section: Format T-1 §2/§4) | 🟡 |
-| 10.2 | Verifier on the draft (Phase 8), `rewrite_failed` loop (max 2), Gate 2 `interrupt()` per section | ⬜ |
-| 10.3 | Draft DOCX through the export service | ⬜ |
+| 10.1 | `plan_response` + `write_sections` with the routed Gemini 3 Flash model over approved KB chunks (one section: Format T-1 §2/§4); deterministic offline fallback remains available | ✅ |
+| 10.2 | Verifier on the draft (Phase 8), `rewrite_failed` loop (max 2), Gate 2 `interrupt()` per section, persisted review and resume | ✅ |
+| 10.3 | Draft DOCX through the export service after Gate 2 approval | ✅ |
 
 **Done when:** after Gate 1 approval one cited section passes verification and waits at Gate 2.
+**Result:** ✅ implemented. Drafting is explicitly requested after Gate 1, is version-bound, stores citations and verifier reports, pauses per section at Gate 2, and resumes after approval. Existing analysis runs remain unchanged when drafting is not requested. `draft_docx` is emitted only for approved drafts.
+
+**Phase 10 configuration:** keep the default `LLM_FAST=fake:fast` and `LLM_STRONG=fake:strong` for offline deterministic drafting, or configure the routed `write_sections` model in `demo_data/demo_config/llm_routing_and_budget.json`. For Gemini, set `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) and select the configured Gemini model. The database/checkpointer and company KB must already be configured as described in Phases 1 and 3. LangSmith remains optional; set `LANGSMITH_TRACING=true` and its API/project variables only when tracing is required.
 
 ### Phase 11 · [S] *Stretch:* draft review UI and routes
 

@@ -89,7 +89,12 @@ def _run_graph(state: dict[str, Any], resume: dict[str, Any] | None, budget: Any
         result = {**checkpoint_state.values, **result}
     result.pop("_session", None)
     result["usage"] = budget.snapshot()
-    result["run_status"] = "awaiting_human" if result.get("gate1_decision") is None else "completed"
+    next_nodes = set(checkpoint_state.next if checkpoint_state else ())
+    result["run_status"] = "awaiting_human" if (
+        result.get("gate1_decision") is None
+        or result.get("gate2_pending")
+        or "gate2_review" in next_nodes
+    ) else "completed"
     return result
 
 
@@ -142,7 +147,9 @@ def _execute_traced(state: dict[str, Any], *, resume: dict[str, Any] | None = No
 def start_run(tender_id: str, *, version: int | None = None,
               analysis_mode: str | None = None, mode: str = "full_analysis",
               previous_run_id: str | None = None,
-              scoring_factors: dict[str, float] | None = None) -> dict[str, Any]:
+              scoring_factors: dict[str, float] | None = None,
+              drafting_requested: bool = False,
+              gate1_decision: dict[str, Any] | None = None) -> dict[str, Any]:
     configure_tracing()  # idempotent; CLI entry points reach the runner without the API lifespan
     with session_scope() as session:
         tender = get_tender(session, tender_id)
@@ -169,6 +176,8 @@ def start_run(tender_id: str, *, version: int | None = None,
             "mode": mode, "analysis_mode": analysis_mode or tender.analysis_mode,
             "previous_run_id": previous_run_id,
             "scoring_factors": scoring_factors or {},
+            "drafting_requested": drafting_requested,
+            "gate1_decision": gate1_decision,
             **amendment_state,
             "sections": [s.model_dump(mode="json") for s in sections],
             "flags": [], "raw_requirements": [], "requirements": [], "compliance": [],

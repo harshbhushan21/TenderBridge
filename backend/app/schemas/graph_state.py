@@ -78,6 +78,8 @@ class TenderState(TypedDict, total=False):
 
     # --- gate 1 ---
     gate1_decision: dict | None                   # GateDecision dump
+    drafting_requested: bool
+    gate2_pending: str | None
 
     # --- drafting ---
     response_plan: dict

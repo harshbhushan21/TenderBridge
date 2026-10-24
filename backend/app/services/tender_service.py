@@ -168,3 +168,27 @@ def decide_gate1(session: Session, tender_id: str, decision: dict, *, user_id: s
         resume_run(run.run_id, gate.model_dump(mode="json"))
     return {"status": "resuming" if gate.action != "defer" else "deferred", "approval_status": status,
             "run_id": run.run_id}
+
+
+def start_drafting(session: Session, tender_id: str, *, actor: str, role: str) -> dict:
+    """Start the cited drafting flow only after the current version passed Gate 1."""
+    from backend.app.agents.runner import start_run
+    from backend.app.core.errors import InvalidStateError
+    from backend.app.core.security import APPROVER_ROLES
+    from backend.app.db.repositories.analysis import gate1_reviews
+    from backend.app.db.repositories.tenders import get_tender
+
+    if role not in APPROVER_ROLES:
+        raise PermissionError("only bid_manager or admin may start drafting")
+    tender = get_tender(session, tender_id)
+    review = next((r for r in gate1_reviews(session, tender_id, tender.current_version)
+                   if r.status == "approved" and r.action == "approve_bid"), None)
+    if review is None:
+        raise InvalidStateError("Gate 1 bid approval is required before drafting")
+    result = start_run(
+        tender_id, version=tender.current_version, drafting_requested=True,
+        gate1_decision=review.data,
+    )
+    audit(actor, "drafting.requested", tender_id=tender_id, version=tender.current_version,
+          run_id=result["analysis_run_id"], session=session)
+    return result

@@ -84,6 +84,20 @@ def persist_state(session: Session, state: dict[str, Any]) -> None:
             score=assessment.get("score", 0), recommendation=assessment.get("recommendation", "NO_BID"),
             data=assessment))
 
+    session.execute(delete(m.SectionDraftRow).where(
+        m.SectionDraftRow.tender_id == tender_id, m.SectionDraftRow.version == version,
+        m.SectionDraftRow.run_id == run_id))
+    for draft in state.get("drafts", []):
+        session.add(m.SectionDraftRow(
+            draft_id=draft["draft_id"], tender_id=tender_id, version=version, run_id=run_id,
+            section_key=draft["section_key"], status=draft.get("status", "pending"),
+            stale=draft.get("stale", False), revision=draft.get("revision", 0),
+            data=draft, verifier=next(
+                (r for r in state.get("verifier_reports", []) if r.get("draft_id") == draft["draft_id"]),
+                None,
+            ),
+        ))
+
 
 def _rows(session: Session, model: type[Any], tender_id: str, version: int,
           run_id: str | None) -> list[Any]:

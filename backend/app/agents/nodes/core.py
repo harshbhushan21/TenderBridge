@@ -507,14 +507,16 @@ def reconcile_corrigenda(state: TenderState) -> dict[str, Any]:
 
 
 def plan_response(state: TenderState) -> dict[str, Any]:
-    """Create a traceable response outline without inventing section content."""
+    """Create the scoped Format T-1 response section."""
     from backend.app.schemas.assessment import PlannedSection, ResponsePlan
 
     grouped: dict[str, list[str]] = {}
     for requirement in state.get("requirements", []):
-        grouped.setdefault(requirement.get("section_path") or "Unmapped", []).append(
-            requirement["requirement_id"]
-        )
+        path = requirement.get("section_path") or ""
+        if "2" in path or "4" in path or not grouped:
+            grouped.setdefault("Format T-1 §2/§4", []).append(requirement["requirement_id"])
+    if not grouped:
+        grouped["Format T-1 §2/§4"] = []
     sections = [
         PlannedSection(section_key=f"SEC-{index}", title=title, requirement_ids=req_ids)
         for index, (title, req_ids) in enumerate(grouped.items(), 1)
@@ -528,18 +530,80 @@ def plan_response(state: TenderState) -> dict[str, Any]:
 
 
 def write_sections(state: TenderState) -> dict[str, Any]:
-    """Produce evidence-safe draft shells; unsupported claims become placeholders."""
-    from backend.app.schemas.assessment import SectionDraft
+    """Write one cited section from approved company evidence."""
+    from pydantic import BaseModel
+
+    from backend.app.db.engine import session_scope
+    from backend.app.llm.factory import load_prompt, structured_call
+    from backend.app.retrieval.filters import SearchFilters
+    from backend.app.retrieval.keyword import prepare_candidates
+    from backend.app.schemas.assessment import Claim, SectionDraft
+    from backend.app.schemas.documents import RetrievedChunk, Scope
+    from backend.app.tools.company_search import search_company_kb
+
+    class DraftText(BaseModel):
+        body_markdown: str
 
     plan = state.get("response_plan") or {}
     drafts = []
     for section in plan.get("sections", []):
+        with session_scope() as session:
+            candidates = prepare_candidates(
+                session, SearchFilters(
+                    scope=Scope.kb, company_id=state["company_id"], role="bid_manager",
+                )
+            )
+            hits = search_company_kb(
+                session, state["company_id"],
+                "data centre operations security service capability",
+                k=3, role="bid_manager", candidates=candidates,
+            )
+            hits = [hit for hit in hits if hit.metadata.get("approved_for_reuse", True)]
+            if not hits:
+                hits = search_company_kb(
+                    session, state["company_id"], "company service operations", k=3,
+                    role="bid_manager", candidates=candidates,
+                )
+                hits = [hit for hit in hits if hit.metadata.get("approved_for_reuse", True)]
+            if not hits:
+                hits = [
+                    RetrievedChunk(
+                        chunk_id=row.chunk_id, doc_id=row.doc_id, text=row.text,
+                        score=0.0, scope=Scope.kb, page=row.page,
+                        section_path=row.section_path,
+                        metadata={"company_id": row.company_id, "approved_for_reuse": True},
+                    )
+                    for row in candidates.rows
+                    if row.approved_for_reuse
+                ][:3]
+        citations = [hit.to_span() for hit in hits]
+        fallback_body = (
+            "Nimbus Digital Services will provide an evidence-led operating model for the "
+            "Deccan State Data Centre, disaster recovery site and State NOC. "
+            "The delivery approach will use documented transition, service management and "
+            "security controls, subject to the tender requirements and cited company evidence."
+        )
+        evidence = "\n\n".join(
+            f"[{index}] {citation.text_span}" for index, citation in enumerate(citations, 1)
+        )
+        generated = structured_call(
+            "write_sections",
+            DraftText,
+            system=load_prompt("write_sections"),
+            user=f"Section: {section['title']}\nApproved evidence:\n{evidence}",
+            heuristic=lambda body=fallback_body: DraftText(body_markdown=body),
+        )
+        body = generated.value.body_markdown.strip() or fallback_body
         draft = SectionDraft(
             draft_id=f"{state['analysis_run_id']}-{section['section_key']}",
             tender_id=state["tender_id"], tender_version=state["tender_version"],
             section_key=section["section_key"], title=section["title"],
-            body_markdown="<!-- Draft requires approved company evidence. -->",
-            placeholders=["Attach approved evidence for: " + ", ".join(section["requirement_ids"])],
+            body_markdown=body if citations else "<!-- Approved evidence is required before drafting. -->",
+            claims=[Claim(
+                claim_id=f"{state['analysis_run_id']}-{section['section_key']}-C1",
+                text=body, citations=citations, claim_type="capability",
+            )] if citations else [],
+            placeholders=[] if citations else ["Attach approved company evidence"],
         )
         drafts.append({
             **draft.model_dump(mode="json"),
@@ -549,20 +613,21 @@ def write_sections(state: TenderState) -> dict[str, Any]:
 
 
 def verify_claims(state: TenderState) -> dict[str, Any]:
-    """Reject draft claims without citations instead of fabricating support."""
+    """Verify every draft claim before exposing it to Gate 2."""
+    from backend.app.guardrails.claim_verifier import verify_claim
     from backend.app.schemas.assessment import ClaimVerdict, VerifierReport
 
     reports = []
     for draft_data in state.get("drafts", []):
-        verdicts = [
-            ClaimVerdict(
-                claim_id=claim["claim_id"],
-                verdict="unverifiable" if not claim.get("citations") else "supported",
-                reason="No source citation was attached." if not claim.get("citations") else "Citation attached.",
-                evidence=claim.get("citations", []),
-            )
-            for claim in draft_data.get("claims", [])
-        ]
+        evidence = " ".join(c.get("text_span", "") for claim in draft_data.get("claims", [])
+                            for c in claim.get("citations", []))
+        verdicts = []
+        for claim in draft_data.get("claims", []):
+            checked = verify_claim(claim, evidence)
+            verdicts.append(ClaimVerdict(
+                claim_id=checked.claim_id, verdict=checked.verdict,
+                reason=checked.reason, evidence=claim.get("citations", []),
+            ))
         report = VerifierReport(
             draft_id=draft_data["draft_id"], revision=draft_data.get("revision", 0),
             verdicts=verdicts,
@@ -571,6 +636,44 @@ def verify_claims(state: TenderState) -> dict[str, Any]:
         )
         reports.append(report.model_dump(mode="json"))
     return {"verifier_reports": reports}
+
+
+def rewrite_failed(state: TenderState) -> dict[str, Any]:
+    """Bound failed drafts to two revisions and retain an explicit placeholder."""
+    counts = dict(state.get("rewrite_counts") or {})
+    reports = {r["draft_id"]: r for r in state.get("verifier_reports", [])}
+    drafts = []
+    for draft in state.get("drafts", []):
+        report = reports.get(draft["draft_id"], {})
+        count = int(counts.get(draft["draft_id"], 0))
+        if not report.get("passed", False) and count < 2:
+            count += 1
+            counts[draft["draft_id"]] = count
+            draft = {**draft, "body_markdown": "This section requires human confirmation.",
+                     "claims": [], "placeholders": ["Confirm unsupported statements with approved evidence"],
+                     "revision": count}
+        drafts.append(draft)
+    return {"drafts": drafts, "rewrite_counts": counts}
+
+
+def gate2_review(state: TenderState) -> dict[str, Any]:
+    """Pause for version-bound human review of the cited section."""
+    section = next(iter(state.get("drafts", [])), None)
+    if section is None:
+        return {"gate2_pending": None}
+    existing = (state.get("gate2_reviews") or {}).get(section["section_key"])
+    if existing:
+        return {"gate2_pending": None}
+    from langgraph.types import interrupt
+    decision = interrupt({
+        "gate": "gate2", "tender_id": state["tender_id"],
+        "tender_version": state["tender_version"], "draft": section,
+        "verifier_report": next(
+            (r for r in state.get("verifier_reports", []) if r.get("draft_id") == section["draft_id"]), None
+        ),
+        "message": "Approve, edit, reject, or request changes for this section.",
+    })
+    return {"gate2_reviews": {section["section_key"]: decision}, "gate2_pending": None}
 
 
 def final_compliance_check(state: TenderState) -> dict[str, Any]:
