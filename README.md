@@ -558,13 +558,15 @@ Routing follows `demo_data/demo_config/llm_routing_and_budget.json` (free-tier
 quotas from the team's Groq and Google accounts; verify model IDs with each
 provider's model list before relying on them):
 
-| Use | Model (`provider:model`) |
-|---|---|
-| Fast tier: extraction, key facts, corrigenda, routing | `groq:openai/gpt-oss-20b` |
-| Strong tier: similar-work judge, technical grading, claim verification | `groq:openai/gpt-oss-120b` |
-| Response planning and the one drafted section | `google_genai:gemini-3-flash` (20 requests/day: keep ≥5 for the live demo) |
-| Injection screening | `groq:meta-llama/llama-prompt-guard-2-86m` |
-| Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, exports |
+| Use | Model (`provider:model`) | Load per tender |
+|---|---|---|
+| Requirement extraction (batched), key-fact gaps | `google_genai:gemini-2.5-flash-lite` | ~12 calls, ~42k tokens (about 1 min at 15 RPM) |
+| The drafted section and its one rewrite | `google_genai:gemini-2.5-flash` | 1-2 calls |
+| Fallback when no Google key | `groq:openai/gpt-oss-20b` (extraction, ~5 min at 8K TPM), `groq:openai/gpt-oss-120b` (drafting) | |
+| Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, eligibility, exports | |
+
+Set `LLM_FAST=google_genai:gemini-2.5-flash-lite`, `LLM_STRONG=google_genai:gemini-2.5-flash` and
+`GOOGLE_API_KEY` (optionally `GROQ_API_KEY`) in `.env`.
 
 Before a demo, `uv run python dev.py llm-check` shows the model each node will use, whether its
 key is set, the enforced limits and the expected calls/tokens/time for one tender; `--ping` sends one

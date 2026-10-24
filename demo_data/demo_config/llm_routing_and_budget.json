@@ -1,13 +1,15 @@
 {
-  "source": "TenderBridge_LLM_Implementation_Plan.md (quotas transcribed from account screenshots; verify model IDs with models.list before use)",
+  "source": "Demo routing (24 Oct): Gemini 2.5 Flash-Lite for batched extraction (high TPM), Gemini 2.5 Flash for drafting, Groq gpt-oss-120b as fallback when no Google key. Free-tier limits change: check AI Studio and the Groq console, update limits_per_model_from_plan, and run `dev.py llm-check --ping`.",
   "routing": {
     "shred_requirements": {
-      "primary": "groq/openai/gpt-oss-20b",
-      "fallback": "gemini-2.5-flash",
-      "batch": "2-3 short sections per call; tables intact"
+      "primary": "gemini-2.5-flash-lite",
+      "fallback": "groq/openai/gpt-oss-20b",
+      "batch": "sections batched to ~2,500 tokens per call (SHRED_BATCH_TOKENS)"
     },
     "extract_key_facts": {
-      "primary": "groq/openai/gpt-oss-20b"
+      "primary": "gemini-2.5-flash-lite",
+      "fallback": "groq/openai/gpt-oss-20b",
+      "note": "only when the deterministic extractor leaves gaps"
     },
     "reconcile_corrigenda": {
       "primary": "groq/openai/gpt-oss-20b",
@@ -29,10 +31,11 @@
       "plus": "risk_positions.json compare in code"
     },
     "plan_response": {
-      "primary": "gemini-3-flash"
+      "primary": "code",
+      "note": "deterministic section plan"
     },
     "write_sections": {
-      "primary": "gemini-3-flash",
+      "primary": "gemini-2.5-flash",
       "fallback": "groq/openai/gpt-oss-120b"
     },
     "verify_claims": {
@@ -53,6 +56,16 @@
     ]
   },
   "limits_per_model_from_plan": {
+    "gemini-2.5-flash-lite": {
+      "rpm": 15,
+      "rpd": 1000,
+      "tpm": 250000
+    },
+    "gemini-2.5-flash": {
+      "rpm": 10,
+      "rpd": 250,
+      "tpm": 250000
+    },
     "groq/openai/gpt-oss-20b": {
       "rpm": 30,
       "rpd": 1000,
