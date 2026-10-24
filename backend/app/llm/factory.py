@@ -142,6 +142,18 @@ def _record(route: NodeRoute, node: str, in_t: int, out_t: int, latency_ms: floa
 MAX_RATE_LIMIT_WAITS = 4
 
 
+def structured_runnable(llm: Any, schema: type[BaseModel], model: str) -> Any:
+    """Structured output with the provider's native JSON schema where tool calling is unreliable:
+    Groq's gpt-oss can answer in prose instead of calling the tool ("Tool choice is required");
+    json_schema constrains the output itself. Gemini already defaults to json_schema."""
+    if model.startswith("groq:"):
+        try:
+            return llm.with_structured_output(schema, method="json_schema", include_raw=True)
+        except (NotImplementedError, ValueError):
+            pass
+    return llm.with_structured_output(schema, include_raw=True)
+
+
 def _cache_key(node: str, model: str, system: str, user: str, schema: type[BaseModel]) -> str:
     blob = json.dumps([node, model, system, user, schema.__name__, schema.model_json_schema()], sort_keys=True)
     return hashlib.sha256(blob.encode()).hexdigest()
@@ -228,7 +240,7 @@ def structured_call(node: str, schema: type[S], *, system: str, user: str,
                                          f"Return ONLY valid JSON matching this schema:\n"
                                          f"{json.dumps(schema.model_json_schema())[:6000]}")
             try:
-                runnable = llm.with_structured_output(schema, include_raw=True)
+                runnable = structured_runnable(llm, schema, route.model)
                 out = runnable.invoke(msgs)
                 raw_msg = out.get("raw")
                 parsed = out.get("parsed")

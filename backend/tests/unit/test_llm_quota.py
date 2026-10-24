@@ -114,4 +114,4 @@ def test_plan_limits_are_read_from_routing_config(monkeypatch):
     limits = ratelimit.configured_limits()
     ratelimit.configured_limits.cache_clear()
     assert limits["groq:openai/gpt-oss-20b"].tpm == 8000
-    assert limits["google_genai:gemini-3-flash"].rpm == 5
+    assert limits["google_genai:gemini-3-flash-preview"].rpm == 5

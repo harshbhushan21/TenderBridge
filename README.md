@@ -560,12 +560,12 @@ provider's model list before relying on them):
 
 | Use | Model (`provider:model`) | Load per tender |
 |---|---|---|
-| Requirement extraction (large batches), key-fact gaps | `google_genai:gemini-2.5-flash-lite` | ~4 calls (free tier: 10 RPM, 250K TPM, **20 requests/day** → ~5 full runs/day) |
-| The drafted section and its one rewrite | `groq:openai/gpt-oss-120b` (fallback `google_genai:gemini-2.5-flash`) | 1-2 calls (Groq: ~1,000 requests/day) |
+| Requirement extraction (large batches), key-fact gaps | `google_genai:gemini-3.1-flash-lite` | ~4 calls (free tier: 10 RPM, 250K TPM, **20 requests/day** → ~5 full runs/day) |
+| The drafted section and its one rewrite | `groq:openai/gpt-oss-120b` (fallback `google_genai:gemini-3-flash-preview`) | 1-2 calls (Groq: ~1,000 requests/day) |
 | Never an LLM | arithmetic, dates, hard gates, weighted score, citation validity, eligibility, exports | |
 
-Set `LLM_FAST=google_genai:gemini-2.5-flash-lite`, `LLM_STRONG=groq:openai/gpt-oss-120b`,
-`GOOGLE_API_KEY` and `GROQ_API_KEY` in `.env` (with only a Google key, drafting uses Gemini 2.5 Flash).
+Set `LLM_FAST=google_genai:gemini-3.1-flash-lite`, `LLM_STRONG=groq:openai/gpt-oss-120b`,
+`GOOGLE_API_KEY` and `GROQ_API_KEY` in `.env` (with only a Google key, drafting uses Gemini 3 Flash).
 Limits are those shown in the team's AI Studio and Groq consoles on 24 Oct; check yours before a demo.
 
 Before a demo, `uv run python dev.py llm-check` shows the model each node will use, whether its

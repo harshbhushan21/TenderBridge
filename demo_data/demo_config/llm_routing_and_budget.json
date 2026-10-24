@@ -1,13 +1,13 @@
 {
-  "source": "Demo routing (24 Oct): limits from the team's AI Studio free tier (Gemini: 20 requests/day per model) and the Groq console. Extraction on Gemini 2.5 Flash-Lite in large batches (~4 calls per tender); drafting on Groq gpt-oss-120b (~1,000 requests/day), Gemini 2.5 Flash as fallback. Re-check limits before a demo and run `dev.py llm-check --ping`.",
+  "source": "Demo routing (24 Oct): Gemini 2.5 models are no longer served to new API keys. Extraction on gemini-3.1-flash-lite in large batches (~4 calls per tender); drafting on Groq gpt-oss-120b (~1,000 requests/day), gemini-3-flash-preview as fallback. Limits from the team's AI Studio and Groq consoles; re-check before a demo and run `dev.py llm-check --ping`.",
   "routing": {
     "shred_requirements": {
-      "primary": "gemini-2.5-flash-lite",
+      "primary": "gemini-3.1-flash-lite",
       "fallback": "groq/openai/gpt-oss-20b",
       "batch": "sections batched to ~2,500 tokens per call (SHRED_BATCH_TOKENS)"
     },
     "extract_key_facts": {
-      "primary": "gemini-2.5-flash-lite",
+      "primary": "gemini-3.1-flash-lite",
       "fallback": "groq/openai/gpt-oss-20b",
       "note": "only when the deterministic extractor leaves gaps"
     },
@@ -36,7 +36,7 @@
     },
     "write_sections": {
       "primary": "groq/openai/gpt-oss-120b",
-      "fallback": "gemini-2.5-flash"
+      "fallback": "gemini-3-flash-preview"
     },
     "verify_claims": {
       "exact": "code (facts tables)",
@@ -56,17 +56,13 @@
     ]
   },
   "limits_per_model_from_plan": {
-    "gemini-2.5-flash-lite": {
+    "gemini-3.1-flash-lite": {
       "rpm": 10,
       "rpd": 20,
-      "tpm": 250000
+      "tpm": 250000,
+      "note": "assumed equal to the 2.5 Flash-Lite row; confirm in AI Studio"
     },
-    "gemini-2.5-flash": {
-      "rpm": 5,
-      "rpd": 20,
-      "tpm": 250000
-    },
-    "gemini-3-flash": {
+    "gemini-3-flash-preview": {
       "rpm": 5,
       "rpd": 20,
       "tpm": 250000

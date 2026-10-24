@@ -84,15 +84,19 @@ def main() -> None:
           f" (project {s.langsmith_project})")
 
     if args.ping:
-        from backend.app.llm.factory import _build_chat_model, _messages
+        from backend.app.llm.factory import _build_chat_model, _messages, structured_runnable
         print("\nPing (one tiny request per model):")
         for model in sorted({resolve(n).model for n in NODES if not is_fake(resolve(n).model)}):
             t0 = time.perf_counter()
             try:
-                llm = _build_chat_model(model, 0.0, 64, 30.0)
+                llm = _build_chat_model(model, 0.0, 512, 60.0)  # room for "thinking" models
                 try:
-                    out = llm.with_structured_output(Pong).invoke(_messages("Reply ok=true.", "ping"))
+                    raw = structured_runnable(llm, Pong, model).invoke(
+                        _messages("Return JSON with ok set to true.", "ping"))
+                    out = raw.get("parsed")
                     ok = bool(getattr(out, "ok", False))
+                    if not ok and raw.get("parsing_error"):
+                        raise RuntimeError(f"unparseable structured output: {raw['parsing_error']}")
                 except NotImplementedError:
                     ok = bool(llm.invoke(_messages("Reply with the word ok.", "ping")).content)
                 print(f"  {model:<40} {'ok' if ok else 'answered, unexpected output'} "
