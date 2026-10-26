@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TenderBridge demo</title>
+  <style>
+    :root { --ink: #11120d; --paper: #fdfcf8; --olive: #565449; --muted: #a2a097; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--ink); color: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    body { display: flex; flex-direction: column; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 14px 20px; border-bottom: 1px solid rgba(253, 252, 248, 0.1); }
+    .back { display: inline-flex; align-items: center; gap: 8px; color: var(--paper); text-decoration: none;
+      font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 8px; background: rgba(253, 252, 248, 0.08); }
+    .back:hover, .close:hover { background: var(--olive); }
+    .title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+    .title span { color: var(--muted); font-weight: 400; }
+    .close { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; color: var(--paper);
+      text-decoration: none; font-size: 22px; line-height: 1; background: rgba(253, 252, 248, 0.08); }
+    main { flex: 1; display: grid; place-items: center; padding: 20px; min-height: 0; }
+    video { width: 100%; max-width: 1280px; max-height: calc(100vh - 140px); border-radius: 10px;
+      background: #000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20px 16px; }
+    @media (max-width: 600px) { .title span { display: none; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="back" href="https://github.com/harshbhushan21/TenderBridge">&larr; Back to TenderBridge</a>
+    <div class="title">TenderBridge <span>· demo walkthrough (2:57)</span></div>
+    <a class="close" href="https://github.com/harshbhushan21/TenderBridge" aria-label="Close and return to the repository">&times;</a>
+  </header>
+  <main>
+    <video controls autoplay playsinline preload="metadata"
+      src="https://cdn.jsdelivr.net/gh/harshbhushan21/TenderBridge@main/docs/media/tenderbridge-demo.mp4">
+      Your browser cannot play this video. <a href="https://cdn.jsdelivr.net/gh/harshbhushan21/TenderBridge@main/docs/media/tenderbridge-demo.mp4">Download the MP4</a>.
+    </video>
+  </main>
+  <footer>Press Esc to return to the repository.</footer>
+  <script>
+    // Esc leaves the page (it first exits fullscreen if the video is fullscreen).
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !document.fullscreenElement) {
+        window.location.href = "https://github.com/harshbhushan21/TenderBridge";
+      }
+    });
+  </script>
+</body>
+</html>
