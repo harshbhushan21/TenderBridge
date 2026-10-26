@@ -9,12 +9,6 @@ approving every decision.
 **Demo video:** [Watch the TenderBridge demo](https://cdn.jsdelivr.net/gh/harshbhushan21/TenderBridge@main/docs/media/tenderbridge-demo.mp4)
 (2:57, plays in the browser) · [Download the MP4](docs/media/tenderbridge-demo.mp4)
 
-AgentOps 2026 · Track 01 (Multi-agent systems) · CGI domain: IT Infrastructure · Team BR01/MP04 (HX-2SJA)
-
-> **Demo data is synthetic.** `TDR-001` is a simulated State Data Centre O&M tender from a fictional
-> buyer, and Nimbus Digital Services is a fictional bidder. Nothing in this repository is CGI data, and
-> TenderBridge never submits anything to GeM, CPPP or any other portal.
-
 ## About the project
 
 A public tender for IT infrastructure is a pack of PDFs, annexures and spreadsheets that runs to dozens
@@ -443,7 +437,7 @@ minutes. This is a single run, not a benchmark.
 
 ## Team
 
-Built for AgentOps 2026: The Agentic Edition (SDG Club MIT Bengaluru × CGI), Track 01, Multi-agent systems.
+Built for AgentOps 2026: The Agentic Edition (SDG Club MIT Bengaluru × CGI), Track 01, Multi-agent systems, CGI domain: IT Infrastructure. Team BR01/MP04 (HX-2SJA).
 
 | Member | Focus |
 | --- | --- |
