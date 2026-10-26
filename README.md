@@ -4,9 +4,9 @@ An agentic bid / no-bid copilot for public IT-infrastructure tenders. It turns a
 verified compliance matrix, an evidence-backed recommendation and a cited response draft, with a human
 approving every decision.
 
-[![TenderBridge demo preview](docs/media/demo-preview.gif)](https://cdn.jsdelivr.net/gh/harshbhushan21/TenderBridge@main/docs/media/tenderbridge-demo.mp4)
+[![TenderBridge demo preview](docs/media/demo-preview.gif)](https://rawcdn.githack.com/harshbhushan21/TenderBridge/f1d3c193e7d9d25cb9179ca4a9bac71d0a3b7bd4/docs/demo.html)
 
-**Demo video:** [Watch the TenderBridge demo](https://cdn.jsdelivr.net/gh/harshbhushan21/TenderBridge@main/docs/media/tenderbridge-demo.mp4)
+**Demo video:** [Watch the TenderBridge demo](https://rawcdn.githack.com/harshbhushan21/TenderBridge/f1d3c193e7d9d25cb9179ca4a9bac71d0a3b7bd4/docs/demo.html)
 (2:57, plays in the browser) · [Download the MP4](docs/media/tenderbridge-demo.mp4)
 
 ## About the project
